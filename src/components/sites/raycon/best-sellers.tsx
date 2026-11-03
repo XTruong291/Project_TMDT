@@ -1,0 +1,55 @@
+"use client";
+
+import { useRef } from "react";
+
+import { bestSellers } from "@/data/products";
+
+import { ChevronIcon } from "./icons";
+import { ProductCard } from "./product-card";
+
+export function BestSellersCarousel() {
+  const scroller = useRef<HTMLDivElement>(null);
+
+  function scrollByCard(direction: -1 | 1) {
+    const node = scroller.current;
+    if (!node) return;
+    const amount = Math.min(node.clientWidth * 0.8, 380);
+    node.scrollBy({ left: amount * direction, behavior: "smooth" });
+  }
+
+  return (
+    <section className="bg-white py-14 md:py-20">
+      <div className="raycon-container">
+        <div className="mb-8 flex items-end justify-between gap-4">
+          <h2 className="text-[32px] font-bold md:text-[36px]">Fan Favorites</h2>
+          <div className="hidden gap-2 md:flex">
+            <button
+              type="button"
+              aria-label="Previous products"
+              className="flex size-11 items-center justify-center rounded-full border border-navy/15"
+              onClick={() => scrollByCard(-1)}
+            >
+              <ChevronIcon className="size-5 rotate-180" />
+            </button>
+            <button
+              type="button"
+              aria-label="Next products"
+              className="flex size-11 items-center justify-center rounded-full border border-navy/15"
+              onClick={() => scrollByCard(1)}
+            >
+              <ChevronIcon className="size-5" />
+            </button>
+          </div>
+        </div>
+        <div
+          ref={scroller}
+          className="flex gap-4 overflow-x-auto pb-2 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+        >
+          {bestSellers.map((product) => (
+            <ProductCard key={product.id} product={product} />
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
