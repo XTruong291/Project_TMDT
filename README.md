@@ -1,154 +1,136 @@
-<div align="center">
+# Raycon Global Homepage Clone 🎧
 
-# AI Website Cloner Template
-
-### Clone any website with one command
-
-Give your AI coding agent a URL and watch it recreate the website as a clean Next.js app.
-
-**Best results with [Claude Code](https://docs.anthropic.com/en/docs/claude-code) + Opus 5.5. Also supports Codex, Cursor, and OpenCode.**
-
-[![Use this template](https://img.shields.io/badge/Use_this_template-Create_your_copy-2ea44f?style=for-the-badge&logo=github&logoColor=white)](https://github.com/JCodesMore/ai-website-cloner-template/generate) [![Discord](https://img.shields.io/badge/Join_the_community-Discord-5865F2?style=for-the-badge&logo=discord&logoColor=white)](https://discord.gg/hrTSX5yTpB)
-
-[Quick Start](#quick-start) · [Watch Demo](#demo) · [Supported Platforms](#supported-platforms)
-
-<a href="https://github.com/JCodesMore/ai-website-cloner-template/blob/master/LICENSE"><img src="https://img.shields.io/badge/license-MIT-blue" alt="MIT License" /></a> <a href="https://github.com/JCodesMore/ai-website-cloner-template"><img src="https://img.shields.io/github/stars/JCodesMore/ai-website-cloner-template?style=flat" alt="Stars" /></a> <img src="https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/JCodesMore/ai-website-cloner-template/badges/token-badge.json" alt="tokens" />
-
-  <a href="https://trendshift.io/repositories/24302?utm_source=repository-badge&amp;utm_medium=badge&amp;utm_campaign=badge-repository-24302" target="_blank" rel="noopener noreferrer"><img src="https://trendshift.io/api/badge/repositories/24302" alt="JCodesMore%2Fai-website-cloner-template | Trendshift" width="250" height="55" /></a> <a href="https://www.star-history.com/jcodesmore/ai-website-cloner-template/"><picture><source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/badge?repo=JCodesMore/ai-website-cloner-template&amp;theme=dark" /><source media="(prefers-color-scheme: light)" srcset="https://api.star-history.com/badge?repo=JCodesMore/ai-website-cloner-template" /><img alt="Star History Global Rank" src="https://api.star-history.com/badge?repo=JCodesMore/ai-website-cloner-template" width="216" height="55" /></picture></a>
-
-</div>
+Dự án tái hiện (clone) giao diện trang chủ của thương hiệu công nghệ âm thanh **[Raycon Global](https://rayconglobal.com/)**. Dự án được xây dựng với mục tiêu thực hành kỹ thuật Reverse-Engineering giao diện thương mại điện tử (E-Commerce), đảm bảo chuẩn Responsive, tương tác mượt mà và tách bạch dữ liệu sản phẩm theo chuẩn hiện đại.
 
 ---
 
-## Demo
+## 🚀 Công nghệ sử dụng (Tech Stack)
 
-[![Watch the demo](docs/design-references/comparison.png)](https://youtu.be/O669pVZ_qr0)
+- **Framework:** [Next.js 16](https://nextjs.org/) (App Router, Turbopack)
+- **Library:** [React 19](https://react.dev/), TypeScript (Strict mode)
+- **Styling:** [Tailwind CSS v4](https://tailwindcss.com/) với hệ màu thiết kế OKLCH
+- **UI Primitives:** Base UI / shadcn/ui
+- **Icons:** SVG vector trích xuất chuẩn theo nhận diện thương hiệu Raycon
+- **Asset Optimization:** Next.js Static Optimization, hình ảnh thực tế tối ưu hóa
 
-> Click the image above to watch the full demo on YouTube.
+---
 
-## Quick Start
+## ✨ Tính năng nổi bật (Key Features)
 
-### 1. Set up your project
+1. **Sticky Header & Announcement Bar:**
+   - Thanh thông báo khuyến mãi đầu trang (Early Black Friday / Sale).
+   - Thanh điều hướng cố định (Sticky Header) với logo Raycon, danh mục nổi bật (Deals màu Coral, Open Audio, Earbuds,...).
+   - **Tìm kiếm Realtime:** Hộp thoại tìm kiếm sản phẩm trực tiếp theo tên với gợi ý nhanh.
+   - Menu trượt dạng drawer trên thiết bị di động (Mobile Responsive).
 
-**Recommended: ask your agent.** Paste this into Codex, Claude Code, or your coding agent:
+2. **Hero Banner & Split Banners:**
+   - Banner mở đầu *"Before the rush starts."* với hình nền chuẩn nhận diện và nút kêu gọi hành động (*Shop The Sale*).
+   - Banner chuyển tiếp *"Press play on your day."* và banner chốt trang *"Ready for Whatever's Next."*.
+
+3. **Fan Favorites (Best Sellers Carousel):**
+   - Danh sách sản phẩm bán chạy nhất (`Everyday Earbuds`, `Bone Conduction Gen 1`, `Essential Open Earbuds`, `Everyday Clip Earbuds`).
+   - Huy hiệu giảm giá màu Coral (`20% OFF`, `30% OFF`, `40% OFF`).
+   - **Bộ chọn màu tương tác (Color Swatches):** Click chọn màu sẽ tự động chuyển đổi ảnh đại diện sản phẩm tương ứng theo thời gian thực.
+   - Đánh giá sao, số lượng review, hiển thị giá khuyến mãi kèm giá niêm yết gạch ngang.
+
+4. **Shop by Category:**
+   - 4 danh mục chính: *Open Audio*, *Earbuds*, *Headphones*, *Power Tech*.
+   - Hiệu ứng zoom ảnh khi rê chuột (Hover Scale).
+
+5. **Raycon Core Tech (Chi tiết công nghệ):**
+   - Đồ họa vector sóng xoay góc đặc trưng của Raycon.
+   - Thẻ thông số thời lượng pin ấn tượng (**40 hrs** kèm icon pin).
+   - Đồ họa tai nghe kèm 3 chú thích nét đứt chỉ vào từng tính năng kỹ thuật: *Featherlight Fit*, *Tuned 6MM Drivers*, *IPX4 Waterproof*.
+
+6. **Brand Story & Reviews:**
+   - 3 thẻ giá trị thương hiệu: *Effortless Tech*, *Fits your Style*, *Built to Last*.
+   - Mục đánh giá khách hàng *"5 Million+ and Counting"* với nền màu pastel (cyan, peach, lilac), dấu ngoặc kép lớn và nhãn *Verified Buyer*.
+
+7. **Footer & Đăng ký nhận tin:**
+   - Form nhận bản tin *"Shop With Us - Your favorite email, probably."* có phản hồi trạng thái đăng ký thành công.
+   - Hệ thống liên kết mạng xã hội (*Instagram, YouTube, Facebook, Twitter*), danh mục thông tin sản phẩm và chính sách bảo hành.
+
+8. **Tách biệt dữ liệu (E-Commerce Data Separation):**
+   - Không hardcode thông tin sản phẩm trong mã nguồn JSX. Toàn bộ thông tin giá cả, hình ảnh, swatch màu, đánh giá được quản lý tập trung và định kiểu chặt chẽ trong `src/data/products.ts`.
+
+---
+
+## 📁 Cấu trúc thư mục (Project Structure)
 
 ```text
-Set up https://github.com/JCodesMore/ai-website-cloner-template
-as a standalone project in a new folder on my computer.
-Ask me where to put it. Clone the repository, remove its origin remote,
-install dependencies, and run npm run check. Leave it ready for me
-to clone a website.
+├── docs/                           # Tài liệu phân tích & ảnh tham chiếu
+│   ├── design-references/raycon/   # Ảnh chụp đối chiếu Desktop (1440x900) & Mobile
+│   └── research/raycon/            # Trích xuất màu sắc, typography & page brief
+├── public/sites/raycon/images/     # Toàn bộ hình ảnh, swatch màu, banner của trang
+├── src/
+│   ├── app/                        # Next.js App Router (layout.tsx, page.tsx, globals.css)
+│   ├── components/sites/raycon/    # Các section độc lập của trang chủ
+│   │   ├── announcement-bar.tsx    # Thanh thông báo trên cùng
+│   │   ├── header.tsx              # Header và thanh tìm kiếm tương tác
+│   │   ├── hero-banner.tsx         # Banner Hero mở đầu
+│   │   ├── best-sellers.tsx        # Section Fan Favorites
+│   │   ├── product-card.tsx        # Thẻ sản phẩm kèm bộ chọn màu
+│   │   ├── press-play-banner.tsx   # Banner chuyển tiếp giữa trang
+│   │   ├── category-grid.tsx       # Lưới danh mục sản phẩm
+│   │   ├── core-tech.tsx           # Thông số kỹ thuật & chú thích tính năng
+│   │   ├── brand-story.tsx         # Câu chuyện thương hiệu
+│   │   ├── reviews.tsx             # Đánh giá khách hàng
+│   │   ├── closing-cta.tsx         # Banner kêu gọi hành động cuối trang
+│   │   ├── footer.tsx              # Footer & Form newsletter
+│   │   └── icons.tsx               # Hệ thống biểu tượng SVG chuẩn
+│   └── data/
+│       └── products.ts             # Cơ sở dữ liệu mẫu (Sản phẩm, Màu sắc, Danh mục, Review)
 ```
 
-**Or create your own GitHub repository:**
+---
 
-[![Use this template](https://img.shields.io/badge/Use_this_template-Create_your_copy-2ea44f?style=for-the-badge&logo=github&logoColor=white)](https://github.com/JCodesMore/ai-website-cloner-template/generate)
+## 🛠️ Hướng dẫn cài đặt & Khởi chạy (Getting Started)
 
-Give it a name and click **Create repository**. Then give your agent the new repository's link and ask it to clone it onto your computer, install dependencies, and run `npm run check`.
+### 1. Yêu cầu môi trường
+- [Node.js](https://nodejs.org/) phiên bản **20.x** trở lên (khuyên dùng Node 22/24).
+- Trình quản lý gói `npm` (đi kèm Node.js).
 
-### 2. Clone a website
-
-Open the project in your agent with browser access enabled. In Claude Code or Cursor, run:
-
-```text
-/clone-website https://example.com
+### 2. Cài đặt các thư viện phụ thuộc
+Mở terminal tại thư mục gốc của dự án và chạy:
+```bash
+npm install
 ```
 
-Replace the URL with the website you want to recreate. Once it's built, ask your agent for any changes you want.
-
-## Supported Platforms
-
-| Agent                                                         | Status                     |
-| ------------------------------------------------------------- | -------------------------- |
-| [Claude Code](https://docs.anthropic.com/en/docs/claude-code) | **Recommended** — Opus 5.5 |
-| [Codex CLI](https://github.com/openai/codex)                  | Supported                  |
-| [OpenCode](https://opencode.ai/)                              | Supported                  |
-| [Cursor](https://cursor.com/)                                 | Supported                  |
-
-## Prerequisites
-
-- [Node.js](https://nodejs.org/) 24+
-- An AI coding agent (see [Supported Platforms](#supported-platforms))
-
-## Tech Stack
-
-- **Next.js 16** — App Router, React 19, TypeScript strict
-- **shadcn/ui** — Base UI primitives + Tailwind CSS v4
-- **Tailwind CSS v4** — oklch design tokens
-- **Lucide React** — default icons (replaced by extracted SVGs during cloning)
-
-## How It Works
-
-The `/clone-website` skill follows four steps:
-
-1. **Map** — map source URLs to local routes and preserve existing work.
-2. **Observe** — inspect desktop/mobile pages, extract real assets and fonts, and exercise alternate states.
-3. **Build** — implement editable components and working interactions; delegate independent sections when useful.
-4. **Compare** — review source and local pages at matched sizes/states, repair visible differences, and run the production check.
-
-Framer pages and animated sites have focused inspection guidance for responsive variants, media, sticky scenes, and scroll/time-driven motion. Direct HTTP or asset tools handle extraction where practical; browser comparisons establish appearance and behavior. Deliverables include route mappings, run instructions, comparison screenshots, and any remaining gaps.
-
-## Use Cases
-
-- **Platform migration** — rebuild a site you own from WordPress/Webflow/Squarespace into a modern Next.js codebase
-- **Lost source code** — your site is live but the repo is gone, the developer left, or the stack is legacy. Get the code back in a modern format
-- **Learning** — deconstruct how production sites achieve specific layouts, animations, and responsive behavior by working with real code
-
-## Not Intended For
-
-- **Phishing or impersonation** — this project must not be used for deceptive purposes, impersonation, or any activity that breaks the law.
-- **Passing off someone's design as your own** — logos, brand assets, and original copy belong to their owners.
-- **Violating terms of service** — some sites explicitly prohibit scraping or reproduction. Check first.
-
-## Project Structure
-
+### 3. Khởi chạy môi trường phát triển (Dev Server)
+```bash
+npm run dev
 ```
-src/
-  app/              # Next.js routes
-  components/       # React components
-    ui/             # shadcn/ui primitives
-    sites/<site>/   # Source-specific components and extracted SVGs
-  lib/utils.ts      # cn() utility
-  types/            # TypeScript interfaces
-  hooks/            # Custom React hooks
-public/
-  sites/<site>/     # Source-specific images, fonts, videos, and other assets
-docs/
-  research/<site>/  # Page brief, asset map, and inspection evidence
-  design-references/ # Screenshots
-.agents/skills/
-  clone-website/    # Canonical skill and inspection reference
-.claude/commands/
-  clone-website.md  # Thin Claude Code bridge
-AGENTS.md           # Agent instructions (single source of truth)
-CLAUDE.md           # Claude Code config (imports AGENTS.md)
-```
+Sau khi khởi chạy thành công, mở trình duyệt và truy cập:
+👉 **[http://localhost:3000](http://localhost:3000)**
 
-## Commands
+*(Nếu cổng 3000 bị chiếm dụng bởi tiến trình khác, bạn có thể chỉ định cổng khác, ví dụ:* `npm run dev -- -p 3005`*).*
+
+---
+
+## 🧪 Kiểm tra chất lượng mã nguồn (Code Quality Check)
+
+Dự án đã thiết lập quy trình kiểm thử đồng bộ bao gồm: kiểm tra cú pháp ESLint, kiểm tra kiểu tĩnh TypeScript và biên dịch kiểm thử Next.js:
 
 ```bash
-npm run dev    # Start dev server
-npm run build  # Production build
-npm run lint   # ESLint check
-npm run typecheck # TypeScript check
-npm run check  # Run lint + typecheck + build
+npm run check
 ```
+> Lệnh này sẽ lần lượt chạy: `npm run lint` && `npm run typecheck` && `npm run build`.
 
-### If using docker
+---
 
+## 📦 Đóng gói ứng dụng chạy thực tế (Production Build)
+
+Khi cần triển khai (deploy) lên Vercel, Netlify hoặc máy chủ riêng:
 ```bash
-docker compose up app --build # build and run the app
-docker compose up dev --build # run the app in dev mode on port 3001
+# 1. Tạo bản build tối ưu
+npm run build
+
+# 2. Khởi chạy bản production build
+npm run start
 ```
 
-## Agent Support
+---
 
-The project keeps one portable Agent Skill at `.agents/skills/clone-website/`. Codex, Cursor, and OpenCode read it directly. Claude Code uses the small command bridge at `.claude/commands/clone-website.md` so `/clone-website` and its arguments continue to work without exposing a duplicate skill to the other agents.
+## ⚠️ Tuyên bố miễn trừ trách nhiệm (Disclaimer)
 
-## Star History
-
-![Star History Chart](docs/assets/star-history.png)
-
-## License
-
-MIT
+Dự án này được thực hiện phục vụ cho **mục đích học tập và nghiên cứu công nghệ phát triển web / thương mại điện tử**. Mọi bản quyền về nhãn hiệu, hình ảnh, văn bản và thiết kế thuộc về **[Raycon Global Inc.](https://rayconglobal.com/)**.
