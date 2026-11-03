@@ -61,7 +61,7 @@ export function ProductView({ product, relatedProducts }: ProductViewProps) {
   }
 
   const savings =
-    product.compareAtPrice > product.price
+    product.compareAtPrice && product.compareAtPrice > product.price
       ? product.compareAtPrice - product.price
       : 0;
 
@@ -162,7 +162,7 @@ export function ProductView({ product, relatedProducts }: ProductViewProps) {
               <span className="text-3xl font-bold text-royal">
                 {formatUsd(product.price)}
               </span>
-              {product.compareAtPrice > product.price ? (
+              {product.compareAtPrice && product.compareAtPrice > product.price ? (
                 <>
                   <span className="text-lg text-navy/40 line-through font-medium">
                     {formatUsd(product.compareAtPrice)}

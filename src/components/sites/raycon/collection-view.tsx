@@ -34,7 +34,10 @@ export function CollectionView({
     } else if (activeFilter === "top-rated") {
       result = result.filter((p) => p.rating >= 4.5);
     } else if (activeFilter === "on-sale") {
-      result = result.filter((p) => p.badge !== null || p.compareAtPrice > p.price);
+      result = result.filter(
+        (p) =>
+          p.badge !== null || (p.compareAtPrice != null && p.compareAtPrice > p.price),
+      );
     }
 
     // Sort

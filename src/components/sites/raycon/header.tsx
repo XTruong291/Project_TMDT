@@ -2,10 +2,13 @@
 
 import Link from "next/link";
 import { useState } from "react";
+import { Shield, User as UserIcon, LogOut, Settings } from "lucide-react";
 
 import { products } from "@/data/products";
 import { cn } from "@/lib/utils";
 import { useCartStore } from "@/store/use-cart-store";
+import { useAuthStore } from "@/store/use-auth-store";
+import { AuthModal } from "./auth-modal";
 
 import {
   CartIcon,
@@ -43,19 +46,26 @@ const MOBILE_LINKS = [
   ...NAV,
   { label: "Our Story", href: "/pages/about" },
   { label: "FAQs", href: "/pages/faq" },
-  { label: "Login", href: "/account/login" },
 ];
 
 export function SiteHeader() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
+  const [authModalOpen, setAuthModalOpen] = useState(false);
+  const [userDropdownOpen, setUserDropdownOpen] = useState(false);
   const [query, setQuery] = useState("");
 
   const openCart = useCartStore((state) => state.openCart);
   const totalItems = useCartStore((state) => state.getTotalItems());
-  const hasHydrated = useCartStore((state) => state.hasHydrated);
+  const cartHydrated = useCartStore((state) => state.hasHydrated);
 
-  const displayCount = hasHydrated ? totalItems : 0;
+  const user = useAuthStore((state) => state.user);
+  const authHydrated = useAuthStore((state) => state.hasHydrated);
+  const logout = useAuthStore((state) => state.logout);
+
+  const displayCount = cartHydrated ? totalItems : 0;
+  const currentUser = authHydrated ? user : null;
+  const isAdmin = currentUser?.role === "admin";
 
   const results = query.trim()
     ? products.filter((product) =>
@@ -64,132 +74,252 @@ export function SiteHeader() {
     : products.slice(0, 4);
 
   return (
-    <header className="sticky top-0 z-50 border-b border-transparent bg-white">
-      <div className="raycon-container flex h-[66px] items-center gap-4">
-        <button
-          type="button"
-          className="flex size-10 items-center justify-center lg:hidden"
-          aria-label={menuOpen ? "Close navigation menu" : "Open navigation menu"}
-          onClick={() => setMenuOpen((open) => !open)}
-        >
-          {menuOpen ? (
-            <CloseIcon className="size-6" />
-          ) : (
-            <MenuIcon className="size-6" />
-          )}
-        </button>
-
-        <Link
-          href="/"
-          aria-label="Raycon Home"
-          className="mx-auto shrink-0 text-navy lg:mx-0"
-        >
-          <RayconLogo className="h-[22px] w-[104px]" />
-        </Link>
-
-        <nav className="hidden flex-1 items-center justify-center gap-8 lg:flex">
-          {NAV.map((item) => (
-            <Link
-              key={item.label}
-              href={item.href}
-              className={cn(
-                "text-[15.4px] font-bold tracking-[-0.01em] transition-colors",
-                item.accent
-                  ? "text-orange hover:opacity-85"
-                  : "text-[#121619] hover:text-royal",
-              )}
-            >
-              {item.label}
-            </Link>
-          ))}
-        </nav>
-
-        <div className="ml-auto flex items-center gap-1 lg:ml-0">
+    <>
+      <header className="sticky top-0 z-40 border-b border-transparent bg-white">
+        <div className="raycon-container flex h-[66px] items-center gap-4">
           <button
             type="button"
-            className="flex size-10 items-center justify-center text-navy transition-colors hover:text-royal"
-            aria-label="Search"
-            onClick={() => setSearchOpen((open) => !open)}
+            className="flex size-10 items-center justify-center lg:hidden"
+            aria-label={menuOpen ? "Close navigation menu" : "Open navigation menu"}
+            onClick={() => setMenuOpen((open) => !open)}
           >
-            <SearchIcon className="size-5" />
+            {menuOpen ? (
+              <CloseIcon className="size-6" />
+            ) : (
+              <MenuIcon className="size-6" />
+            )}
           </button>
 
-          <button
-            type="button"
-            className="hidden h-10 items-center px-2 text-sm font-bold text-navy lg:flex"
-            aria-label="Currency USD $"
+          <Link
+            href="/"
+            aria-label="Raycon Home"
+            className="mx-auto shrink-0 text-navy lg:mx-0"
           >
-            USD $
-          </button>
+            <RayconLogo className="h-[22px] w-[104px]" />
+          </Link>
 
-          {/* Cart Drawer Trigger Button */}
-          <button
-            type="button"
-            onClick={openCart}
-            className="relative flex size-10 items-center justify-center text-navy transition-colors hover:text-royal cursor-pointer"
-            aria-label={`Open shopping cart (${displayCount} items)`}
-          >
-            <CartIcon className="h-[22px] w-[17px]" />
-            {displayCount > 0 ? (
-              <span className="absolute -top-1 -right-1 flex size-4 items-center justify-center rounded-full bg-royal text-[10px] font-bold text-white animate-in zoom-in-50">
-                {displayCount}
-              </span>
-            ) : null}
-          </button>
-        </div>
-      </div>
-
-      {searchOpen ? (
-        <div className="border-t border-border bg-white shadow-md">
-          <div className="raycon-container py-5">
-            <label className="mb-3 block text-sm font-bold text-navy" htmlFor="site-search">
-              Search Products
-            </label>
-            <input
-              id="site-search"
-              value={query}
-              onChange={(event) => setQuery(event.target.value)}
-              placeholder="Search by product name..."
-              className="h-12 w-full rounded-none border-b border-navy bg-transparent text-lg outline-none"
-              autoFocus
-            />
-            <ul className="mt-4 grid gap-2">
-              {results.map((product) => (
-                <li key={product.id}>
-                  <Link
-                    href={product.href}
-                    onClick={() => setSearchOpen(false)}
-                    className="flex items-center justify-between text-sm font-medium hover:text-royal py-1.5"
-                  >
-                    <span>{product.name}</span>
-                    <span className="text-navy/60 font-semibold">{product.price.toFixed(2)}$</span>
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </div>
-        </div>
-      ) : null}
-
-      {menuOpen ? (
-        <div className="border-t border-border bg-white lg:hidden">
-          <nav className="flex flex-col px-4 py-3">
-            {MOBILE_LINKS.map((item) => (
+          <nav className="hidden flex-1 items-center justify-center gap-8 lg:flex">
+            {NAV.map((item) => (
               <Link
                 key={item.label}
                 href={item.href}
-                onClick={() => setMenuOpen(false)}
                 className={cn(
-                  "border-b border-border py-3 text-base font-bold",
-                  item.label === "Deals" ? "text-orange" : "text-navy",
+                  "text-[15.4px] font-bold tracking-[-0.01em] transition-colors",
+                  item.accent
+                    ? "text-orange hover:opacity-85"
+                    : "text-[#121619] hover:text-royal",
                 )}
               >
                 {item.label}
               </Link>
             ))}
           </nav>
+
+          <div className="ml-auto flex items-center gap-1 lg:ml-0">
+            {/* Search Trigger */}
+            <button
+              type="button"
+              className="flex size-10 items-center justify-center text-navy transition-colors hover:text-royal"
+              aria-label="Search"
+              onClick={() => setSearchOpen((open) => !open)}
+            >
+              <SearchIcon className="size-5" />
+            </button>
+
+            {/* Account / Auth Button */}
+            <div className="relative">
+              {currentUser ? (
+                <div className="relative">
+                  <button
+                    type="button"
+                    onClick={() => setUserDropdownOpen(!userDropdownOpen)}
+                    className="flex size-10 items-center justify-center rounded-full text-navy hover:text-royal hover:bg-gray-100 transition-colors"
+                    aria-label="User Account Menu"
+                  >
+                    {isAdmin ? (
+                      <span className="flex size-7 items-center justify-center rounded-full bg-purple-100 text-purple-700">
+                        <Shield className="size-4" />
+                      </span>
+                    ) : (
+                      <span className="flex size-7 items-center justify-center rounded-full bg-blue-100 text-royal">
+                        <UserIcon className="size-4" />
+                      </span>
+                    )}
+                  </button>
+
+                  {userDropdownOpen && (
+                    <div className="absolute right-0 mt-2 w-56 rounded-2xl border border-gray-100 bg-white p-2 shadow-xl z-50 animate-in fade-in zoom-in-95">
+                      <div className="border-b border-gray-100 px-3 py-2">
+                        <p className="text-xs font-bold text-navy truncate">
+                          {currentUser.fullName}
+                        </p>
+                        <p className="text-[11px] text-gray-500 truncate">
+                          {currentUser.email}
+                        </p>
+                        {isAdmin && (
+                          <span className="mt-1 inline-flex items-center gap-1 rounded bg-purple-100 px-1.5 py-0.5 text-[10px] font-bold text-purple-700">
+                            <Shield className="size-3" />
+                            Admin Store
+                          </span>
+                        )}
+                      </div>
+
+                      <div className="py-1">
+                        {isAdmin && (
+                          <Link
+                            href="/admin/products"
+                            onClick={() => setUserDropdownOpen(false)}
+                            className="flex items-center gap-2 rounded-lg px-3 py-2 text-xs font-bold text-purple-700 hover:bg-purple-50 transition-colors"
+                          >
+                            <Settings className="size-4" />
+                            <span>Trang Quản trị (Admin)</span>
+                          </Link>
+                        )}
+                        <button
+                          type="button"
+                          onClick={() => {
+                            logout();
+                            setUserDropdownOpen(false);
+                          }}
+                          className="flex w-full items-center gap-2 rounded-lg px-3 py-2 text-xs font-semibold text-red-600 hover:bg-red-50 transition-colors"
+                        >
+                          <LogOut className="size-4" />
+                          <span>Đăng xuất</span>
+                        </button>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              ) : (
+                <button
+                  type="button"
+                  onClick={() => setAuthModalOpen(true)}
+                  className="flex size-10 items-center justify-center text-navy transition-colors hover:text-royal"
+                  aria-label="Login or Register"
+                >
+                  <UserIcon className="size-5" />
+                </button>
+              )}
+            </div>
+
+            <button
+              type="button"
+              className="hidden h-10 items-center px-2 text-sm font-bold text-navy lg:flex"
+              aria-label="Currency USD $"
+            >
+              USD $
+            </button>
+
+            {/* Cart Drawer Trigger Button */}
+            <button
+              type="button"
+              onClick={openCart}
+              className="relative flex size-10 items-center justify-center text-navy transition-colors hover:text-royal cursor-pointer"
+              aria-label={`Open shopping cart (${displayCount} items)`}
+            >
+              <CartIcon className="h-[22px] w-[17px]" />
+              {displayCount > 0 ? (
+                <span className="absolute -top-1 -right-1 flex size-4 items-center justify-center rounded-full bg-royal text-[10px] font-bold text-white animate-in zoom-in-50">
+                  {displayCount}
+                </span>
+              ) : null}
+            </button>
+          </div>
         </div>
-      ) : null}
-    </header>
+
+        {searchOpen ? (
+          <div className="border-t border-border bg-white shadow-md">
+            <div className="raycon-container py-5">
+              <label className="mb-3 block text-sm font-bold text-navy" htmlFor="site-search">
+                Search Products
+              </label>
+              <input
+                id="site-search"
+                value={query}
+                onChange={(event) => setQuery(event.target.value)}
+                placeholder="Search by product name..."
+                className="h-12 w-full rounded-none border-b border-navy bg-transparent text-lg outline-none"
+                autoFocus
+              />
+              <ul className="mt-4 grid gap-2">
+                {results.map((product) => (
+                  <li key={product.id}>
+                    <Link
+                      href={product.href}
+                      onClick={() => setSearchOpen(false)}
+                      className="flex items-center justify-between text-sm font-medium hover:text-royal py-1.5"
+                    >
+                      <span>{product.name}</span>
+                      <span className="text-navy/60 font-semibold">{product.price.toFixed(2)}$</span>
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </div>
+        ) : null}
+
+        {menuOpen ? (
+          <div className="border-t border-border bg-white lg:hidden">
+            <nav className="flex flex-col px-4 py-3">
+              {MOBILE_LINKS.map((item) => (
+                <Link
+                  key={item.label}
+                  href={item.href}
+                  onClick={() => setMenuOpen(false)}
+                  className={cn(
+                    "border-b border-border py-3 text-base font-bold",
+                    item.label === "Deals" ? "text-orange" : "text-navy",
+                  )}
+                >
+                  {item.label}
+                </Link>
+              ))}
+              {currentUser ? (
+                <div className="border-b border-border py-3">
+                  <div className="text-sm font-bold text-navy">{currentUser.fullName}</div>
+                  {isAdmin && (
+                    <Link
+                      href="/admin/products"
+                      onClick={() => setMenuOpen(false)}
+                      className="mt-2 block text-sm font-bold text-purple-700"
+                    >
+                      ⚙️ Trang Quản trị (Admin)
+                    </Link>
+                  )}
+                  <button
+                    type="button"
+                    onClick={() => {
+                      logout();
+                      setMenuOpen(false);
+                    }}
+                    className="mt-2 block text-sm font-semibold text-red-600"
+                  >
+                    Đăng xuất
+                  </button>
+                </div>
+              ) : (
+                <button
+                  type="button"
+                  onClick={() => {
+                    setMenuOpen(false);
+                    setAuthModalOpen(true);
+                  }}
+                  className="py-3 text-left text-base font-bold text-royal"
+                >
+                  Đăng nhập / Đăng ký
+                </button>
+              )}
+            </nav>
+          </div>
+        ) : null}
+      </header>
+
+      {/* Global Auth Modal */}
+      <AuthModal
+        isOpen={authModalOpen}
+        onClose={() => setAuthModalOpen(false)}
+      />
+    </>
   );
 }

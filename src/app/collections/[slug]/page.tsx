@@ -5,8 +5,9 @@ import { CollectionView } from "@/components/sites/raycon/collection-view";
 import {
   collectionsMeta,
   getCollectionInfo,
-  getProductsByCollection,
+  getProductsByCollection as fallbackGetProductsByCollection,
 } from "@/data/products";
+import { getProducts } from "@/lib/api";
 
 interface PageProps {
   params: Promise<{
@@ -34,7 +35,11 @@ export async function generateMetadata({
 export default async function CollectionPage({ params }: PageProps) {
   const { slug } = await params;
   const collection = getCollectionInfo(slug);
-  const collectionProducts = getProductsByCollection(slug);
+
+  let collectionProducts = await getProducts({ collection: slug });
+  if (!collectionProducts || collectionProducts.length === 0) {
+    collectionProducts = fallbackGetProductsByCollection(slug);
+  }
 
   if (collectionProducts.length === 0 && !collectionsMeta[slug]) {
     notFound();
@@ -49,4 +54,3 @@ export default async function CollectionPage({ params }: PageProps) {
     </main>
   );
 }
-

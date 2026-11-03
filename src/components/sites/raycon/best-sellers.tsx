@@ -1,14 +1,38 @@
 "use client";
 
-import { useRef } from "react";
-
-import { bestSellers } from "@/data/products";
-
+import { useEffect, useRef, useState } from "react";
+import { bestSellers as fallbackBestSellers } from "@/data/products";
+import { getProducts } from "@/lib/api";
+import type { Product } from "@/types/product";
 import { ChevronIcon } from "./icons";
 import { ProductCard } from "./product-card";
 
-export function BestSellersCarousel() {
+interface BestSellersCarouselProps {
+  initialProducts?: Product[];
+}
+
+export function BestSellersCarousel({
+  initialProducts,
+}: BestSellersCarouselProps) {
   const scroller = useRef<HTMLDivElement>(null);
+  const [items, setItems] = useState<Product[]>(
+    initialProducts && initialProducts.length > 0
+      ? initialProducts
+      : fallbackBestSellers,
+  );
+
+  useEffect(() => {
+    // If not provided from SSR or to keep in real-time sync with MySQL
+    let isMounted = true;
+    getProducts({ featured: true }).then((products) => {
+      if (isMounted && products && products.length > 0) {
+        setItems(products);
+      }
+    });
+    return () => {
+      isMounted = false;
+    };
+  }, []);
 
   function scrollByCard(direction: -1 | 1) {
     const node = scroller.current;
@@ -26,7 +50,7 @@ export function BestSellersCarousel() {
             <button
               type="button"
               aria-label="Previous products"
-              className="flex size-11 items-center justify-center rounded-full border border-navy/15"
+              className="flex size-11 items-center justify-center rounded-full border border-navy/15 cursor-pointer hover:bg-gray-50 transition-colors"
               onClick={() => scrollByCard(-1)}
             >
               <ChevronIcon className="size-5 rotate-180" />
@@ -34,7 +58,7 @@ export function BestSellersCarousel() {
             <button
               type="button"
               aria-label="Next products"
-              className="flex size-11 items-center justify-center rounded-full border border-navy/15"
+              className="flex size-11 items-center justify-center rounded-full border border-navy/15 cursor-pointer hover:bg-gray-50 transition-colors"
               onClick={() => scrollByCard(1)}
             >
               <ChevronIcon className="size-5" />
@@ -45,7 +69,7 @@ export function BestSellersCarousel() {
           ref={scroller}
           className="flex gap-4 overflow-x-auto pb-2 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
         >
-          {bestSellers.map((product) => (
+          {items.map((product) => (
             <ProductCard key={product.id} product={product} />
           ))}
         </div>

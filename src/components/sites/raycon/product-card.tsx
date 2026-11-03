@@ -92,7 +92,7 @@ export function ProductCard({ product }: { product: Product }) {
             <span className="text-[19px] font-bold text-royal">
               {formatUsd(product.price)}
             </span>
-            {product.compareAtPrice > product.price ? (
+            {product.compareAtPrice && product.compareAtPrice > product.price ? (
               <span className="text-sm font-medium text-navy/40 line-through">
                 {formatUsd(product.compareAtPrice)}
               </span>

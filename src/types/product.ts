@@ -13,7 +13,8 @@ export type ProductCategory =
   | "earbuds"
   | "open-audio"
   | "headphones"
-  | "power-tech";
+  | "power-tech"
+  | string;
 
 export type Product = {
   id: string;
@@ -25,8 +26,8 @@ export type Product = {
   href: string;
   image: string;
   price: number;
-  compareAtPrice: number;
-  badge: string | null;
+  compareAtPrice?: number | null;
+  badge?: string | null;
   rating: number;
   reviewCount: number;
   colors: ProductColor[];
@@ -63,4 +64,3 @@ export type Review = {
   verified: boolean;
   tint: "cyan" | "peach" | "lilac";
 };
-

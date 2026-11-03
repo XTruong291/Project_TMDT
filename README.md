@@ -1,158 +1,283 @@
-# FITFLOW - Nền Tảng Thương Mại Điện Tử Thiết Bị Âm thanh thể thao
+# 🎧 FITFLOW - Nền Tảng Thương Mại Điện Tử Thiết Bị Âm Thanh (Full-Stack)
 
-Dự án xây dựng và phát triển website Thương mại Điện tử (E-Commerce). Ứng dụng mang đến trải nghiệm mua sắm trực tuyến hiện đại, trực quan, tốc độ tải trang tức thì và tối ưu hóa chuyển đổi trên mọi thiết bị.
+Hệ thống Thương mại Điện tử (E-Commerce) bán thiết bị âm thanh hoàn chỉnh, độc lập và hiện đại. Dự án kết hợp kiến trúc **Frontend Next.js 16 (App Router)** tốc độ cao với **Backend FastAPI (Python)** hiệu năng vượt trội, kết nối cơ sở dữ liệu **MySQL 8.0** chạy qua **Docker Compose** và giao diện quản trị **Admin Dashboard** trực quan.
 
 ---
 
-## 🌟 Tổng Quan Dự Án
+## 🌟 Tổng Quan Kiến Trúc Hệ Thống (Architecture)
 
-Fitflow Audio Store được phát triển nhằm đáp ứng nhu cầu trải nghiệm âm thanh di động chất lượng cao cho thế hệ người dùng năng động. Website tích hợp đầy đủ các phân hệ chức năng từ khám phá sản phẩm, tìm kiếm thời gian thực, xem chi tiết biến thể màu sắc, thông số công nghệ độc quyền đến hệ thống đánh giá xác thực từ khách hàng.
+```text
+┌────────────────────────────────────────────────────────────────────────┐
+│                        FITFLOW AUDIO E-COMMERCE                        │
+└────────────────────────────────────┬───────────────────────────────────┘
+                                     │
+           ┌─────────────────────────┴─────────────────────────┐
+           ▼                                                   ▼
+┌──────────────────────────────┐              ┌──────────────────────────────┐
+│     STOREFRONT (NEXT.JS)     │              │    ADMIN PORTAL (NEXT.JS)    │
+│  - Trang chủ & Fan Favorites │              │  - Quản lý Sản phẩm (CRUD)   │
+│  - Danh mục (/collections/*) │              │  - Quản lý Đơn hàng & Status │
+│  - Chi tiết SP (/products/*) │              │  - Bảo vệ quyền (AdminGuard) │
+│  - Giỏ hàng trượt (Drawer)   │              │  - Đăng nhập nhanh 1-Click   │
+│  - Trang Thanh toán/Checkout │              │                              │
+└──────────────┬───────────────┘              └──────────────┬───────────────┘
+               │                                             │
+               └──────────────────────┬──────────────────────┘
+                                      │ HTTP / REST API (cache: 'no-store')
+                                      ▼
+                      ┌──────────────────────────────┐
+                      │    BACKEND (FASTAPI + ORM)   │
+                      │  - Xác thực JWT & Bcrypt     │
+                      │  - Quản lý Sản phẩm & Biến thể│
+                      │  - Tạo đơn & Tính phí ship   │
+                      │  - REST API Swagger Docs     │
+                      └──────────────┬───────────────┘
+                                     │ SQLAlchemy
+                                     ▼
+                      ┌──────────────────────────────┐
+                      │   DATABASE (DOCKER COMPOSE)  │
+                      │  - MySQL 8.0 (Port 3306)     │
+                      │  - phpMyAdmin (Port 8080)    │
+                      └──────────────────────────────┘
+```
 
 ---
 
 ## 🚀 Công Nghệ Sử Dụng (Tech Stack)
 
-- **Framework:** [Next.js 16](https://nextjs.org/) (App Router, Turbopack Engine)
-- **Giao diện & Thành phần UI:** [React 19](https://react.dev/), TypeScript (Strict Type Safety)
-- **Hệ thống tạo kiểu (Styling):** [Tailwind CSS v4](https://tailwindcss.com/) với không gian màu thiết kế hiện đại OKLCH
-- **UI Primitives:** Base UI / Radix / shadcn/ui
-- **Hệ thống biểu tượng:** Custom SVG Icons tối ưu chuẩn Vector
-- **Tối ưu hóa tài nguyên:** Next.js Static Optimization, hình ảnh sắc nét được nén tối ưu dung lượng
+### Frontend (Storefront & Admin Dashboard)
+* **Framework:** [Next.js 16](https://nextjs.org/) (App Router, Turbopack Engine, React 19)
+* **Ngôn ngữ:** TypeScript (Strict Type Safety)
+* **Giao diện & Styling:** Tailwind CSS v4, Lucide React Icons
+* **Quản lý Trạng thái (State Management):** [Zustand](https://github.com/pmndrs/zustand) với middleware `persist` (Lưu giỏ hàng & phiên đăng nhập an toàn chống lỗi Hydration)
+* **Tối ưu hình ảnh:** Hỗ trợ đa nguồn ảnh ngoài qua cấu hình `next.config.ts`
+
+### Backend (REST API Service)
+* **Framework:** [FastAPI](https://fastapi.tiangolo.com/) (Python 3.10+)
+* **Cơ sở dữ liệu & ORM:** [SQLAlchemy 2.0](https://www.sqlalchemy.org/) kết nối MySQL qua driver `pymysql`
+* **Mã hóa & Xác thực:** `bcrypt` nguyên bản và `PyJWT` (chuẩn Bearer Token, phân quyền Admin & Customer)
+* **Validation & Serialization:** [Pydantic v2](https://docs.pydantic.dev/) tự động chuyển đổi camelCase/snake_case và ép kiểu số thực (`float`) cho giá tiền
+
+### Hạ tầng (Infrastructure)
+* **Database Container:** `mysql:8.0` (Cổng 3306, mã hóa `utf8mb4_unicode_ci`, lưu trữ qua Docker volume)
+* **Quản trị Database trực quan:** `phpmyadmin:latest` (Cổng 8080)
 
 ---
 
-## ✨ Các Phân Hệ Chức Năng Nổi Bật
+## ⚡ Các Tính Năng Đã Hoàn Thiện
 
-### 1. Thanh thông báo & Điều hướng thông minh (Smart Navigation)
-- **Top Announcement Bar:** Nổi bật các chương trình ưu đãi, voucher giảm giá theo mùa.
-- **Sticky Header:** Cố định linh hoạt khi cuộn trang, hiển thị danh mục sản phẩm chủ lực (*Deals, Open Audio, Earbuds, Headphones, Fast Charge*).
-- **Hộp thoại tìm kiếm thời gian thực (Instant Search):** Tra cứu nhanh sản phẩm ngay trên thanh công cụ với gợi ý danh mục và kết quả tức thì.
-- **Giỏ hàng & Mobile Drawer:** Tối ưu hóa trải nghiệm thao tác một chạm trên điện thoại và máy tính bảng.
+### 🛒 Dành Cho Khách Hàng (Storefront)
+1. **Trang Chủ Hiện Đại:**
+   * Banner Hero, Carousel sản phẩm bán chạy (*Fan Favorites*).
+   * Khám phá công nghệ lõi (*Core Tech*), câu chuyện thương hiệu (*Brand Story*), đánh giá xác thực (*Reviews*).
+2. **Trang Danh Mục Động (`/collections/[slug]`):**
+   * Phân loại: *Earbuds*, *Open Audio*, *Headphones*, *Power Tech*, *Special Deals*.
+   * Lọc giá (Dưới \$50, Trên \$50), Top đánh giá (4.5★+), Đang giảm giá.
+   * Sắp xếp: Giá tăng/giảm dần, Đánh giá, Số lượng reviews.
+3. **Trang Chi Tiết Sản Phẩm Động (`/products/[slug]`):**
+   * Gallery ảnh đồng bộ thời gian thực theo biến thể màu sắc (*Color Swatches*).
+   * Bảng thông số kỹ thuật chi tiết (*Specs*), mô tả chi tiết, chính sách đổi trả.
+   * Nút thêm vào giỏ hàng kèm hiệu ứng trực quan.
+4. **Giỏ Hàng Trượt (Slide-out Cart Drawer):**
+   * Mở/đóng mượt mà từ cạnh phải màn hình.
+   * Tăng/giảm số lượng, xóa sản phẩm, hiển thị thanh tiến trình Free Shipping (\$50).
+5. **Trang Thanh Toán Hoàn Chỉnh (`/checkout`):**
+   * Điền thông tin giao nhận hàng, mã giảm giá (`RAYCON10`), phương thức COD.
+   * Gửi đơn trực tiếp vào MySQL, sinh mã đơn hàng chuẩn định dạng `RAY-YYYYMMDD-XXXXXX`.
 
-### 2. Trưng bày sản phẩm bán chạy (Best Sellers & Fan Favorites)
-- Bộ sưu tập các dòng tai nghe đầu bảng: *Everyday Earbuds*, *Bone Conduction Headphones*, *Essential Open Earbuds*, *Everyday Clip Earbuds*.
-- **Huy hiệu khuyến mãi:** Nổi bật mức chiết khấu (`20% OFF`, `30% OFF`, `40% OFF`).
-- **Bộ chọn màu tương tác (Interactive Color Swatches):** Khách hàng có thể bấm đổi các màu sắc khác nhau (*Carbon Black, Electric Blue, Rose Gold, Cool Mint, Blush Violet*) và hình ảnh sản phẩm sẽ đổi tương ứng ngay lập tức.
-- Hiển thị song song giá bán ưu đãi kèm giá niêm yết gốc gạch ngang, số lượng đánh giá thực tế và nút chọn mua nhanh (*Quick Add*).
-
-### 3. Phân loại danh mục trực quan (Category Grid)
-- Trực quan hóa 4 nhóm sản phẩm chính với hình ảnh độ phân giải cao và hiệu ứng phóng to mượt mà khi tương tác:
-  - **Open Audio:** Dòng tai nghe mở, giữ trọn nhận thức môi trường xung quanh.
-  - **Earbuds:** Tai nghe in-ear nhỏ gọn, tiện lợi cho sinh hoạt thường nhật.
-  - **Headphones:** Dòng chụp tai chống ồn với âm trường rộng lớn.
-  - **Power Tech:** Cáp sạc từ tính và phụ kiện sạc nhanh đa năng.
-
-### 4. Khám phá công nghệ độc quyền (Raycon Core Tech)
-- Phân tích chi tiết công nghệ âm thanh trên dòng sản phẩm chủ lực *Everyday Earbuds*.
-- Đồ họa vector sóng âm đặc trưng cùng **Thẻ thông số pin 40 giờ** (kèm icon pin chuyên nghiệp).
-- Mô hình tai nghe với 3 điểm chú thích kỹ thuật trực quan kết nối bằng đường nét đứt:
-  - *Featherlight Fit:* Đệm gel công thái học siêu nhẹ, êm ái khi đeo lâu.
-  - *Tuned 6MM Drivers:* Màng loa 6mm tinh chỉnh dải trầm bùng nổ, âm sắc cân bằng.
-  - *IPX4 Waterproof:* Tiêu chuẩn kháng nước và kháng mồ hôi bền bỉ.
-
-### 5. Câu chuyện thương hiệu (Brand Story)
-- Thể hiện định vị và triết lý sản phẩm qua 3 giá trị cốt lõi:
-  - **Effortless Tech:** Công nghệ không rào cản, kết nối tức thì không cần cài đặt rườm rà.
-  - **Fits your Style:** Thiết kế thời trang, đường cong tinh tế, màu sắc cá tính.
-  - **Built to Last:** Pin dài hạn, hoàn thiện chắc chắn đồng hành suốt cả ngày dài.
-
-### 6. Đánh giá khách hàng xác thực (Loved Out Loud - Customer Reviews)
-- Hệ thống trích dẫn đánh giá thực tế từ người tiêu dùng đã mua hàng (*Verified Buyer*).
-- Thiết kế thẻ đánh giá dạng màu pastel thanh lịch (*Cyan, Peach, Lilac*) kết hợp dấu trích dẫn lớn, 5 sao chất lượng và avatar ký tự đại diện.
-
-### 7. Phân hệ chân trang & Bản tin (Footer & Newsletter)
-- Form đăng ký nhận thông tin ưu đãi độc quyền (*"Your favorite email, probably."*) tích hợp xác thực email và thông báo trạng thái đăng ký thành công.
-- Cổng thông tin điều hướng toàn diện: Danh mục sản phẩm, Về công ty, Chính sách bảo hành, Đổi trả & Hỗ trợ khách hàng.
-- Liên kết mạng xã hội chính thức (*Instagram, YouTube, Facebook, Twitter*).
-
-### 8. Kiến trúc tách bạch dữ liệu (Clean Data Architecture)
-- Toàn bộ dữ liệu sản phẩm, thông số kỹ thuật, biến thể màu sắc, hình ảnh và đánh giá được quản lý tập trung tại `src/data/products.ts`.
-- Không hardcode dữ liệu trong giao diện, dễ dàng mở rộng kết nối với các hệ thống Headless CMS hoặc REST API / GraphQL trong tương lai.
+### 🛡️ Dành Cho Quản Trị Viên (Admin Portal)
+1. **Bảo vệ Route (Admin Route Guard):** Chặn truy cập trái phép, tự động kiểm tra quyền Admin sau khi đọc xong bộ nhớ trình duyệt (chống văng khi bấm F5).
+2. **Quản Lý Sản Phẩm (`/admin/products`):**
+   * Bảng dữ liệu hiển thị toàn bộ sản phẩm trong MySQL.
+   * **Form Thêm / Sửa Sản Phẩm:** Tự động tạo mã ID và Slug từ tên sản phẩm, quản lý danh sách biến thể màu sắc (`colors`), thông số kỹ thuật (`specs`), bật/tắt còn hàng (`inStock`) và nổi bật (`featured`).
+   * **Xóa Sản Phẩm:** Kèm popup xác nhận an toàn, bảo toàn nguyên vẹn lịch sử đơn hàng cũ.
+3. **Quản Lý Đơn Hàng (`/admin/orders`):**
+   * Xem danh sách đơn hàng thực tế của khách hàng.
+   * Đổi trạng thái đơn hàng tức thì: `pending` ➔ `processing` ➔ `shipped` ➔ `delivered` ➔ `cancelled`.
+   * Xem chi tiết sản phẩm, màu sắc, địa chỉ và ghi chú từng đơn.
+4. **Đăng Nhập Nhanh (1-Click Demo Login):** Tích hợp nút điền sẵn tài khoản Admin và Customer để tiện kiểm thử phân quyền ngay lập tức.
 
 ---
 
-## 📁 Cấu Trúc Thư Mục (Project Structure)
+## 📁 Cấu Trúc Dự Án (Project Structure)
 
 ```text
-raycon-audio-store/
-├── public/sites/raycon/images/     # Kho tài nguyên hình ảnh sản phẩm & banner
-├── src/
-│   ├── app/                        # Next.js App Router
-│   │   ├── favicon.ico             # Biểu tượng website
-│   │   ├── globals.css             # Thiết lập kiểu toàn cục & bảng màu OKLCH
-│   │   ├── layout.tsx              # Cấu trúc khung trang (Header, Footer, Meta SEO)
-│   │   └── page.tsx                # Trang chủ tích hợp các phân hệ
-│   ├── components/
-│   │   ├── sites/raycon/           # Các phân hệ giao diện của website
-│   │   │   ├── announcement-bar.tsx# Thanh thông báo khuyến mãi
-│   │   │   ├── header.tsx          # Thanh điều hướng & hộp thoại tìm kiếm
-│   │   │   ├── hero-banner.tsx     # Phân hệ banner mở đầu
-│   │   │   ├── best-sellers.tsx    # Danh mục sản phẩm nổi bật
-│   │   │   ├── product-card.tsx    # Thẻ sản phẩm với bộ chọn biến thể màu
-│   │   │   ├── press-play-banner.tsx # Banner chuyển tiếp
-│   │   │   ├── category-grid.tsx   # Lưới phân loại danh mục
-│   │   │   ├── core-tech.tsx       # Giới thiệu công nghệ lõi
-│   │   │   ├── brand-story.tsx     # Giá trị thương hiệu
-│   │   │   ├── reviews.tsx         # Đánh giá khách hàng
-│   │   │   ├── closing-cta.tsx     # Banner kêu gọi hành động cuối trang
-│   │   │   ├── footer.tsx          # Chân trang & form newsletter
-│   │   │   └── icons.tsx           # Thư viện biểu tượng SVG
-│   │   └── ui/                     # Các thành phần giao diện dùng chung
-│   ├── data/
-│   │   └── products.ts             # Cơ sở dữ liệu mẫu chuẩn TypeScript
-│   └── lib/
-│       └── utils.ts                # Tiện ích xử lý style (clsx & tailwind-merge)
-├── package.json                    # Cấu hình dự án & danh sách thư viện
-└── tsconfig.json                   # Cấu hình TypeScript Strict Mode
+raycon-clone/
+├── backend/                        # Nguồn mã nguồn Backend FastAPI
+│   ├── app/
+│   │   ├── api/
+│   │   │   ├── deps.py             # Dependency injection (get_current_admin)
+│   │   │   └── v1/
+│   │   │       ├── api.py          # Router tổng hợp v1
+│   │   │       ├── auth.py         # Endpoints xác thực (/register, /login, /me)
+│   │   │       ├── orders.py       # Endpoints đơn hàng
+│   │   │       └── products.py     # Endpoints CRUD sản phẩm
+│   │   ├── core/
+│   │   │   ├── config.py           # Cấu hình Pydantic settings & CORS
+│   │   │   ├── database.py         # SQLAlchemy engine & SessionLocal
+│   │   │   └── security.py         # Mã hóa Bcrypt & PyJWT
+│   │   ├── models/                 # SQLAlchemy Database Models
+│   │   │   ├── order.py            # Model Order & OrderItem
+│   │   │   ├── product.py          # Model Product (JSON columns)
+│   │   │   └── user.py             # Model User & RoleEnum
+│   │   ├── schemas/                # Pydantic v2 Data Validation Schemas
+│   │   │   ├── base.py             # CamelModel tự động sinh alias camelCase
+│   │   │   ├── order.py            # Order schemas
+│   │   │   ├── product.py          # Product schemas (Computed href)
+│   │   │   └── user.py             # User schemas
+│   │   ├── seed/
+│   │   │   └── seed.py             # Script nạp dữ liệu mẫu vào MySQL
+│   │   └── main.py                 # File khởi động FastAPI
+│   ├── .env                        # Biến môi trường Backend
+│   └── requirements.txt            # Danh sách thư viện Python
+├── docker-compose.yml              # Cấu hình MySQL 8.0 & phpMyAdmin
+├── public/                         # Tài nguyên tĩnh (ảnh tai nghe, banner)
+├── src/                            # Nguồn mã nguồn Frontend Next.js
+│   ├── app/
+│   │   ├── admin/                  # Giao diện Quản trị Cửa hàng
+│   │   │   ├── login/page.tsx      # Đăng nhập Admin
+│   │   │   ├── orders/page.tsx     # Quản lý đơn hàng
+│   │   │   ├── products/page.tsx   # Quản lý sản phẩm (Thêm/Sửa/Xóa)
+│   │   │   └── layout.tsx          # Layout Admin có Sidebar
+│   │   ├── checkout/page.tsx       # Trang Thanh toán đơn hàng
+│   │   ├── collections/[slug]/     # Trang Danh mục sản phẩm động
+│   │   ├── products/[slug]/        # Trang Chi tiết sản phẩm động
+│   │   ├── layout.tsx              # Khung giao diện toàn trang
+│   │   └── page.tsx                # Trang chủ (Homepage)
+│   ├── components/                 # Các components giao diện React
+│   │   ├── admin/admin-guard.tsx   # Component bảo vệ quyền Admin
+│   │   └── sites/raycon/           # Header, Footer, Cart Drawer, Modals...
+│   ├── data/products.ts            # Dữ liệu fallback dự phòng
+│   ├── lib/api.ts                  # HTTP API Client kết nối FastAPI
+│   ├── store/                      # Zustand State Stores
+│   │   ├── use-auth-store.ts       # Quản lý trạng thái đăng nhập
+│   │   └── use-cart-store.ts       # Quản lý giỏ hàng mua sắm
+│   └── types/                      # TypeScript Interface & Types
+├── next.config.ts                  # Cấu hình Next.js (unoptimized images)
+└── package.json                    # Cấu hình dự án & scripts Next.js
 ```
 
 ---
 
-## 🛠️ Hướng Dẫn Cài Đặt & Khởi Chạy (Getting Started)
+## 🛠️ HƯỚNG DẪN CÀI ĐẶT & CHẠY DỰ ÁN CHI TIẾT
 
-### 1. Yêu cầu môi trường
-- Cài đặt sẵn [Node.js](https://nodejs.org/) (khuyến nghị phiên bản **20.x** trở lên).
-- Trình quản lý gói `npm`.
+### Bước 1: Khởi động Hạ tầng Database (Docker)
+Đảm bảo máy tính đã cài đặt và bật **Docker Desktop**. Tại thư mục gốc của dự án, mở terminal và chạy:
 
-### 2. Cài đặt các gói phụ thuộc
-Tại thư mục gốc của dự án, mở cửa sổ dòng lệnh và thực thi:
 ```bash
-npm install
+docker compose up -d
 ```
+*Lệnh này sẽ tự động tải và khởi chạy 2 container:*
+* **MySQL 8.0:** `localhost:3306` (Tự động tạo database `raycon_ecommerce`).
+* **phpMyAdmin:** `http://localhost:8080` (Dùng để xem và quản lý bảng dữ liệu).
 
-### 3. Khởi chạy môi trường phát triển (Development Server)
+Kiểm tra trạng thái container bằng lệnh:
 ```bash
-npm run dev
+docker ps
 ```
-Sau khi tiến trình sẵn sàng, mở trình duyệt và truy cập:
-👉 **[http://localhost:3000](http://localhost:3000)**
-
-*(Trường hợp cổng 3000 đang được tiến trình khác sử dụng, có thể khởi chạy trên cổng khác: `npm run dev -- -p 3005`)*
 
 ---
 
-## 🧪 Kiểm Tra Tiêu Chuẩn Mã Nguồn (Quality Assurance)
+### Bước 2: Thiết lập & Khởi chạy Backend FastAPI
 
-Dự án áp dụng quy chuẩn kiểm tra chất lượng nghiêm ngặt trước khi triển khai:
+1. **Di chuyển vào thư mục backend:**
+   ```bash
+   cd backend
+   ```
+
+2. **Kích hoạt môi trường ảo Python (Virtual Environment):**
+   * *Trên Windows (PowerShell):*
+     ```powershell
+     python -m venv venv
+     .\venv\Scripts\Activate.ps1
+     ```
+   * *Trên macOS / Linux:*
+     ```bash
+     python3 -m venv venv
+     source venv/bin/activate
+     ```
+
+3. **Cài đặt các gói phụ thuộc:**
+   ```bash
+   pip install -r requirements.txt
+   ```
+
+4. **Nạp dữ liệu mẫu ban đầu (Seed Database):**
+   *Chạy lệnh sau để tự động tạo bảng và nạp 2 tài khoản mẫu cùng 7 sản phẩm Raycon vào MySQL:*
+   ```bash
+   python app/seed/seed.py
+   ```
+   *(Kết quả hiển thị `[OK] Database seeding completed successfully!` là thành công)*
+
+5. **Khởi chạy máy chủ FastAPI Backend:**
+   ```bash
+   python -m uvicorn app.main:app --host 127.0.0.1 --port 8000 --reload
+   ```
+   * Backend API hoạt động tại: **[http://localhost:8000](http://localhost:8000)**
+   * Xem tài liệu Swagger UI tương tác tại: **[http://localhost:8000/docs](http://localhost:8000/docs)**
+
+---
+
+### Bước 3: Cài đặt & Khởi chạy Frontend Next.js
+
+Mở một cửa sổ Terminal mới tại thư mục gốc của dự án:
+
+1. **Cài đặt các thư viện Node.js:**
+   ```bash
+   npm install
+   ```
+
+2. **Khởi chạy máy chủ Next.js:**
+   ```bash
+   npm run dev
+   ```
+
+3. **Truy cập ứng dụng trên trình duyệt:**
+   👉 **[http://localhost:3000](http://localhost:3000)**
+
+---
+
+## 🔑 DANH SÁCH TÀI KHOẢN & ĐƯỜNG DẪN TRUY CẬP
+
+### 1. Tài khoản Đăng nhập Hệ thống
+| Loại tài khoản | Email | Mật khẩu | Quyền hạn |
+| :--- | :--- | :--- | :--- |
+| **Quản trị viên (Admin)** | `admin@raycon.local` | `admin123` | Toàn quyền Thêm/Sửa/Xóa sản phẩm, Đổi trạng thái đơn hàng |
+| **Khách hàng (Customer)** | `user@raycon.local` | `user123` | Mua hàng, xem lịch sử đơn cá nhân |
+
+*(Giao diện Đăng nhập có sẵn 2 nút **Demo Login** để điền và đăng nhập ngay trong 1 click).*
+
+### 2. Thông tin Kết nối Cơ sở dữ liệu (MySQL & phpMyAdmin)
+* **phpMyAdmin URL:** [http://localhost:8080](http://localhost:8080)
+* **Server:** `mysql` (hoặc `localhost:3306`)
+* **Username:** `raycon_user` / **Password:** `raycon_password`
+* **Root Password:** `rootpassword`
+* **Database Name:** `raycon_ecommerce`
+
+### 3. Các Đường dẫn Trọng yếu
+* **Cửa hàng (Storefront):** [http://localhost:3000](http://localhost:3000)
+* **Danh mục Tai nghe:** [http://localhost:3000/collections/earbuds](http://localhost:3000/collections/earbuds)
+* **Trang Giỏ hàng & Checkout:** [http://localhost:3000/checkout](http://localhost:3000/checkout)
+* **Trang Đăng nhập Quản trị:** [http://localhost:3000/admin/login](http://localhost:3000/admin/login)
+* **Dashboard Quản lý Sản phẩm:** [http://localhost:3000/admin/products](http://localhost:3000/admin/products)
+* **Dashboard Quản lý Đơn hàng:** [http://localhost:3000/admin/orders](http://localhost:3000/admin/orders)
+* **FastAPI Swagger API Docs:** [http://localhost:8000/docs](http://localhost:8000/docs)
+
+---
+
+## 🧪 KIỂM TRA CHẤT LƯỢNG MÃ NGUỒN (CI/CD CHECK)
+
+Trước khi đóng gói hoặc triển khai, chạy lệnh kiểm tra toàn diện:
 
 ```bash
 npm run check
 ```
-Lệnh trên sẽ tự động kích hoạt tuần tự:
-1. `npm run lint` — Kiểm tra quy chuẩn cú pháp và phong cách mã nguồn (ESLint 9).
-2. `npm run typecheck` — Xác thực tính toàn vẹn kiểu dữ liệu tĩnh (TypeScript `tsc --noEmit`).
-3. `npm run build` — Biên dịch tối ưu hóa toàn bộ trang cho môi trường sản xuất (Next.js Turbopack).
+Lệnh sẽ tự động thực thi 3 bước:
+1. `npm run lint` — Kiểm tra quy chuẩn cú pháp mã nguồn (ESLint 9).
+2. `npm run typecheck` — Kiểm tra toàn vẹn kiểu dữ liệu tĩnh (`tsc --noEmit`).
+3. `npm run build` — Biên dịch tối ưu hóa toàn bộ 23 trang production (Next.js Turbopack).
 
 ---
 
-## 📦 Đóng Gói Triển Khai (Production Build)
-
-Khi triển khai lên các nền tảng đám mây (Vercel, AWS, Cloudflare Pages, máy chủ độc lập):
-
-```bash
-# 1. Tạo bản build tối ưu hóa
-npm run build
-
-# 2. Khởi chạy máy chủ chạy môi trường sản xuất
-npm run start
-```
+## 📄 Bản Quyền
+Dự án được xây dựng phục vụ mục đích học tập, nghiên cứu kiến trúc E-commerce Full-Stack hiện đại. Hình ảnh và thương hiệu thuộc quyền sở hữu của Raycon Global Inc.

@@ -2,7 +2,11 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 
 import { ProductView } from "@/components/sites/raycon/product-view";
-import { getProductByHandle, products } from "@/data/products";
+import {
+  getProductByHandle as fallbackGetProductByHandle,
+  products as fallbackProducts,
+} from "@/data/products";
+import { getProductByHandle, getProducts } from "@/lib/api";
 
 interface PageProps {
   params: Promise<{
@@ -11,7 +15,9 @@ interface PageProps {
 }
 
 export async function generateStaticParams() {
-  return products.map((product) => ({
+  const products = await getProducts();
+  const list = products && products.length > 0 ? products : fallbackProducts;
+  return list.map((product) => ({
     slug: product.handle,
   }));
 }
@@ -20,7 +26,10 @@ export async function generateMetadata({
   params,
 }: PageProps): Promise<Metadata> {
   const { slug } = await params;
-  const product = getProductByHandle(slug);
+  let product = await getProductByHandle(slug);
+  if (!product) {
+    product = fallbackGetProductByHandle(slug);
+  }
 
   if (!product) {
     return {
@@ -36,14 +45,20 @@ export async function generateMetadata({
 
 export default async function ProductDetailPage({ params }: PageProps) {
   const { slug } = await params;
-  const product = getProductByHandle(slug);
+  let product = await getProductByHandle(slug);
+  if (!product) {
+    product = fallbackGetProductByHandle(slug);
+  }
 
   if (!product) {
     notFound();
   }
 
-  // Related products from the same or other categories
-  const relatedProducts = products.filter((p) => p.id !== product.id);
+  // Related products
+  const allProducts = await getProducts();
+  const productList =
+    allProducts && allProducts.length > 0 ? allProducts : fallbackProducts;
+  const relatedProducts = productList.filter((p) => p.id !== product.id);
 
   return (
     <main>
@@ -51,4 +66,3 @@ export default async function ProductDetailPage({ params }: PageProps) {
     </main>
   );
 }
-
