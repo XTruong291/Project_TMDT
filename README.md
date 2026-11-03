@@ -1,12 +1,12 @@
-# Raycon Audio - Nền Tảng Thương Mại Điện Tử Thiết Bị Âm Thanh Thông Minh 🎧
+# FITFLOW - Nền Tảng Thương Mại Điện Tử Thiết Bị Âm thanh thể thao
 
-Dự án xây dựng và phát triển website Thương mại Điện tử (E-Commerce) cho thương hiệu thiết bị âm thanh **Raycon Audio**. Ứng dụng mang đến trải nghiệm mua sắm trực tuyến hiện đại, trực quan, tốc độ tải trang tức thì và tối ưu hóa chuyển đổi trên mọi thiết bị.
+Dự án xây dựng và phát triển website Thương mại Điện tử (E-Commerce). Ứng dụng mang đến trải nghiệm mua sắm trực tuyến hiện đại, trực quan, tốc độ tải trang tức thì và tối ưu hóa chuyển đổi trên mọi thiết bị.
 
 ---
 
 ## 🌟 Tổng Quan Dự Án
 
-Raycon Audio Store được phát triển nhằm đáp ứng nhu cầu trải nghiệm âm thanh di động chất lượng cao cho thế hệ người dùng năng động. Website tích hợp đầy đủ các phân hệ chức năng từ khám phá sản phẩm, tìm kiếm thời gian thực, xem chi tiết biến thể màu sắc, thông số công nghệ độc quyền đến hệ thống đánh giá xác thực từ khách hàng.
+Fitflow Audio Store được phát triển nhằm đáp ứng nhu cầu trải nghiệm âm thanh di động chất lượng cao cho thế hệ người dùng năng động. Website tích hợp đầy đủ các phân hệ chức năng từ khám phá sản phẩm, tìm kiếm thời gian thực, xem chi tiết biến thể màu sắc, thông số công nghệ độc quyền đến hệ thống đánh giá xác thực từ khách hàng.
 
 ---
 
