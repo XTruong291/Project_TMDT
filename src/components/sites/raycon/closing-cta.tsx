@@ -1,3 +1,5 @@
+import Link from "next/link";
+
 export function ClosingCta() {
   return (
     <section className="bg-white py-4 md:py-6">
@@ -19,12 +21,12 @@ export function ClosingCta() {
               <p className="mt-4 text-base font-medium text-white/90 md:text-[20px]">
                 Uncomplicated, stylish, and made to play.
               </p>
-              <a
-                href="https://rayconglobal.com/products/bone-conduction-headphones"
+              <Link
+                href="/products/bone-conduction-headphones"
                 className="mt-8 inline-flex h-12 items-center justify-center rounded-full bg-[#f05c56] px-8 text-sm font-bold tracking-[0.06em] text-white uppercase transition hover:bg-[#e0524c]"
               >
                 Shop Now
-              </a>
+              </Link>
             </div>
           </div>
         </div>

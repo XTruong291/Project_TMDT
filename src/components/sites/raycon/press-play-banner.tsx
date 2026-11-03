@@ -1,3 +1,5 @@
+import Link from "next/link";
+
 export function PressPlayBanner() {
   return (
     <section className="bg-white py-4 md:py-6">
@@ -22,12 +24,12 @@ export function PressPlayBanner() {
                 Tech for everyday. Long battery life, easy setup, and colors that
                 feel like you.
               </p>
-              <a
-                href="https://rayconglobal.com/collections/special"
+              <Link
+                href="/collections/special"
                 className="mt-8 inline-flex h-12 items-center justify-center rounded-full bg-[#4040ff] px-8 text-sm font-bold tracking-[0.06em] text-white uppercase transition hover:bg-[#3030cc]"
               >
                 Shop Now
-              </a>
+              </Link>
             </div>
           </div>
         </div>

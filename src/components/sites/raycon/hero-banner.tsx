@@ -1,3 +1,5 @@
+import Link from "next/link";
+
 export function HeroBanner() {
   return (
     <section className="relative overflow-hidden bg-[#1a1db6]">
@@ -17,12 +19,12 @@ export function HeroBanner() {
           <p className="mt-4 max-w-[460px] text-base leading-snug text-white/90 md:text-[18px]">
             Get ahead on the easiest decision of the season.
           </p>
-          <a
-            href="https://rayconglobal.com/collections/special"
+          <Link
+            href="/collections/special"
             className="mt-8 inline-flex h-[48px] items-center justify-center rounded-full bg-white px-8 text-sm font-bold tracking-[0.06em] text-royal uppercase transition duration-200 hover:bg-[#f9f9f9] hover:shadow-md"
           >
             Shop The Sale
-          </a>
+          </Link>
         </div>
       </div>
     </section>

@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useState } from "react";
 
 import {
@@ -7,13 +8,25 @@ import {
   formatUsd,
   type Product,
 } from "@/data/products";
+import { useCartStore } from "@/store/use-cart-store";
 
 import { StarIcon } from "./icons";
 
 export function ProductCard({ product }: { product: Product }) {
   const [colorIndex, setColorIndex] = useState(0);
+  const [added, setAdded] = useState(false);
+  const addItem = useCartStore((state) => state.addItem);
+
   const color = product.colors[colorIndex] ?? product.colors[0];
   const image = color?.image ?? product.image;
+
+  function handleAddToCart() {
+    if (color) {
+      addItem(product, color, 1);
+      setAdded(true);
+      setTimeout(() => setAdded(false), 1200);
+    }
+  }
 
   return (
     <article className="flex h-full min-w-[280px] flex-1 flex-col rounded-[28px] bg-white p-3 shadow-[0_0_0_1px_rgba(31,40,58,0.04)] md:min-w-[320px] lg:min-w-[280px]">
@@ -24,14 +37,14 @@ export function ProductCard({ product }: { product: Product }) {
           </span>
         ) : null}
 
-        <a href={product.href} className="block">
+        <Link href={product.href} className="block">
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
             src={image}
             alt={`${product.name}${color ? ` in ${color.name}` : ""}`}
             className="aspect-square w-full object-contain p-6 transition duration-300 hover:scale-[1.03]"
           />
-        </a>
+        </Link>
       </div>
 
       <div className="flex flex-1 flex-col px-2 pt-4 pb-2">
@@ -48,9 +61,9 @@ export function ProductCard({ product }: { product: Product }) {
         </div>
 
         <h3 className="text-[18px] leading-snug font-bold md:text-[19px]">
-          <a href={product.href} className="hover:text-royal transition-colors">
+          <Link href={product.href} className="hover:text-royal transition-colors">
             {product.name}
-          </a>
+          </Link>
         </h3>
 
         <div className="mt-3 flex flex-wrap gap-2 min-h-[30px] items-center" role="listbox" aria-label="Color">
@@ -86,13 +99,16 @@ export function ProductCard({ product }: { product: Product }) {
             ) : null}
           </div>
 
-          <a
-            href={product.href}
+          <button
+            type="button"
+            onClick={handleAddToCart}
             aria-label={`Quick add ${product.name} to cart`}
-            className="inline-flex h-10 items-center justify-center rounded-full bg-royal px-6 text-sm font-bold text-white transition hover:bg-[#2827cd]"
+            className={`inline-flex h-10 items-center justify-center rounded-full px-6 text-sm font-bold text-white transition-all cursor-pointer ${
+              added ? "bg-emerald-600 scale-105" : "bg-royal hover:bg-[#2827cd]"
+            }`}
           >
-            Add
-          </a>
+            {added ? "Added!" : "Add"}
+          </button>
         </div>
       </div>
     </article>

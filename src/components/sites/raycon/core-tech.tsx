@@ -1,3 +1,5 @@
+import Link from "next/link";
+
 import { coreTechFeatures } from "@/data/products";
 
 export function CoreTech() {
@@ -36,12 +38,12 @@ export function CoreTech() {
             Most earbuds quit by lunch. Everyday Earbuds don’t.
           </h2>
 
-          <a
-            href="https://rayconglobal.com/products/the-everyday-earbuds"
+          <Link
+            href="/products/the-everyday-earbuds"
             className="mt-6 inline-flex h-12 items-center justify-center rounded-full bg-royal px-8 text-sm font-bold tracking-[0.06em] text-white uppercase transition hover:bg-[#2827cd]"
           >
             Shop Now
-          </a>
+          </Link>
 
           {/* Battery Chip */}
           <div className="mt-8 inline-flex items-center gap-4 rounded-2xl border border-royal/15 bg-white/70 p-4 backdrop-blur-xs">

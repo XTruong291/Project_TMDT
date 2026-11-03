@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useState } from "react";
 
 import {
@@ -37,58 +38,58 @@ const COLUMNS = [
   {
     title: "Products",
     links: [
-      { label: "Shop All", href: "https://rayconglobal.com/collections/all" },
-      { label: "Open Audio", href: "https://rayconglobal.com/collections/open-audio" },
-      { label: "Earbuds", href: "https://rayconglobal.com/collections/earbuds" },
-      { label: "Headphones", href: "https://rayconglobal.com/collections/headphones" },
-      { label: "Fast Charge", href: "https://rayconglobal.com/collections/power-tech" },
-      { label: "Accessories", href: "https://rayconglobal.com/collections/accessories" },
-      { label: "Product Manuals", href: "https://rayconglobal.com/pages/manuals" },
+      { label: "Shop All", href: "/collections/all" },
+      { label: "Open Audio", href: "/collections/open-audio" },
+      { label: "Earbuds", href: "/collections/earbuds" },
+      { label: "Headphones", href: "/collections/headphones" },
+      { label: "Fast Charge", href: "/collections/power-tech" },
+      { label: "Accessories", href: "/collections/accessories" },
+      { label: "Product Manuals", href: "/pages/manuals" },
     ],
   },
   {
     title: "Company",
     links: [
-      { label: "About Us", href: "https://rayconglobal.com/pages/about" },
-      { label: "B2B", href: "https://rayconglobal.com/pages/b2b" },
+      { label: "About Us", href: "/pages/about" },
+      { label: "B2B", href: "/pages/b2b" },
       {
         label: "Influencers & Affiliates",
-        href: "https://rayconglobal.com/pages/affiliates",
+        href: "/pages/affiliates",
       },
-      { label: "Careers", href: "https://rayconglobal.com/pages/careers" },
+      { label: "Careers", href: "/pages/careers" },
     ],
   },
   {
     title: "Support",
     links: [
-      { label: "FAQ / Contact Us", href: "https://rayconglobal.com/pages/faq" },
+      { label: "FAQ / Contact Us", href: "/pages/faq" },
       {
         label: "Shipping Policy",
-        href: "https://rayconglobal.com/pages/shipping-policy",
+        href: "/pages/shipping-policy",
       },
       {
         label: "File a Return/Warranty Claim",
-        href: "https://rayconglobal.com/pages/returns",
+        href: "/pages/returns",
       },
       {
         label: "EU Right To Withdrawal Policy",
-        href: "https://rayconglobal.com/pages/eu-right-to-withdrawal-policy",
+        href: "/pages/eu-right-to-withdrawal-policy",
       },
       {
         label: "Warranty Policy",
-        href: "https://rayconglobal.com/pages/warranty",
+        href: "/pages/warranty",
       },
       {
         label: "Terms of Service",
-        href: "https://rayconglobal.com/policies/terms-of-service",
+        href: "/policies/terms-of-service",
       },
       {
         label: "Privacy Policy",
-        href: "https://rayconglobal.com/policies/privacy-policy",
+        href: "/policies/privacy-policy",
       },
       {
         label: "Accessibility Statement",
-        href: "https://rayconglobal.com/pages/accessibility",
+        href: "/pages/accessibility",
       },
     ],
   },
@@ -118,6 +119,8 @@ export function SiteFooter() {
                 <li key={item.name}>
                   <a
                     href={item.href}
+                    target="_blank"
+                    rel="noopener noreferrer"
                     aria-label={item.name}
                     className="flex size-9 items-center justify-center rounded-full bg-white/10 transition hover:bg-white/25"
                   >
@@ -138,12 +141,12 @@ export function SiteFooter() {
                 <ul className="space-y-2.5">
                   {column.links.map((link) => (
                     <li key={link.label}>
-                      <a
+                      <Link
                         href={link.href}
                         className="text-[14px] leading-snug text-white/85 transition hover:text-white hover:underline"
                       >
                         {link.label}
-                      </a>
+                      </Link>
                     </li>
                   ))}
                 </ul>
@@ -182,7 +185,7 @@ export function SiteFooter() {
                 />
                 <button
                   type="submit"
-                  className="inline-flex h-11 items-center justify-center rounded-full bg-white px-6 text-xs font-bold tracking-wider text-royal uppercase transition hover:bg-white/90"
+                  className="inline-flex h-11 items-center justify-center rounded-full bg-white px-6 text-xs font-bold tracking-wider text-royal uppercase transition hover:bg-white/90 cursor-pointer"
                 >
                   Subscribe
                 </button>
@@ -194,12 +197,14 @@ export function SiteFooter() {
         {/* Bottom Bar */}
         <div className="mt-12 flex flex-col items-start justify-between gap-4 border-t border-white/20 pt-6 text-sm text-white/80 sm:flex-row sm:items-center">
           <div className="flex items-center gap-4">
-            <RayconLogo className="h-5 w-[96px] text-white" />
+            <Link href="/" aria-label="Raycon Home">
+              <RayconLogo className="h-5 w-[96px] text-white" />
+            </Link>
             <span>Language: English</span>
           </div>
-          <a href="https://rayconglobal.com/" className="text-xs hover:underline">
+          <Link href="/" className="text-xs hover:underline">
             © RAYCON 2026
-          </a>
+          </Link>
         </div>
       </div>
     </footer>

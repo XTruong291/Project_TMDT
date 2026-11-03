@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Outfit } from "next/font/google";
 
 import { AnnouncementBar } from "@/components/sites/raycon/announcement-bar";
+import { CartDrawer } from "@/components/sites/raycon/cart-drawer";
 import { SiteFooter } from "@/components/sites/raycon/footer";
 import { SiteHeader } from "@/components/sites/raycon/header";
 
@@ -13,7 +14,7 @@ const outfit = Outfit({
 });
 
 export const metadata: Metadata = {
-  title: "Raycon, Your Everyday Tech – Raycon",
+  title: "Raycon, Your Everyday Tech – Raycon Audio",
   description:
     "Tech for everyday. Long battery life, easy setup, and colors that feel like you.",
 };
@@ -38,6 +39,7 @@ export default function RootLayout({
         <SiteHeader />
         {children}
         <SiteFooter />
+        <CartDrawer />
       </body>
     </html>
   );

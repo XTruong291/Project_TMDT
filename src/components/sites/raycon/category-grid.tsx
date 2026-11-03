@@ -1,3 +1,5 @@
+import Link from "next/link";
+
 import { categories } from "@/data/products";
 
 export function CategoryGrid() {
@@ -12,7 +14,7 @@ export function CategoryGrid() {
         </h2>
         <div className="mt-10 grid grid-cols-2 gap-4 md:grid-cols-4 md:gap-6">
           {categories.map((category) => (
-            <a
+            <Link
               key={category.name}
               href={category.href}
               className="group block overflow-hidden rounded-[24px] bg-[#eef3f8] transition duration-200 hover:shadow-md"
@@ -26,7 +28,7 @@ export function CategoryGrid() {
               <h3 className="px-3 py-4 text-center text-base font-bold text-navy md:text-lg">
                 {category.name}
               </h3>
-            </a>
+            </Link>
           ))}
         </div>
       </div>
