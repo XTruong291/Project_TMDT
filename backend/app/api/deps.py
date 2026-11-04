@@ -61,3 +61,24 @@ def get_current_admin(
         )
     return current_user
 
+
+def get_optional_current_user(
+    db: Session = Depends(get_db),
+    token: Optional[str] = Depends(oauth2_scheme),
+) -> Optional[User]:
+    """Return the authenticated user if token is valid and active, else None."""
+    if not token:
+        return None
+    payload = decode_access_token(token)
+    if payload is None:
+        return None
+    user_id_str: Optional[str] = payload.get("sub")
+    if user_id_str is None:
+        return None
+    try:
+        user_id = int(user_id_str)
+    except ValueError:
+        return None
+    return db.query(User).filter(User.id == user_id, User.is_active.is_(True)).first()
+
+

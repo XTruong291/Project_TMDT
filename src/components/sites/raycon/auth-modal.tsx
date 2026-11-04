@@ -208,7 +208,7 @@ export function AuthModal({ isOpen, onClose }: AuthModalProps) {
                   required
                   value={fullName}
                   onChange={(e) => setFullName(e.target.value)}
-                  placeholder="Nguyễn Văn Raycon"
+                  placeholder="Xuân Trường"
                   className="w-full rounded-xl border border-gray-200 bg-gray-50/50 py-2 px-3 text-sm text-navy outline-none focus:border-navy focus:bg-white"
                 />
               </div>

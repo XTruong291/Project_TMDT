@@ -336,7 +336,7 @@ def seed_database():
             admin_user = User(
                 email=admin_email,
                 hashed_password=hash_password("admin123"),
-                full_name="Raycon Administrator",
+                full_name="ADMIN",
                 phone="0901234567",
                 role=RoleEnum.ADMIN,
                 is_active=True,
@@ -344,7 +344,8 @@ def seed_database():
             db.add(admin_user)
             print("    [+] Created Admin User: admin@raycon.local / admin123")
         else:
-            print("    [i] Admin user already exists")
+            admin_user.full_name = "ADMIN"
+            print("    [i] Admin user updated to ADMIN")
 
         # 2. Customer user
         customer_email = "user@raycon.local"
@@ -353,7 +354,7 @@ def seed_database():
             customer_user = User(
                 email=customer_email,
                 hashed_password=hash_password("user123"),
-                full_name="Nguyễn Văn Raycon",
+                full_name="Xuân Trường",
                 phone="0987654321",
                 role=RoleEnum.CUSTOMER,
                 is_active=True,
@@ -361,7 +362,8 @@ def seed_database():
             db.add(customer_user)
             print("    [+] Created Customer User: user@raycon.local / user123")
         else:
-            print("    [i] Customer user already exists")
+            customer_user.full_name = "Xuân Trường"
+            print("    [i] Customer user updated to Xuan Truong")
 
         print("[*] Seeding products...")
         seeded_count = 0

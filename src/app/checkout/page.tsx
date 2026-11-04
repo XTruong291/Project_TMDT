@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useState, useSyncExternalStore } from "react";
+import { useEffect, useState, useSyncExternalStore } from "react";
 import {
   Banknote,
   CheckCircle2,
@@ -34,12 +34,13 @@ export default function CheckoutPage() {
   const getSubtotal = useCartStore((state) => state.getSubtotal);
   const clearCart = useCartStore((state) => state.clearCart);
   const token = useAuthStore((state) => state.token);
+  const user = useAuthStore((state) => state.user);
 
   // Form states
   const [formData, setFormData] = useState({
-    fullName: "Nguyễn Văn An",
-    phone: "0912345678",
-    email: "an.nguyen@example.com",
+    fullName: user?.fullName || "Xuân Trường",
+    phone: user?.phone || "0987654321",
+    email: user?.email || "user@raycon.local",
     address: "Số 207 Đường Giải Phóng, Phường Đồng Tâm",
     district: "Quận Hai Bà Trưng",
     city: "Hà Nội",
@@ -64,6 +65,18 @@ export default function CheckoutPage() {
     total: number;
     customer: typeof formData;
   } | null>(null);
+
+  // Synchronize form details with logged-in user
+  useEffect(() => {
+    if (user) {
+      setFormData((prev) => ({
+        ...prev,
+        fullName: user.fullName || prev.fullName,
+        email: user.email || prev.email,
+        phone: user.phone || prev.phone,
+      }));
+    }
+  }, [user]);
 
   if (!isClient) return null;
 
@@ -119,6 +132,13 @@ export default function CheckoutPage() {
         total: order.totalAmount,
         customer: { ...formData },
       });
+      try {
+        const stored = JSON.parse(localStorage.getItem("raycon_guest_orders") || "[]");
+        const updated = [order.orderNumber, ...stored.filter((id: string) => id !== order.orderNumber)].slice(0, 10);
+        localStorage.setItem("raycon_guest_orders", JSON.stringify(updated));
+      } catch {
+        // Ignore localStorage error
+      }
       clearCart();
       setOrderComplete(true);
       window.scrollTo({ top: 0, behavior: "smooth" });
@@ -134,6 +154,13 @@ export default function CheckoutPage() {
         total: finalTotal,
         customer: { ...formData },
       });
+      try {
+        const stored = JSON.parse(localStorage.getItem("raycon_guest_orders") || "[]");
+        const updated = [generatedOrderId, ...stored.filter((id: string) => id !== generatedOrderId)].slice(0, 10);
+        localStorage.setItem("raycon_guest_orders", JSON.stringify(updated));
+      } catch {
+        // Ignore localStorage error
+      }
       clearCart();
       setOrderComplete(true);
       window.scrollTo({ top: 0, behavior: "smooth" });
@@ -202,6 +229,12 @@ export default function CheckoutPage() {
 
             <div className="mt-8 flex flex-col sm:flex-row gap-3 justify-center">
               <Link
+                href={`/orders?track=${completedOrder.orderId}`}
+                className="inline-flex h-12 items-center justify-center rounded-full bg-navy px-8 text-sm font-bold text-white transition hover:bg-navy/80"
+              >
+                Theo dõi & Quản lý đơn hàng này →
+              </Link>
+              <Link
                 href="/"
                 className="inline-flex h-12 items-center justify-center rounded-full bg-royal px-8 text-sm font-bold text-white transition hover:bg-[#2827cd]"
               >
@@ -262,7 +295,14 @@ export default function CheckoutPage() {
           <div className="space-y-6 lg:col-span-7">
             {/* Customer Information */}
             <div className="rounded-3xl border border-navy/10 bg-white p-6 sm:p-8 shadow-xs">
-              <h2 className="text-lg font-bold text-navy mb-4">1. Thông tin liên hệ</h2>
+              <div className="flex flex-wrap items-center justify-between gap-2 mb-4">
+                <h2 className="text-lg font-bold text-navy">1. Thông tin liên hệ</h2>
+                {user && (
+                  <span className="text-xs bg-royal/10 text-royal px-2.5 py-1 rounded-full font-medium">
+                    Tài khoản: {user.fullName}
+                  </span>
+                )}
+              </div>
               <div className="grid gap-4 sm:grid-cols-2">
                 <div>
                   <label htmlFor="fullname" className="block text-xs font-bold text-navy/70 uppercase mb-1.5">

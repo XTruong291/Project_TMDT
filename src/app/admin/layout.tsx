@@ -5,6 +5,7 @@ import { usePathname, useRouter } from "next/navigation";
 import {
   Package,
   ShoppingBag,
+  Users,
   ArrowLeft,
   LogOut,
   Shield,
@@ -24,6 +25,11 @@ const NAV_ITEMS = [
     label: "Quản lý Đơn hàng",
     href: "/admin/orders",
     icon: ShoppingBag,
+  },
+  {
+    label: "Quản lý Người dùng",
+    href: "/admin/users",
+    icon: Users,
   },
 ];
 

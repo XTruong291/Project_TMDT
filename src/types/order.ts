@@ -6,7 +6,7 @@ export type OrderStatus =
   | "cancelled";
 
 export type OrderItemPayload = {
-  productId: string;
+  productId?: string | null;
   productName: string;
   colorName: string;
   colorImage?: string | null;
@@ -30,6 +30,11 @@ export type OrderCreatePayload = {
   paymentMethod?: string;
   notes?: string;
   items: OrderItemPayload[];
+};
+
+export type OrderCancelPayload = {
+  guestEmail?: string;
+  reason?: string;
 };
 
 export type Order = {

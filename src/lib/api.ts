@@ -4,11 +4,16 @@ import {
   getProductsByCollection as fallbackGetProductsByCollection,
 } from "@/data/products";
 import type { AuthResponse, User } from "@/types/auth";
-import type { Order, OrderCreatePayload, OrderStatus } from "@/types/order";
+import type {
+  Order,
+  OrderCancelPayload,
+  OrderCreatePayload,
+  OrderStatus,
+} from "@/types/order";
 import type { Product } from "@/types/product";
 
 export const API_BASE =
-  process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api/v1";
+  process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:8000/api/v1";
 
 interface FetchProductFilters {
   category?: string;
@@ -266,10 +271,61 @@ export async function createOrder(
  * Orders: Track order by order number
  */
 export async function trackOrder(orderNumber: string): Promise<Order> {
-  const res = await fetch(`${API_BASE}/orders/track/${orderNumber}`);
+  const res = await fetch(`${API_BASE}/orders/track/${orderNumber}`, {
+    cache: "no-store",
+  });
   if (!res.ok) {
-    throw new Error("Order not found");
+    const err = await res.json().catch(() => ({}));
+    throw new Error(err.detail || "Không tìm thấy đơn hàng");
   }
+  return res.json();
+}
+
+/**
+ * Customer: Get current user's orders
+ */
+export async function getMyOrders(token: string): Promise<Order[]> {
+  const res = await fetch(`${API_BASE}/orders/my-orders`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+    cache: "no-store",
+  });
+
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({}));
+    throw new Error(err.detail || "Không thể tải danh sách đơn hàng");
+  }
+
+  return res.json();
+}
+
+/**
+ * Customer/Guest: Cancel an order by ID or Order Number
+ */
+export async function cancelOrder(
+  orderIdentifier: string | number,
+  payload?: OrderCancelPayload,
+  token?: string,
+): Promise<Order> {
+  const headers: Record<string, string> = {
+    "Content-Type": "application/json",
+  };
+  if (token) {
+    headers["Authorization"] = `Bearer ${token}`;
+  }
+
+  const res = await fetch(`${API_BASE}/orders/${orderIdentifier}/cancel`, {
+    method: "POST",
+    headers,
+    body: JSON.stringify(payload || {}),
+  });
+
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({}));
+    throw new Error(err.detail || "Không thể hủy đơn hàng");
+  }
+
   return res.json();
 }
 
@@ -320,3 +376,158 @@ export async function adminUpdateOrderStatus(
   return res.json();
 }
 
+/**
+ * Admin: Delete order
+ */
+export async function adminDeleteOrder(
+  orderId: number,
+  token: string,
+): Promise<{ message: string; id: number }> {
+  const res = await fetch(`${API_BASE}/orders/${orderId}`, {
+    method: "DELETE",
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({}));
+    throw new Error(err.detail || "Failed to delete order");
+  }
+
+  return res.json();
+}
+export async function adminGetUsers(
+  filters?: { role?: string; isActive?: boolean; search?: string },
+  token?: string,
+): Promise<User[]> {
+  const params = new URLSearchParams();
+  if (filters?.role && filters.role !== "all") params.append("role", filters.role);
+  if (filters?.isActive !== undefined) params.append("is_active", String(filters.isActive));
+  if (filters?.search) params.append("search", filters.search);
+
+  const query = params.toString() ? `?${params.toString()}` : "";
+  const res = await fetch(`${API_BASE}/users${query}`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+    cache: "no-store",
+  });
+
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({}));
+    throw new Error(err.detail || "Failed to fetch users");
+  }
+
+  return res.json();
+}
+
+/**
+ * Admin: Create user
+ */
+export async function adminCreateUser(
+  userData: {
+    email: string;
+    password: string;
+    fullName: string;
+    phone?: string;
+    role?: string;
+    isActive?: boolean;
+  },
+  token: string,
+): Promise<User> {
+  const res = await fetch(`${API_BASE}/users`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+    body: JSON.stringify(userData),
+  });
+
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({}));
+    throw new Error(err.detail || "Failed to create user");
+  }
+
+  return res.json();
+}
+
+/**
+ * Admin: Update user
+ */
+export async function adminUpdateUser(
+  userId: number,
+  userData: {
+    email?: string;
+    fullName?: string;
+    phone?: string;
+    role?: string;
+    isActive?: boolean;
+    password?: string;
+  },
+  token: string,
+): Promise<User> {
+  const res = await fetch(`${API_BASE}/users/${userId}`, {
+    method: "PUT",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+    body: JSON.stringify(userData),
+  });
+
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({}));
+    throw new Error(err.detail || "Failed to update user");
+  }
+
+  return res.json();
+}
+
+/**
+ * Admin: Toggle user active status
+ */
+export async function adminToggleUserStatus(
+  userId: number,
+  isActive: boolean,
+  token: string,
+): Promise<User> {
+  const res = await fetch(`${API_BASE}/users/${userId}/status`, {
+    method: "PATCH",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+    body: JSON.stringify({ isActive }),
+  });
+
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({}));
+    throw new Error(err.detail || "Failed to change user status");
+  }
+
+  return res.json();
+}
+
+/**
+ * Admin: Delete user
+ */
+export async function adminDeleteUser(
+  userId: number,
+  token: string,
+): Promise<{ message: string; id: number }> {
+  const res = await fetch(`${API_BASE}/users/${userId}`, {
+    method: "DELETE",
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({}));
+    throw new Error(err.detail || "Failed to delete user");
+  }
+
+  return res.json();
+}

@@ -47,3 +47,12 @@ next-env.d.ts
 
 # Local temp files
 temp/
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.venv
+venv/
+backend/venv/
+backend/.env

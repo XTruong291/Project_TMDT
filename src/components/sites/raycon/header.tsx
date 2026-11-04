@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useState } from "react";
-import { Shield, User as UserIcon, LogOut, Settings } from "lucide-react";
+import { Shield, User as UserIcon, LogOut, Settings, PackageCheck, Truck } from "lucide-react";
 
 import { products } from "@/data/products";
 import { cn } from "@/lib/utils";
@@ -165,6 +165,14 @@ export function SiteHeader() {
                       </div>
 
                       <div className="py-1">
+                        <Link
+                          href="/orders"
+                          onClick={() => setUserDropdownOpen(false)}
+                          className="flex items-center gap-2 rounded-lg px-3 py-2 text-xs font-bold text-navy hover:bg-gray-50 transition-colors"
+                        >
+                          <PackageCheck className="size-4 text-royal" />
+                          <span>Đơn hàng của tôi</span>
+                        </Link>
                         {isAdmin && (
                           <Link
                             href="/admin/products"
@@ -201,6 +209,16 @@ export function SiteHeader() {
                 </button>
               )}
             </div>
+
+            {/* Order Tracking Quick Link */}
+            <Link
+              href="/orders"
+              className="flex size-10 items-center justify-center text-navy transition-colors hover:text-royal"
+              aria-label="Theo dõi đơn hàng"
+              title="Theo dõi đơn hàng"
+            >
+              <Truck className="size-5" />
+            </Link>
 
             <button
               type="button"
@@ -275,9 +293,24 @@ export function SiteHeader() {
                   {item.label}
                 </Link>
               ))}
+              <Link
+                href="/orders"
+                onClick={() => setMenuOpen(false)}
+                className="border-b border-border py-3 text-base font-bold text-navy flex items-center gap-2"
+              >
+                <Truck className="size-5 text-royal" />
+                <span>Theo dõi đơn hàng</span>
+              </Link>
               {currentUser ? (
                 <div className="border-b border-border py-3">
                   <div className="text-sm font-bold text-navy">{currentUser.fullName}</div>
+                  <Link
+                    href="/orders"
+                    onClick={() => setMenuOpen(false)}
+                    className="mt-2 block text-sm font-bold text-royal"
+                  >
+                    📦 Đơn hàng của tôi
+                  </Link>
                   {isAdmin && (
                     <Link
                       href="/admin/products"

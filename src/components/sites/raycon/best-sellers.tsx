@@ -67,7 +67,7 @@ export function BestSellersCarousel({
         </div>
         <div
           ref={scroller}
-          className="flex gap-4 overflow-x-auto pb-2 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+          className="flex items-stretch gap-4 overflow-x-auto pb-2 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
         >
           {items.map((product) => (
             <ProductCard key={product.id} product={product} />

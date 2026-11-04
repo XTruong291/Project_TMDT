@@ -5,7 +5,7 @@ from app.models.order import OrderStatus
 
 
 class OrderItemCreate(CamelModel):
-    product_id: str
+    product_id: Optional[str] = None
     product_name: str
     color_name: str
     color_image: Optional[str] = None
@@ -33,6 +33,11 @@ class OrderCreate(CamelModel):
 
 class OrderStatusUpdate(CamelModel):
     status: OrderStatus
+
+
+class OrderCancelRequest(CamelModel):
+    guest_email: Optional[str] = None
+    reason: Optional[str] = None
 
 
 class OrderResponse(CamelModel):

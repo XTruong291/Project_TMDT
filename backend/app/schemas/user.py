@@ -13,6 +13,20 @@ class UserBase(CamelModel):
 class UserCreate(UserBase):
     password: str
     role: Optional[RoleEnum] = RoleEnum.CUSTOMER
+    is_active: Optional[bool] = True
+
+
+class UserUpdate(CamelModel):
+    email: Optional[str] = None
+    full_name: Optional[str] = None
+    phone: Optional[str] = None
+    password: Optional[str] = None
+    role: Optional[RoleEnum] = None
+    is_active: Optional[bool] = None
+
+
+class UserStatusUpdate(CamelModel):
+    is_active: bool
 
 
 class UserLogin(CamelModel):
@@ -25,6 +39,7 @@ class UserResponse(UserBase):
     role: RoleEnum
     is_active: bool
     created_at: datetime
+    updated_at: Optional[datetime] = None
 
 
 class Token(CamelModel):

@@ -29,7 +29,7 @@ export function ProductCard({ product }: { product: Product }) {
   }
 
   return (
-    <article className="flex h-full min-w-[280px] flex-1 flex-col rounded-[28px] bg-white p-3 shadow-[0_0_0_1px_rgba(31,40,58,0.04)] md:min-w-[320px] lg:min-w-[280px]">
+    <article className="flex h-full min-w-[280px] flex-1 flex-col justify-between rounded-[28px] bg-white p-3 shadow-[0_0_0_1px_rgba(31,40,58,0.04)] md:min-w-[320px] lg:min-w-[280px]">
       <div className="relative block overflow-hidden rounded-[22px] bg-[#e8f7ff]">
         {product.badge ? (
           <span className="absolute top-3 left-3 z-10 inline-flex items-center rounded-full bg-[#f05c56] px-2.5 py-1 text-[11px] font-bold tracking-wider text-white uppercase">
@@ -60,13 +60,13 @@ export function ProductCard({ product }: { product: Product }) {
           </span>
         </div>
 
-        <h3 className="text-[18px] leading-snug font-bold md:text-[19px]">
+        <h3 className="min-h-[52px] text-[18px] leading-snug font-bold line-clamp-2 md:text-[19px]">
           <Link href={product.href} className="hover:text-royal transition-colors">
             {product.name}
           </Link>
         </h3>
 
-        <div className="mt-3 flex flex-wrap gap-2 min-h-[30px] items-center" role="listbox" aria-label="Color">
+        <div className="mt-3 flex h-[32px] min-h-[32px] flex-wrap items-center gap-2 overflow-hidden" role="listbox" aria-label="Color">
           {product.colors.map((option, index) => (
             <button
               key={option.name}
@@ -87,7 +87,7 @@ export function ProductCard({ product }: { product: Product }) {
           ))}
         </div>
 
-        <div className="mt-auto flex items-end justify-between pt-5">
+        <div className="mt-auto flex items-end justify-between pt-4">
           <div className="flex items-baseline gap-2">
             <span className="text-[19px] font-bold text-royal">
               {formatUsd(product.price)}

@@ -10,13 +10,18 @@ import {
   Package,
   XCircle,
   Eye,
+  Trash2,
   Loader2,
   X,
   Phone,
   Mail,
   MapPin,
 } from "lucide-react";
-import { adminGetOrders, adminUpdateOrderStatus } from "@/lib/api";
+import {
+  adminGetOrders,
+  adminUpdateOrderStatus,
+  adminDeleteOrder,
+} from "@/lib/api";
 import { formatUsd } from "@/data/products";
 import { useAuthStore } from "@/store/use-auth-store";
 import type { Order, OrderStatus } from "@/types/order";
@@ -64,19 +69,30 @@ export default function AdminOrdersPage() {
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState<string>("all");
+  const [error, setError] = useState<string | null>(null);
 
   // Selected Order for Detail Modal
   const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
   const [updatingId, setUpdatingId] = useState<number | null>(null);
 
+  // Delete Order State
+  const [deleteTarget, setDeleteTarget] = useState<Order | null>(null);
+  const [deleting, setDeleting] = useState(false);
+
   const loadOrders = useCallback(async () => {
     if (!token) return;
     setLoading(true);
+    setError(null);
     try {
       const data = await adminGetOrders(undefined, token);
       setOrders(data);
-    } catch (err) {
+    } catch (err: unknown) {
       console.error("Failed to fetch orders:", err);
+      if (err instanceof Error) {
+        setError(err.message);
+      } else {
+        setError("Không thể tải danh sách đơn hàng từ Backend.");
+      }
     } finally {
       setLoading(false);
     }
@@ -114,6 +130,27 @@ export default function AdminOrdersPage() {
       console.error("Failed to update status:", err);
     } finally {
       setUpdatingId(null);
+    }
+  }
+
+  async function handleDeleteOrder() {
+    if (!deleteTarget || !token) return;
+    setDeleting(true);
+    try {
+      await adminDeleteOrder(deleteTarget.id, token);
+      setOrders((prev) => prev.filter((o) => o.id !== deleteTarget.id));
+      if (selectedOrder && selectedOrder.id === deleteTarget.id) {
+        setSelectedOrder(null);
+      }
+      setDeleteTarget(null);
+    } catch (err: unknown) {
+      if (err instanceof Error) {
+        alert(err.message);
+      } else {
+        alert("Không thể xóa đơn hàng.");
+      }
+    } finally {
+      setDeleting(false);
     }
   }
 
@@ -161,6 +198,21 @@ export default function AdminOrdersPage() {
           ))}
         </div>
       </div>
+
+      {error && (
+        <div className="rounded-2xl border border-red-200 bg-red-50 p-4 flex items-center justify-between gap-3 text-xs text-red-700">
+          <div>
+            <strong>Lỗi tải dữ liệu:</strong> {error}
+          </div>
+          <button
+            type="button"
+            onClick={loadOrders}
+            className="rounded-lg bg-red-600 px-3 py-1.5 font-bold text-white hover:bg-red-700 transition-colors"
+          >
+            Thử lại
+          </button>
+        </div>
+      )}
 
       {/* Orders Table */}
       <div className="overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm">
@@ -255,16 +307,26 @@ export default function AdminOrdersPage() {
                         </div>
                       </td>
 
-                      {/* View Action */}
+                      {/* Actions */}
                       <td className="py-3 px-4 text-right">
-                        <button
-                          type="button"
-                          onClick={() => setSelectedOrder(order)}
-                          className="inline-flex size-8 items-center justify-center rounded-lg text-gray-400 hover:bg-gray-100 hover:text-navy transition-colors cursor-pointer"
-                          title="Xem chi tiết đơn hàng"
-                        >
-                          <Eye className="size-4" />
-                        </button>
+                        <div className="flex items-center justify-end gap-1">
+                          <button
+                            type="button"
+                            onClick={() => setSelectedOrder(order)}
+                            className="inline-flex size-8 items-center justify-center rounded-lg text-gray-400 hover:bg-gray-100 hover:text-navy transition-colors cursor-pointer"
+                            title="Xem chi tiết đơn hàng"
+                          >
+                            <Eye className="size-4" />
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => setDeleteTarget(order)}
+                            className="inline-flex size-8 items-center justify-center rounded-lg text-red-400 hover:bg-red-50 hover:text-red-600 transition-colors cursor-pointer"
+                            title="Xóa đơn hàng"
+                          >
+                            <Trash2 className="size-4" />
+                          </button>
+                        </div>
                       </td>
                     </tr>
                   );
@@ -387,6 +449,38 @@ export default function AdminOrdersPage() {
                 className="rounded-xl bg-navy px-5 py-2.5 text-xs font-bold text-white hover:bg-navy/90"
               >
                 Đóng
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Delete Order Confirmation Dialog */}
+      {deleteTarget && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-navy/60 backdrop-blur-sm animate-in fade-in duration-200">
+          <div className="w-full max-w-sm rounded-3xl bg-white p-6 shadow-2xl border border-gray-100 text-center">
+            <div className="mx-auto flex size-12 items-center justify-center rounded-2xl bg-red-100 text-red-600 mb-4">
+              <Trash2 className="size-6" />
+            </div>
+            <h3 className="text-lg font-bold text-navy">Xác nhận Xóa đơn hàng</h3>
+            <p className="mt-1 text-xs text-gray-500">
+              Bạn có chắc chắn muốn xóa vĩnh viễn đơn hàng <strong className="font-mono text-royal">{deleteTarget.orderNumber}</strong> của khách hàng <strong className="text-navy">{deleteTarget.customerName}</strong> khỏi cơ sở dữ liệu?
+            </p>
+            <div className="mt-6 flex items-center justify-center gap-3">
+              <button
+                type="button"
+                onClick={() => setDeleteTarget(null)}
+                className="rounded-xl border border-gray-200 px-4 py-2 text-xs font-bold text-gray-600 hover:bg-gray-100"
+              >
+                Hủy
+              </button>
+              <button
+                type="button"
+                onClick={handleDeleteOrder}
+                disabled={deleting}
+                className="rounded-xl bg-red-600 px-5 py-2 text-xs font-bold text-white shadow-sm hover:bg-red-700 disabled:opacity-50"
+              >
+                {deleting ? "Đang xóa..." : "Xác nhận Xóa"}
               </button>
             </div>
           </div>

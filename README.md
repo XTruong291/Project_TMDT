@@ -95,7 +95,12 @@ Hệ thống Thương mại Điện tử (E-Commerce) bán thiết bị âm than
    * Xem danh sách đơn hàng thực tế của khách hàng.
    * Đổi trạng thái đơn hàng tức thì: `pending` ➔ `processing` ➔ `shipped` ➔ `delivered` ➔ `cancelled`.
    * Xem chi tiết sản phẩm, màu sắc, địa chỉ và ghi chú từng đơn.
-4. **Đăng Nhập Nhanh (1-Click Demo Login):** Tích hợp nút điền sẵn tài khoản Admin và Customer để tiện kiểm thử phân quyền ngay lập tức.
+4. **Quản Lý Người Dùng (`/admin/users`):**
+   * Xem danh sách người dùng, lọc theo vai trò (*Admin*, *Khách hàng*) và trạng thái (*Hoạt động*, *Đã khóa*).
+   * Tạo tài khoản mới, phân quyền Admin / Customer.
+   * Chỉnh sửa thông tin, đổi mật khẩu, bật/tắt khóa tài khoản một chạm.
+   * Xóa người dùng an toàn (bảo vệ tài khoản admin đang đăng nhập và bảo toàn lịch sử mua hàng).
+5. **Đăng Nhập Nhanh (1-Click Demo Login):** Tích hợp nút điền sẵn tài khoản Admin và Customer để tiện kiểm thử phân quyền ngay lập tức.
 
 ---
 
@@ -138,6 +143,7 @@ raycon-clone/
 │   │   │   ├── login/page.tsx      # Đăng nhập Admin
 │   │   │   ├── orders/page.tsx     # Quản lý đơn hàng
 │   │   │   ├── products/page.tsx   # Quản lý sản phẩm (Thêm/Sửa/Xóa)
+│   │   │   ├── users/page.tsx      # Quản lý người dùng & phân quyền
 │   │   │   └── layout.tsx          # Layout Admin có Sidebar
 │   │   ├── checkout/page.tsx       # Trang Thanh toán đơn hàng
 │   │   ├── collections/[slug]/     # Trang Danh mục sản phẩm động
@@ -261,6 +267,7 @@ Mở một cửa sổ Terminal mới tại thư mục gốc của dự án:
 * **Trang Đăng nhập Quản trị:** [http://localhost:3000/admin/login](http://localhost:3000/admin/login)
 * **Dashboard Quản lý Sản phẩm:** [http://localhost:3000/admin/products](http://localhost:3000/admin/products)
 * **Dashboard Quản lý Đơn hàng:** [http://localhost:3000/admin/orders](http://localhost:3000/admin/orders)
+* **Dashboard Quản lý Người dùng:** [http://localhost:3000/admin/users](http://localhost:3000/admin/users)
 * **FastAPI Swagger API Docs:** [http://localhost:8000/docs](http://localhost:8000/docs)
 
 ---
