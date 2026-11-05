@@ -1,4 +1,4 @@
-# 🎧 FITFLOW - Nền Tảng Thương Mại Điện Tử Thiết Bị Âm Thanh (Full-Stack)
+# 🎧 RYVO - Nền Tảng Thương Mại Điện Tử Thiết Bị Âm Thanh (Full-Stack)
 
 Hệ thống Thương mại Điện tử (E-Commerce) bán thiết bị âm thanh hoàn chỉnh, độc lập và hiện đại. Dự án kết hợp kiến trúc **Frontend Next.js 16 (App Router)** tốc độ cao với **Backend FastAPI (Python)** hiệu năng vượt trội, kết nối cơ sở dữ liệu **MySQL 8.0** chạy qua **Docker Compose** và giao diện quản trị **Admin Dashboard** trực quan.
 
