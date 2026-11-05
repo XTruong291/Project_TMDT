@@ -10,7 +10,7 @@ class ArticleBase(CamelModel):
     content: str
     thumbnail: Optional[str] = None
     category: str = "tin-tuc"
-    author: str = "Ban Biên Tập Raycon"
+    author: str = "Ban Biên Tập RYVO"
     is_published: bool = True
 
 

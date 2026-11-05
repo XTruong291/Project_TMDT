@@ -22,7 +22,7 @@ const SLIDES: Slide[] = [
     id: 1,
     badge: "Holiday Special · Giảm 20%",
     title: "Before the rush starts.",
-    subtitle: "Sở hữu ngay chất âm đỉnh cao trước mùa lễ hội với các dòng sản phẩm Raycon bán chạy nhất.",
+    subtitle: "Sở hữu ngay chất âm đỉnh cao trước mùa lễ hội với các dòng sản phẩm RYVO bán chạy nhất.",
     ctaText: "Khám Phá Ưu Đãi",
     ctaHref: "/collections/special",
     secondaryText: "Tất cả sản phẩm",

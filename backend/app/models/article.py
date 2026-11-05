@@ -13,7 +13,7 @@ class Article(Base):
     content = Column(Text, nullable=False)
     thumbnail = Column(Text, nullable=True)
     category = Column(String(50), nullable=False, default="tin-tuc", index=True)
-    author = Column(String(100), nullable=False, default="Ban Biên Tập Raycon")
+    author = Column(String(100), nullable=False, default="Ban Biên Tập RYVO")
     author_id = Column(String(36), nullable=True)
     views = Column(Integer, nullable=False, default=0)
     is_published = Column(Boolean, nullable=False, default=True, index=True)

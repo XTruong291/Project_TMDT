@@ -37,15 +37,15 @@ def verify_coupon(
             )
 
     # Check min order amount
-    if payload.subtotal < coupon.min_order_amount:
+    if payload.subtotal < float(coupon.min_order_amount):
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
-            detail=f"Đơn hàng cần đạt tối thiểu ${coupon.min_order_amount:.2f} để sử dụng mã này."
+            detail=f"Đơn hàng cần đạt tối thiểu {float(coupon.min_order_amount):,.0f} ₫ để sử dụng mã này."
         )
 
     # Calculate discount amount
     if coupon.discount_type == "percent":
-        discount_amount = round((payload.subtotal * coupon.discount_value) / 100.0, 2)
+        discount_amount = round((payload.subtotal * float(coupon.discount_value)) / 100.0, 2)
     else:  # fixed
         discount_amount = min(float(coupon.discount_value), payload.subtotal)
 

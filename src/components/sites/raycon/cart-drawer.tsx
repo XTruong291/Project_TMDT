@@ -8,7 +8,7 @@ import { formatUsd } from "@/data/products";
 import { verifyCoupon } from "@/lib/api";
 import { useCartStore } from "@/store/use-cart-store";
 
-const FREE_SHIPPING_THRESHOLD = 50;
+const FREE_SHIPPING_THRESHOLD = 500000;
 const emptySubscribe = () => () => {};
 
 export function CartDrawer() {
@@ -166,12 +166,12 @@ export function CartDrawer() {
             <Truck className="size-4 text-royal shrink-0" />
             {amountToFreeShipping === 0 ? (
               <span className="text-emerald-700">
-                🎉 Congratulations! You unlocked <strong>FREE Standard Shipping</strong>!
+                🎉 Chúc mừng! Bạn được <strong>MIỄN PHÍ VẬN CHUYỂN</strong> toàn quốc!
               </span>
             ) : (
               <span>
-                Add <strong>{formatUsd(amountToFreeShipping)}</strong> more to get{" "}
-                <strong className="text-royal">FREE Shipping</strong>!
+                Mua thêm <strong>{formatUsd(amountToFreeShipping)}</strong> để được{" "}
+                <strong className="text-royal">FREESHIP 0đ</strong>!
               </span>
             )}
           </div>
@@ -193,7 +193,7 @@ export function CartDrawer() {
             </div>
             <h3 className="text-xl font-bold text-navy">Your cart is empty</h3>
             <p className="mt-2 max-w-xs text-sm text-navy/60">
-              Looks like you haven&apos;t added any Raycon audio gear to your cart yet.
+              Looks like you haven&apos;t added any RYVO audio gear to your cart yet.
             </p>
             <Link
               href="/collections/all"
@@ -328,7 +328,7 @@ export function CartDrawer() {
                         setCouponInput(e.target.value);
                         setCouponError("");
                       }}
-                      placeholder="Mã giảm giá (ví dụ: RAYCON10)"
+                      placeholder="Mã giảm giá (ví dụ: RYVO10)"
                       className="h-9 flex-1 rounded-xl border border-navy/15 px-3 text-xs uppercase outline-none focus:border-royal"
                     />
                     <button

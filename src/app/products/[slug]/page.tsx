@@ -33,12 +33,12 @@ export async function generateMetadata({
 
   if (!product) {
     return {
-      title: "Product Not Found – Raycon Audio",
+      title: "Product Not Found – RYVO Audio",
     };
   }
 
   return {
-    title: `${product.name} – Raycon Audio`,
+    title: `${product.name} – RYVO Audio`,
     description: product.tagline,
   };
 }

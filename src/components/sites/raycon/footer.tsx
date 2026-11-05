@@ -10,7 +10,7 @@ import type { SiteAnalytics } from "@/types/analytics";
 import {
   FacebookIcon,
   InstagramIcon,
-  RayconLogo,
+  RyvoLogo,
   TwitterIcon,
   YoutubeIcon,
 } from "./icons";
@@ -18,22 +18,22 @@ import {
 const SOCIAL = [
   {
     name: "Instagram",
-    href: "https://www.instagram.com/raycon/",
+    href: "https://www.instagram.com/ryvo.audio/",
     icon: InstagramIcon,
   },
   {
     name: "YouTube",
-    href: "https://www.youtube.com/c/Raycon",
+    href: "https://www.youtube.com/@ryvoaudio",
     icon: YoutubeIcon,
   },
   {
     name: "Facebook",
-    href: "https://www.facebook.com/RayconGlobal/",
+    href: "https://www.facebook.com/ryvoaudio/",
     icon: FacebookIcon,
   },
   {
     name: "Twitter",
-    href: "https://twitter.com/raycon",
+    href: "https://twitter.com/ryvoaudio",
     icon: TwitterIcon,
   },
 ];
@@ -166,20 +166,20 @@ export function SiteFooter() {
                 <Phone className="size-3.5 text-white/70" />
                 <span className="text-white/70">Hotline:</span>
                 <a
-                  href="tel:1800729266"
+                  href="tel:18007986"
                   className="font-bold text-white hover:underline"
                 >
-                  1-800-RAYCON (24/7)
+                  1-800-RYVO (24/7)
                 </a>
               </div>
               <div className="flex items-center gap-2">
                 <Mail className="size-3.5 text-white/70" />
                 <span className="text-white/70">Email:</span>
                 <a
-                  href="mailto:support@rayconglobal.com"
+                  href="mailto:support@ryvo.vn"
                   className="text-white font-medium hover:underline"
                 >
-                  support@rayconglobal.com
+                  support@ryvo.vn
                 </a>
               </div>
               <div className="flex items-start gap-2 pt-0.5 text-white/65">
@@ -255,8 +255,8 @@ export function SiteFooter() {
         {/* Bottom Bar */}
         <div className="mt-12 flex flex-col items-start justify-between gap-4 border-t border-white/20 pt-6 text-sm text-white/80 md:flex-row md:items-center">
           <div className="flex items-center gap-4">
-            <Link href="/" aria-label="Raycon Home">
-              <RayconLogo className="h-5 w-[96px] text-white" />
+            <Link href="/" aria-label="RYVO Home">
+              <RyvoLogo className="h-5 w-[96px] text-white" />
             </Link>
             <span>Language: English</span>
           </div>
@@ -274,7 +274,7 @@ export function SiteFooter() {
           </div>
 
           <Link href="/" className="text-xs hover:underline">
-            © RAYCON 2026
+            © RYVO 2026
           </Link>
         </div>
       </div>

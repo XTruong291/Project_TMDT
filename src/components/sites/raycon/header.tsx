@@ -12,7 +12,7 @@ import {
   Loader2,
 } from "lucide-react";
 
-import { products } from "@/data/products";
+import { formatUsd, products } from "@/data/products";
 import { getProducts, getProfile } from "@/lib/api";
 import { cn } from "@/lib/utils";
 import { useAuthStore } from "@/store/use-auth-store";
@@ -24,7 +24,7 @@ import {
   CartIcon,
   CloseIcon,
   MenuIcon,
-  RayconLogo,
+  RyvoLogo,
   SearchIcon,
 } from "./icons";
 
@@ -153,10 +153,10 @@ export function SiteHeader() {
 
           <Link
             href="/"
-            aria-label="Raycon Home"
+            aria-label="RYVO Home"
             className="mx-auto shrink-0 text-navy lg:mx-0"
           >
-            <RayconLogo className="h-[22px] w-[104px]" />
+            <RyvoLogo className="h-[24px] w-[100px]" />
           </Link>
 
           <nav className="hidden flex-1 items-center justify-center gap-8 lg:flex">
@@ -284,9 +284,9 @@ export function SiteHeader() {
             <button
               type="button"
               className="hidden h-10 items-center px-2 text-sm font-bold text-navy lg:flex"
-              aria-label="Currency USD $"
+              aria-label="Currency VNĐ ₫"
             >
-              USD $
+              VNĐ ₫
             </button>
 
             {/* Cart Drawer Trigger Button */}
@@ -387,7 +387,7 @@ export function SiteHeader() {
                           </div>
                         </div>
                         <span className="text-xs font-bold text-royal shrink-0">
-                          ${product.price.toFixed(2)}
+                          {formatUsd(product.price)}
                         </span>
                       </Link>
                     ))}

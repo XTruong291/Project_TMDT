@@ -475,7 +475,7 @@ export function ProductView({ product, relatedProducts }: ProductViewProps) {
               <div className="flex flex-col items-center gap-1.5 p-1">
                 <Truck className="size-5 text-royal" />
                 <span className="text-xs font-bold text-navy">Free Shipping</span>
-                <span className="text-[11px] text-navy/50">On orders over $50</span>
+                <span className="text-[11px] text-navy/50">Đơn hàng từ 500.000₫</span>
               </div>
               <div className="flex flex-col items-center gap-1.5 p-1 border-x border-navy/10">
                 <RotateCcw className="size-5 text-royal" />
@@ -587,7 +587,7 @@ export function ProductView({ product, relatedProducts }: ProductViewProps) {
               <div className="max-w-3xl space-y-4 text-sm text-navy/80 leading-relaxed">
                 <h3 className="text-xl font-bold text-navy">Hassle-Free Shipping & Warranty</h3>
                 <p>
-                  All domestic US & Vietnam express orders placed before 2:00 PM are processed same-day. We offer free standard tracked shipping on all orders over $50.
+                  Tất cả đơn hàng giao nhanh tại Việt Nam đặt trước 14:00 sẽ được xử lý trong ngày. Miễn phí vận chuyển tiêu chuẩn cho mọi đơn hàng từ 500.000₫.
                 </p>
                 <ul className="list-disc pl-5 space-y-2 text-navy/70">
                   <li>Standard Delivery: 2–4 business days with tracking number.</li>

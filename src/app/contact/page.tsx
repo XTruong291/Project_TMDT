@@ -90,13 +90,13 @@ export default function ContactPage() {
         <div className="raycon-container relative z-10 text-center max-w-2xl mx-auto">
           <div className="inline-flex items-center gap-2 rounded-full bg-white/10 px-4 py-1.5 text-xs font-bold tracking-wider uppercase backdrop-blur-xs mb-3">
             <Sparkles className="size-3.5 text-[#ffb13b]" />
-            <span>Trung tâm Trợ giúp Raycon</span>
+            <span>Trung tâm Trợ giúp RYVO</span>
           </div>
           <h1 className="text-3xl md:text-5xl font-black tracking-tight leading-tight">
             Liên Hệ Với Chúng Tôi
           </h1>
           <p className="mt-3 text-sm md:text-base text-white/85 leading-relaxed">
-            Bạn có câu hỏi về sản phẩm, chính sách bảo hành hoặc mong muốn hợp tác? Đội ngũ Raycon luôn sẵn sàng lắng nghe và hỗ trợ bạn 24/7.
+            Bạn có câu hỏi về sản phẩm, chính sách bảo hành hoặc mong muốn hợp tác? Đội ngũ RYVO luôn sẵn sàng lắng nghe và hỗ trợ bạn 24/7.
           </p>
         </div>
       </section>
@@ -108,7 +108,7 @@ export default function ContactPage() {
           <div className="lg:col-span-7 bg-white rounded-3xl border border-navy/10 p-6 md:p-10 shadow-xs">
             <div className="mb-6">
               <h2 className="text-xl md:text-2xl font-bold text-navy">
-                Gửi Tin Nhắn Cho Raycon
+                Gửi Tin Nhắn Cho RYVO
               </h2>
               <p className="text-xs text-navy/60 mt-1">
                 Điền đầy đủ thông tin bên dưới, chúng tôi sẽ phản hồi qua email trong vòng 24 giờ làm việc.
@@ -131,7 +131,7 @@ export default function ContactPage() {
                   Gửi Tin Nhắn Thành Công!
                 </h3>
                 <p className="text-xs text-emerald-700 max-w-sm mx-auto">
-                  Cảm ơn bạn đã liên hệ với Raycon. Chuyên viên chăm sóc khách hàng của chúng tôi sẽ sớm liên lạc lại với bạn.
+                  Cảm ơn bạn đã liên hệ với RYVO. Chuyên viên chăm sóc khách hàng của chúng tôi sẽ sớm liên lạc lại với bạn.
                 </p>
                 <button
                   type="button"
@@ -271,7 +271,7 @@ export default function ContactPage() {
                   </div>
                   <div>
                     <p className="text-xs font-bold text-navy">Hotline Hỗ Trợ 24/7</p>
-                    <p className="text-sm font-extrabold text-royal mt-0.5">1-800-RAYCON (1800 729 266)</p>
+                    <p className="text-sm font-extrabold text-royal mt-0.5">1-800-RYVO (1800 7986)</p>
                     <p className="text-[11px] text-navy/50">Miễn cước cho toàn bộ khách hàng</p>
                   </div>
                 </div>
@@ -282,7 +282,7 @@ export default function ContactPage() {
                   </div>
                   <div>
                     <p className="text-xs font-bold text-navy">Email CSKH & Khiếu Nại</p>
-                    <p className="text-sm font-bold text-navy mt-0.5">support@rayconglobal.com</p>
+                    <p className="text-sm font-bold text-navy mt-0.5">support@ryvo.vn</p>
                     <p className="text-[11px] text-navy/50">Phản hồi cam kết trong 24 giờ</p>
                   </div>
                 </div>
@@ -294,11 +294,9 @@ export default function ContactPage() {
                   <div>
                     <p className="text-xs font-bold text-navy">Trụ Sở Chính (Global HQ)</p>
                     <p className="text-xs text-navy/80 mt-0.5 leading-snug">
-                      1115 Broadway, Suite 1200, New York, NY 10010, USA
+                      207 Đ. Giải Phóng, Bạch Mai, Hà Nội, Việt Nam
                     </p>
-                    <p className="text-[11px] text-navy/50 mt-1">
-                      Chi nhánh VN: 128 Hai Bà Trưng, Phường Đa Kao, Quận 1, TP. HCM
-                    </p>
+                    
                   </div>
                 </div>
 
@@ -328,8 +326,8 @@ export default function ContactPage() {
               </div>
               <div className="aspect-16/10 w-full overflow-hidden rounded-2xl border border-navy/10">
                 <iframe
-                  title="Raycon Location Map"
-                  src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3022.6174786417786!2d-73.99124442347312!3d40.74189537138865!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x89c259a3f81d509f%3A0xa1b92ffcb613e54b!2s1115%20Broadway%2C%20New%20York%2C%20NY%2010010%2C%20USA!5e0!3m2!1sen!2s!4v1700000000000!5m2!1sen!2s"
+                  title="RYVO Location Map"
+                  src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d5402.927863394476!2d105.84275207023528!3d20.99988298634503!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3135ac71752d8f79%3A0xd2ec575c01017afa!2zxJDhuqFpIGjhu41jIEtpbmggdOG6vyBRdeG7kWMgZMOibg!5e1!3m2!1svi!2s!4v1793870691108!5m2!1svi!2s"
                   width="100%"
                   height="100%"
                   style={{ border: 0 }}

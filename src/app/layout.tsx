@@ -15,9 +15,9 @@ const outfit = Outfit({
 });
 
 export const metadata: Metadata = {
-  title: "Raycon, Your Everyday Tech – Raycon Audio",
+  title: "RYVO, Your Everyday Tech – RYVO Audio Vietnam",
   description:
-    "Tech for everyday. Long battery life, easy setup, and colors that feel like you.",
+    "Thương hiệu âm thanh cá nhân RYVO. Tai nghe chống ồn Hybrid ANC, tai nghe truyền âm qua xương Bone Conduction, pin bền bỉ cả ngày dài.",
 };
 
 export default function RootLayout({

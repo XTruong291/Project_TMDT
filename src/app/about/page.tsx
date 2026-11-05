@@ -13,18 +13,18 @@ import { getAboutSections } from "@/lib/api";
 import type { AboutSection } from "@/types/about";
 
 export const metadata: Metadata = {
-  title: "Về Raycon | Âm Thanh Đích Thực Cho Cuộc Sống Hàng Ngày",
+  title: "Về RYVO | Âm Thanh Thông Minh Cho Cuộc Sống Hàng Ngày",
   description:
-    "Tìm hiểu về câu chuyện thương hiệu Raycon, sứ mệnh phổ cập âm thanh không dây cao cấp và các giá trị cốt lõi mang lại trải nghiệm âm nhạc đỉnh cao.",
+    "Tìm hiểu về câu chuyện thương hiệu RYVO, sứ mệnh phổ cập âm thanh không dây cao cấp và các giá trị cốt lõi mang lại trải nghiệm âm nhạc đỉnh cao.",
 };
 
 const DEFAULT_SECTIONS: AboutSection[] = [
   {
     id: 1,
-    title: "Raycon Global - Kỷ nguyên Âm thanh Không dây Dễ tiếp cận",
+    title: "RYVO Audio - Kỷ nguyên Âm thanh Không dây Thông minh",
     category: "company_overview",
     content:
-      "Được thành lập vào năm 2017 bởi Ray J cùng các chuyên gia hàng đầu ngành âm thanh tại New York, Raycon ra đời với sứ mệnh xóa bỏ rào cản giá cả đối với các thiết bị âm thanh không dây cao cấp. Chúng tôi tin rằng âm thanh tuyệt hảo không nhất thiết phải đi kèm mức giá xa xỉ, mà phải đồng hành cùng nhịp sống hàng ngày của tất cả mọi người.",
+      "Được sáng lập với niềm đam mê âm học hiện đại cùng các chuyên gia hàng đầu ngành âm thanh, RYVO ra đời với sứ mệnh xóa bỏ rào cản giá cả đối với các thiết bị âm thanh không dây cao cấp. Chúng tôi tin rằng âm thanh tuyệt hảo không nhất thiết phải đi kèm mức giá xa xỉ, mà phải đồng hành cùng nhịp sống hàng ngày của tất cả mọi người.",
     imageUrl: "/sites/raycon/images/earbuds-lifestyle.png",
     isVisible: true,
     sortOrder: 1,
@@ -33,10 +33,10 @@ const DEFAULT_SECTIONS: AboutSection[] = [
   },
   {
     id: 2,
-    title: "Hệ sinh thái Sản phẩm & Dịch vụ Âm thanh Raycon",
+    title: "Hệ sinh thái Sản phẩm & Dịch vụ Âm thanh RYVO",
     category: "products_services",
     content:
-      "Raycon cung cấp dải sản phẩm hoàn chỉnh phục vụ cuộc sống năng động: từ dòng tai nghe nhét tai True Wireless siêu nhỏ gọn (Everyday Earbuds), tai nghe truyền âm qua xương (Bone Conduction), tai nghe chụp tai chống ồn chủ động (Everyday Headphones ANC) cho tới cáp sạc nhanh đa năng Magic Spin. Mọi sản phẩm đều đi kèm chính sách đổi trả 30 ngày và bảo hành chính hãng 1 năm.",
+      "RYVO cung cấp dải sản phẩm hoàn chỉnh phục vụ cuộc sống năng động: từ dòng tai nghe nhét tai True Wireless siêu nhỏ gọn (Everyday Earbuds), tai nghe truyền âm qua xương (Bone Conduction), tai nghe chụp tai chống ồn chủ động (Everyday Headphones ANC) cho tới cáp sạc nhanh đa năng Magic Spin. Mọi sản phẩm đều đi kèm chính sách đổi trả 30 ngày và bảo hành chính hãng 1 năm.",
     imageUrl: "/sites/raycon/images/E25_BLA_IMG1.png",
     isVisible: true,
     sortOrder: 2,
@@ -48,7 +48,7 @@ const DEFAULT_SECTIONS: AboutSection[] = [
     title: "Tầm nhìn & Sứ mệnh Thương hiệu",
     category: "mission_vision",
     content:
-      "Sứ mệnh của chúng tôi là truyền cảm hứng cho những con người bận rộn, người sáng tạo và thế hệ trẻ vươn tới mục tiêu mỗi ngày bằng âm thanh giàu năng lượng. Tầm nhìn 2030: Trở thành thương hiệu âm thanh cá nhân số 1 về trải nghiệm người dùng thực tế và độ bền bỉ trong phân khúc dưới $150.",
+      "Sứ mệnh của chúng tôi là truyền cảm hứng cho những con người bận rộn, người sáng tạo và thế hệ trẻ vươn tới mục tiêu mỗi ngày bằng âm thanh giàu năng lượng. Tầm nhìn 2030: Trở thành thương hiệu âm thanh cá nhân số 1 về trải nghiệm người dùng thực tế và độ bền bỉ trong phân khúc dưới 3.500.000₫.",
     imageUrl: "/sites/raycon/images/open-audio-lifestyle.png",
     isVisible: true,
     sortOrder: 3,
@@ -108,7 +108,7 @@ export default async function AboutPage() {
             Âm Thanh Đích Thực Cho Cuộc Sống Hàng Ngày
           </h1>
           <p className="mt-4 text-base md:text-lg text-white/85 leading-relaxed">
-            Chúng tôi tin rằng âm thanh cao cấp không nên là đặc quyền xa xỉ. Raycon được sinh ra để tiếp sức cho mọi khoảnh khắc: khi làm việc, tập luyện, hay thư giãn.
+            Chúng tôi tin rằng âm thanh cao cấp không nên là đặc quyền xa xỉ. RYVO được sinh ra để tiếp sức cho mọi khoảnh khắc: khi làm việc, tập luyện, hay thư giãn.
           </p>
         </div>
       </section>
@@ -147,7 +147,7 @@ export default async function AboutPage() {
                 Khởi nguồn thương hiệu
               </span>
               <h2 className="mt-1 text-2xl md:text-3xl font-extrabold text-navy">
-                Tổng Quan Về Raycon
+                Tổng Quan Về RYVO
               </h2>
             </div>
 
@@ -292,7 +292,7 @@ export default async function AboutPage() {
         <div className="rounded-3xl bg-white border border-navy/10 p-8 md:p-12">
           <div className="text-center max-w-xl mx-auto mb-10">
             <h2 className="text-2xl md:text-3xl font-extrabold text-navy">
-              Giá Trị Cốt Lõi Raycon
+              Giá Trị Cốt Lõi RYVO
             </h2>
             <p className="mt-2 text-xs md:text-sm text-navy/60">
               4 nguyên tắc vàng định hình từng sản phẩm chúng tôi tạo ra
@@ -349,7 +349,7 @@ export default async function AboutPage() {
             Sẵn Sàng Nâng Tầm Trải Nghiệm Âm Nhạc?
           </h3>
           <p className="text-sm md:text-base text-white/80 max-w-xl mx-auto">
-            Gia nhập cộng đồng hơn 2 triệu người dùng Raycon trên toàn cầu. Mua ngay hôm nay với chính sách miễn phí vận chuyển cho đơn hàng trên $50.
+            Gia nhập cộng đồng hơn 2 triệu người dùng RYVO trên toàn cầu. Mua ngay hôm nay với chính sách miễn phí vận chuyển cho đơn hàng từ 500.000₫.
           </p>
           <div className="pt-2">
             <Link

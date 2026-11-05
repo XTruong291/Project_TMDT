@@ -19,14 +19,14 @@ const CATEGORY_MAP: Record<string, { label: string; badgeClass: string }> = {
 const FALLBACK_NEWS: Article[] = [
   {
     id: 1,
-    slug: "raycon-ra-mat-dong-tai-nghe-chong-on-anc-everyday-pro",
-    title: "Raycon chính thức ra mắt tai nghe chống ồn ANC Everyday Pro thế hệ mới",
+    slug: "ryvo-ra-mat-dong-tai-nghe-chong-on-anc-everyday-pro",
+    title: "RYVO chính thức ra mắt tai nghe chống ồn ANC Everyday Pro thế hệ mới",
     summary:
-      "Dòng tai nghe chụp tai hàng đầu của Raycon nâng cấp công nghệ chống ồn chủ động Hybrid ANC 35dB, thời lượng pin 45 giờ cùng chất âm cân bằng chuyên nghiệp.",
+      "Dòng tai nghe chụp tai hàng đầu của RYVO nâng cấp công nghệ chống ồn chủ động Hybrid ANC 35dB, thời lượng pin 45 giờ cùng chất âm cân bằng chuyên nghiệp.",
     content: "Chi tiết...",
     thumbnail: "/sites/raycon/images/headphones-lifestyle.png",
     category: "su-kien",
-    author: "Ban Biên Tập Raycon",
+    author: "Ban Biên Tập RYVO",
     views: 128,
     isPublished: true,
     publishedAt: new Date().toISOString(),
@@ -42,7 +42,7 @@ const FALLBACK_NEWS: Article[] = [
     content: "Chi tiết...",
     thumbnail: "/sites/raycon/images/open-audio-lifestyle.png",
     category: "cong-nghe-am-thanh",
-    author: "Kỹ Sư Âm Học Raycon",
+    author: "Kỹ Sư Âm Học RYVO",
     views: 245,
     isPublished: true,
     publishedAt: new Date().toISOString(),
@@ -54,11 +54,11 @@ const FALLBACK_NEWS: Article[] = [
     slug: "huong-dan-chon-profile-am-thanh-pure-balanced-bass",
     title: "Hướng dẫn chọn 3 chế độ âm thanh: Pure Sound, Balanced Sound & Bass Boost",
     summary:
-      "Làm chủ 3 profile âm thanh độc quyền tích hợp sẵn trên tai nghe Raycon chỉ với một chạm để tối ưu cho từng thể loại nhạc và podcast.",
+      "Làm chủ 3 profile âm thanh độc quyền tích hợp sẵn trên tai nghe RYVO chỉ với một chạm để tối ưu cho từng thể loại nhạc và podcast.",
     content: "Chi tiết...",
     thumbnail: "/sites/raycon/images/earbuds-lifestyle.png",
     category: "tin-tuc",
-    author: "Ban Biên Tập Raycon",
+    author: "Ban Biên Tập RYVO",
     views: 310,
     isPublished: true,
     publishedAt: new Date().toISOString(),
@@ -84,13 +84,13 @@ export async function HomeNews() {
           <div>
             <div className="inline-flex items-center gap-1.5 text-xs font-bold tracking-widest text-royal uppercase">
               <Sparkles className="size-3.5 text-[#ffb13b]" />
-              <span>Raycon Stories</span>
+              <span>RYVO Stories</span>
             </div>
             <h2 className="mt-1 text-2xl md:text-4xl font-extrabold text-navy tracking-tight">
               Tin Tức & Sự Kiện Mới Nhất
             </h2>
             <p className="mt-2 text-xs md:text-sm text-navy/60 max-w-xl">
-              Cập nhật các bước tiến công nghệ âm thanh, sự kiện ra mắt độc quyền và mẹo sử dụng thiết bị hiệu quả từ Raycon.
+              Cập nhật các bước tiến công nghệ âm thanh, sự kiện ra mắt độc quyền và mẹo sử dụng thiết bị hiệu quả từ RYVO.
             </p>
           </div>
 

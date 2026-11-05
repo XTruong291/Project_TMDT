@@ -118,10 +118,10 @@ export function AuthModal({ isOpen, onClose }: AuthModalProps) {
         <div className="flex items-center justify-between border-b border-gray-100 px-6 py-4 bg-gray-50/50">
           <div className="flex items-center gap-2">
             <span className="flex size-7 items-center justify-center rounded-lg bg-navy text-white text-xs font-bold">
-              RC
+              RV
             </span>
             <h3 className="font-bold text-navy text-lg">
-              {mode === "login" ? "Đăng nhập Raycon" : "Tạo tài khoản mới"}
+              {mode === "login" ? "Đăng nhập RYVO" : "Tạo tài khoản mới"}
             </h3>
           </div>
           <button

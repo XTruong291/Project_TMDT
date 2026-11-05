@@ -1,6 +1,7 @@
 import { create } from "zustand";
 import { createJSONStorage, persist } from "zustand/middleware";
 
+import { formatVnd } from "@/data/products";
 import type { CartItem } from "@/types/cart";
 import type { AppliedCoupon } from "@/types/coupon";
 import type { Product, ProductColor } from "@/types/product";
@@ -38,7 +39,7 @@ function checkCouponValidity(
   if (subtotal < coupon.minOrderAmount) {
     return {
       validCoupon: null,
-      message: `Mã ${coupon.code} đã tự động gỡ do đơn hàng chưa đạt mức tối thiểu $${coupon.minOrderAmount.toFixed(2)}.`,
+      message: `Mã ${coupon.code} đã tự động gỡ do đơn hàng chưa đạt mức tối thiểu ${formatVnd(coupon.minOrderAmount)}.`,
     };
   }
   return { validCoupon: coupon, message: null };
@@ -174,9 +175,9 @@ export const useCartStore = create<CartState>()(
         if (!coupon || subtotal < coupon.minOrderAmount) return 0;
 
         if (coupon.discountType === "percent") {
-          return Math.round(((subtotal * coupon.discountValue) / 100) * 100) / 100;
+          return Math.round((subtotal * coupon.discountValue) / 100);
         }
-        return Math.min(coupon.discountValue, subtotal);
+        return Math.min(Math.round(coupon.discountValue), subtotal);
       },
 
       applyCoupon: (coupon) =>
@@ -193,13 +194,25 @@ export const useCartStore = create<CartState>()(
     }),
     {
       name: "raycon-cart-storage",
+      version: 2,
       storage: createJSONStorage(() => localStorage),
       partialize: (state) => ({
         items: state.items,
         appliedCoupon: state.appliedCoupon,
       }),
       onRehydrateStorage: () => (state) => {
-        state?.setHasHydrated(true);
+        if (state) {
+          // If cached items have old USD prices (< 1000), clear cart to avoid displaying "64 ₫"
+          const hasStaleUsdPrices = state.items.some(
+            (item) => item.product.price < 1000,
+          );
+          if (hasStaleUsdPrices) {
+            state.items = [];
+            state.appliedCoupon = null;
+            state.couponMessage = null;
+          }
+          state.setHasHydrated(true);
+        }
       },
     },
   ),

@@ -526,7 +526,7 @@ export default function AdminUsersPage() {
                   onChange={(e) =>
                     setFormData({ ...formData, email: e.target.value })
                   }
-                  placeholder="user@raycon.local"
+                  placeholder="user@ryvo.local"
                   className="w-full rounded-xl border border-gray-200 bg-gray-50/50 py-2.5 px-3.5 text-xs text-navy outline-none focus:border-navy focus:bg-white"
                 />
               </div>

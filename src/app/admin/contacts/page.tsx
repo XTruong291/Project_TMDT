@@ -405,7 +405,7 @@ export default function AdminContactsPage() {
 
             <div className="pt-3 border-t border-gray-100 flex justify-end">
               <a
-                href={`mailto:${viewingContact.email}?subject=Phản hồi từ Raycon: ${encodeURIComponent(viewingContact.subject || "Thư liên hệ")}`}
+                href={`mailto:${viewingContact.email}?subject=Phản hồi từ RYVO: ${encodeURIComponent(viewingContact.subject || "Thư liên hệ")}`}
                 className="inline-flex items-center gap-2 rounded-xl bg-navy px-5 py-2.5 text-xs font-bold text-white hover:bg-navy/90 transition"
               >
                 <Mail className="size-3.5" />

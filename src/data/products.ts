@@ -30,8 +30,8 @@ export const products: Product[] = [
     collectionSlug: "earbuds",
     href: "/products/the-everyday-earbuds",
     image: `${IMG}/E25_BLA_IMG1.png`,
-    price: 63.99,
-    compareAtPrice: 79.98,
+    price: 1590000,
+    compareAtPrice: 1990000,
     badge: "20% OFF",
     rating: 4.4,
     reviewCount: 232893,
@@ -90,8 +90,8 @@ export const products: Product[] = [
     collectionSlug: "headphones",
     href: "/products/bone-conduction-headphones",
     image: `${IMG}/bc-blue.png`,
-    price: 69.99,
-    compareAtPrice: 99.98,
+    price: 1750000,
+    compareAtPrice: 2490000,
     badge: "30% OFF",
     rating: 4.2,
     reviewCount: 3617,
@@ -134,8 +134,8 @@ export const products: Product[] = [
     collectionSlug: "open-audio",
     href: "/products/essential-open-earbuds",
     image: `${IMG}/515.2514_6e551754-ab11-46e0-9eca-d9cb9a6e0ea6.png`,
-    price: 47.99,
-    compareAtPrice: 79.98,
+    price: 1190000,
+    compareAtPrice: 1990000,
     badge: "40% OFF",
     rating: 4.5,
     reviewCount: 4777,
@@ -182,8 +182,8 @@ export const products: Product[] = [
     collectionSlug: "open-audio",
     href: "/products/everyday-clip-earbuds",
     image: `${IMG}/O55_bla_002_V1.png`,
-    price: 69.99,
-    compareAtPrice: 99.98,
+    price: 1750000,
+    compareAtPrice: 2490000,
     badge: "30% OFF",
     rating: 4.5,
     reviewCount: 685,
@@ -229,8 +229,8 @@ export const products: Product[] = [
     collectionSlug: "earbuds",
     href: "/products/the-fitness-earbuds",
     image: `${IMG}/E45_BLU_IMG1_d64b334f-cb84-48a3-b8fb-9c0a8e264cee.png`,
-    price: 83.99,
-    compareAtPrice: 119.98,
+    price: 2090000,
+    compareAtPrice: 2990000,
     badge: "NEW - 30% OFF",
     rating: 4.6,
     reviewCount: 91738,
@@ -270,8 +270,8 @@ export const products: Product[] = [
     collectionSlug: "headphones",
     href: "/products/the-everyday-h20-headphones",
     image: `${IMG}/H20_BLA_IMG1_720x.png`,
-    price: 69.99,
-    compareAtPrice: 99.98,
+    price: 1750000,
+    compareAtPrice: 2490000,
     badge: "30% OFF",
     rating: 4.5,
     reviewCount: 18400,
@@ -302,8 +302,8 @@ export const products: Product[] = [
     collectionSlug: "power-tech",
     href: "/products/magic-spin-cable",
     image: `${IMG}/SPN61C_BLA_CAROUSEL_IMG1_720x.png`,
-    price: 19.99,
-    compareAtPrice: 24.98,
+    price: 490000,
+    compareAtPrice: 590000,
     badge: null,
     rating: 4.7,
     reviewCount: 2100,
@@ -372,7 +372,7 @@ export const collectionsMeta: Record<string, CollectionInfo> = {
   special: {
     slug: "special",
     title: "Special Offers & Limited Deals",
-    tagline: "Limited-time deals, up to 50% off select Raycon favorites and bundles.",
+    tagline: "Limited-time deals, up to 50% off select RYVO favorites and bundles.",
     bannerImage: `${IMG}/HP_EVRGRN-BANNER_DESKTOP_A.png`,
   },
   all: {
@@ -510,12 +510,15 @@ export const reviews: Review[] = [
   },
 ];
 
-export function formatUsd(value: number) {
-  return new Intl.NumberFormat("en-US", {
+export function formatVnd(value: number) {
+  return new Intl.NumberFormat("vi-VN", {
     style: "currency",
-    currency: "USD",
-  }).format(value);
+    currency: "VND",
+  }).format(Math.round(value));
 }
+
+// Backward compatibility alias so all existing components work automatically
+export const formatUsd = formatVnd;
 
 export function formatReviewCount(count: number) {
   return new Intl.NumberFormat("en-US").format(count);

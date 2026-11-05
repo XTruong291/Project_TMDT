@@ -30,7 +30,7 @@ export function CoreTech() {
           <div className="inline-flex items-center gap-2">
             <span className="size-2 rounded-full bg-[#f05c56]" />
             <span className="text-xs font-bold tracking-[0.12em] text-royal uppercase">
-              Raycon Core Tech
+              RYVO Core Tech
             </span>
           </div>
 

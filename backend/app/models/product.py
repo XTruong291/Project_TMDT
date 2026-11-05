@@ -1,4 +1,4 @@
-from sqlalchemy import Column, String, Float, Integer, Boolean, Text, DateTime, JSON, func
+from sqlalchemy import Column, String, Float, Integer, Boolean, Text, DateTime, JSON, DECIMAL, func
 from sqlalchemy.orm import relationship
 from app.core.database import Base
 
@@ -15,8 +15,8 @@ class Product(Base):
     sub_category = Column(String(100), index=True, nullable=True)
     collection_slug = Column(String(64), index=True, nullable=False)
     image = Column(String(512), nullable=False)
-    price = Column(Float, nullable=False)
-    compare_at_price = Column(Float, nullable=True)
+    price = Column(DECIMAL(15, 2), nullable=False)
+    compare_at_price = Column(DECIMAL(15, 2), nullable=True)
     badge = Column(String(64), nullable=True)
     rating = Column(Float, default=5.0, nullable=False)
     review_count = Column(Integer, default=0, nullable=False)

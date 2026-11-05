@@ -153,7 +153,7 @@ export default function AdminProductsPage() {
       inStock: true,
       isActive: true,
       featured: false,
-      description: "Sản phẩm âm thanh cao cấp với công nghệ tiên tiến nhất từ Raycon.",
+      description: "Sản phẩm âm thanh cao cấp với công nghệ tiên tiến nhất từ RYVO.",
       colors: [
         {
           name: "Carbon Black",
@@ -668,7 +668,7 @@ export default function AdminProductsPage() {
                     onChange={(e) =>
                       setFormData({ ...formData, sku: e.target.value })
                     }
-                    placeholder="RAY-E25-BLK"
+                    placeholder="RYVO-E25-BLK"
                     className="w-full rounded-xl border border-gray-200 bg-gray-50/50 py-2.5 px-3.5 text-xs text-navy outline-none focus:border-navy focus:bg-white font-mono"
                   />
                 </div>
@@ -733,27 +733,28 @@ export default function AdminProductsPage() {
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <div>
                   <label className="block text-xs font-bold uppercase tracking-wider text-navy/70 mb-1">
-                    Giá bán ($ USD) *
+                    Giá bán (VNĐ) *
                   </label>
                   <input
                     type="number"
-                    step="0.01"
+                    step="1000"
                     required
                     value={formData.price}
                     onChange={(e) =>
                       setFormData({ ...formData, price: parseFloat(e.target.value) || 0 })
                     }
+                    placeholder="1590000"
                     className="w-full rounded-xl border border-gray-200 bg-gray-50/50 py-2.5 px-3.5 text-xs text-navy outline-none focus:border-navy focus:bg-white font-bold"
                   />
                 </div>
 
                 <div>
                   <label className="block text-xs font-bold uppercase tracking-wider text-navy/70 mb-1">
-                    Giá gốc ($ USD)
+                    Giá gốc (VNĐ)
                   </label>
                   <input
                     type="number"
-                    step="0.01"
+                    step="1000"
                     value={formData.compareAtPrice ?? ""}
                     onChange={(e) =>
                       setFormData({
@@ -761,7 +762,7 @@ export default function AdminProductsPage() {
                         compareAtPrice: e.target.value ? parseFloat(e.target.value) : null,
                       })
                     }
-                    placeholder="99.98"
+                    placeholder="1990000"
                     className="w-full rounded-xl border border-gray-200 bg-gray-50/50 py-2.5 px-3.5 text-xs text-navy outline-none focus:border-navy focus:bg-white"
                   />
                 </div>

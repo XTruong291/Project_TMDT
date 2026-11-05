@@ -23,7 +23,7 @@ router = APIRouter(prefix="/orders", tags=["Orders"])
 def generate_order_number() -> str:
     timestamp = datetime.now().strftime("%Y%m%d")
     unique_suffix = uuid.uuid4().hex[:6].upper()
-    return f"RAY-{timestamp}-{unique_suffix}"
+    return f"RYVO-{timestamp}-{unique_suffix}"
 
 
 @router.post("", response_model=OrderResponse, status_code=status.HTTP_201_CREATED)
@@ -107,21 +107,21 @@ def create_order(
                 detail=f"Mã giảm giá '{code_clean}' không hợp lệ hoặc đã hết hạn.",
             )
 
-        if calculated_subtotal < coupon.min_order_amount:
+        if calculated_subtotal < float(coupon.min_order_amount):
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST,
-                detail=f"Đơn hàng cần đạt tối thiểu ${coupon.min_order_amount:.2f} để sử dụng mã {coupon.code}.",
+                detail=f"Đơn hàng cần đạt tối thiểu {float(coupon.min_order_amount):,.0f} ₫ để sử dụng mã {coupon.code}.",
             )
 
         if coupon.discount_type == "percent":
-            discount_amount = round((calculated_subtotal * coupon.discount_value) / 100.0, 2)
+            discount_amount = round((calculated_subtotal * float(coupon.discount_value)) / 100.0, 2)
         else:
             discount_amount = min(float(coupon.discount_value), calculated_subtotal)
 
         applied_coupon_code = coupon.code
 
-    # 3. Calculate shipping fee
-    shipping_fee = 0.0 if calculated_subtotal >= 50.0 or applied_coupon_code == "FREESHIP" else 4.99
+    # 3. Calculate shipping fee (Free shipping for orders >= 500.000 ₫, standard shipping fee 30.000 ₫)
+    shipping_fee = 0.0 if calculated_subtotal >= 500000.0 or applied_coupon_code == "FREESHIP" else 30000.0
     total_amount = round(max(0.0, calculated_subtotal - discount_amount + shipping_fee), 2)
 
     # 4. Create Order

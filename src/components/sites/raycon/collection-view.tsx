@@ -14,7 +14,7 @@ interface CollectionViewProps {
   collection: CollectionInfo;
 }
 
-type FilterType = "all" | "under-50" | "over-50" | "top-rated" | "on-sale";
+type FilterType = "all" | "under-1m" | "over-1m" | "under-50" | "over-50" | "top-rated" | "on-sale";
 type SortType = "featured" | "price-asc" | "price-desc" | "rating" | "reviews";
 
 export function CollectionView({
@@ -36,10 +36,10 @@ export function CollectionView({
     }
 
     // Quick filter
-    if (activeFilter === "under-50") {
-      result = result.filter((p) => p.price < 50);
-    } else if (activeFilter === "over-50") {
-      result = result.filter((p) => p.price >= 50);
+    if (activeFilter === "under-1m" || activeFilter === "under-50") {
+      result = result.filter((p) => p.price < 1000000);
+    } else if (activeFilter === "over-1m" || activeFilter === "over-50") {
+      result = result.filter((p) => p.price >= 1000000);
     } else if (activeFilter === "top-rated") {
       result = result.filter((p) => p.rating >= 4.5);
     } else if (activeFilter === "on-sale") {
@@ -64,11 +64,11 @@ export function CollectionView({
   }, [initialProducts, selectedSubCategory, activeFilter, activeSort]);
 
   const filterOptions: { id: FilterType; label: string }[] = [
-    { id: "all", label: "All Items" },
-    { id: "on-sale", label: "On Sale / Deals" },
-    { id: "under-50", label: "Under $50" },
-    { id: "over-50", label: "$50 & Above" },
-    { id: "top-rated", label: "Top Rated (4.5★+)" },
+    { id: "all", label: "Tất cả sản phẩm" },
+    { id: "on-sale", label: "Đang giảm giá" },
+    { id: "under-1m", label: "Dưới 1.000.000₫" },
+    { id: "over-1m", label: "Từ 1.000.000₫ trở lên" },
+    { id: "top-rated", label: "Đánh giá cao (4.5★+)" },
   ];
 
   return (
@@ -108,7 +108,7 @@ export function CollectionView({
           <div className="max-w-2xl">
             <div className="inline-flex items-center gap-2 rounded-full bg-white/10 px-3.5 py-1 text-xs font-bold tracking-wider text-white uppercase backdrop-blur-xs">
               <Sparkles className="size-3.5 text-[#ffb13b]" />
-              <span>Raycon Collection</span>
+              <span>RYVO Collection</span>
             </div>
             <h1 className="mt-4 text-[32px] leading-tight font-bold md:text-[48px] md:leading-[54px]">
               {collection.title}

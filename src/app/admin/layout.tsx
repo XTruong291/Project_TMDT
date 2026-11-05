@@ -101,7 +101,7 @@ export default function AdminLayout({
               </div>
               <div>
                 <span className="font-extrabold text-navy tracking-tight text-base block leading-tight">
-                  RAYCON ADMIN
+                  RYVO ADMIN
                 </span>
                 <span className="text-[10px] font-bold text-purple-600 uppercase tracking-wider block">
                   Store Control Center

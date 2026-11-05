@@ -29,19 +29,19 @@ const FAQ_PROMPTS = [
     icon: Headphones,
     label: "Kết nối Bluetooth",
     reply:
-      "Để kết nối tai nghe Raycon: Hãy lấy cả 2 tai nghe ra khỏi hộp sạc, bật Bluetooth trên điện thoại/máy tính của bạn, tìm và chọn tên thiết bị (ví dụ 'The Everyday Earbuds') trong danh sách để ghép nối ngay lập tức!",
+      "Để kết nối tai nghe RYVO: Hãy lấy cả 2 tai nghe ra khỏi hộp sạc, bật Bluetooth trên điện thoại/máy tính của bạn, tìm và chọn tên thiết bị (ví dụ 'The Everyday Earbuds') trong danh sách để ghép nối ngay lập tức!",
   },
   {
     icon: RotateCcw,
     label: "Bảo hành & Đổi trả",
     reply:
-      "Raycon cam kết chính sách dùng thử 30 ngày 100% rủi ro bằng 0 (hoàn tiền không cần lý do) và bảo hành nhà sản xuất 1 năm 1 đổi 1 đối với mọi lỗi kỹ thuật.",
+      "RYVO cam kết chính sách dùng thử 30 ngày 100% rủi ro bằng 0 (hoàn tiền không cần lý do) và bảo hành nhà sản xuất 1 năm 1 đổi 1 đối với mọi lỗi kỹ thuật.",
   },
   {
     icon: Truck,
     label: "Thời gian giao hàng",
     reply:
-      "Đơn hàng đặt trước 14:00 được xử lý cùng ngày. Thời gian giao hàng tiêu chuẩn từ 2 – 4 ngày làm việc trên toàn quốc, miễn phí vận chuyển cho đơn hàng trên $50.",
+      "Đơn hàng đặt trước 14:00 được xử lý cùng ngày. Thời gian giao hàng tiêu chuẩn từ 2 – 4 ngày làm việc trên toàn quốc, miễn phí vận chuyển cho đơn hàng từ 500.000₫.",
   },
 ];
 
@@ -54,7 +54,7 @@ export function FloatingChatWidget() {
     {
       id: "welcome",
       sender: "bot",
-      text: "Xin chào! 👋 Tôi là trợ lý ảo Raycon. Tôi có thể giúp gì cho bạn hôm nay?",
+      text: "Xin chào! 👋 Tôi là trợ lý ảo RYVO. Tôi có thể giúp gì cho bạn hôm nay?",
       time: "Vừa xong",
     },
   ]);
@@ -86,7 +86,7 @@ export function FloatingChatWidget() {
       // Bot automated intelligent reply
       setTimeout(() => {
         let botResponse =
-          "Cảm ơn bạn đã liên hệ! Yêu cầu của bạn đã được ghi nhận. Để được hỗ trợ trực tiếp từ chuyên viên kỹ thuật, bạn có thể gọi hotline 1-800-RAYCON hoặc để lại lời nhắn tại trang Liên hệ (/contact).";
+          "Cảm ơn bạn đã liên hệ! Yêu cầu của bạn đã được ghi nhận. Để được hỗ trợ trực tiếp từ chuyên viên kỹ thuật, bạn có thể gọi hotline 1-800-RYVO (1800 7986) hoặc để lại lời nhắn tại trang Liên hệ (/contact).";
 
         const lower = text.toLowerCase();
         if (
@@ -95,14 +95,14 @@ export function FloatingChatWidget() {
           lower.includes("pairing")
         ) {
           botResponse =
-            "Hướng dẫn kết nối: Lấy cả 2 tai nghe ra khỏi hộp sạc để tự động ghép đôi (đèn LED nhấp nháy), sau đó mở cài đặt Bluetooth trên máy và chọn thiết bị Raycon.";
+            "Hướng dẫn kết nối: Lấy cả 2 tai nghe ra khỏi hộp sạc để tự động ghép đôi (đèn LED nhấp nháy), sau đó mở cài đặt Bluetooth trên máy và chọn thiết bị RYVO.";
         } else if (
           lower.includes("bảo hành") ||
           lower.includes("đổi trả") ||
           lower.includes("warranty")
         ) {
           botResponse =
-            "Chính sách Raycon: Đổi trả trong vòng 30 ngày miễn phí hoàn tiền và bảo hành chính hãng 1 đổi 1 trong 1 năm.";
+            "Chính sách RYVO: Đổi trả trong vòng 30 ngày miễn phí hoàn tiền và bảo hành chính hãng 1 đổi 1 trong 1 năm.";
         } else if (
           lower.includes("giá") ||
           lower.includes("khuyến mãi") ||
@@ -110,14 +110,14 @@ export function FloatingChatWidget() {
           lower.includes("mã")
         ) {
           botResponse =
-            "Raycon đang có các mã giảm giá hấp dẫn: Nhập mã 'RAYCON10' (giảm 10%), 'RAYCON20' (giảm 20% cho đơn từ $100) hoặc 'FREESHIP' ngay tại Giỏ hàng!";
+            "RYVO đang có các mã giảm giá hấp dẫn: Nhập mã 'RYVO10' (giảm 10%), 'RYVO20' (giảm 20% cho đơn từ 1.000.000₫) hoặc 'FREESHIP' ngay tại Giỏ hàng!";
         } else if (
           lower.includes("chống ồn") ||
           lower.includes("anc") ||
           lower.includes("headphones")
         ) {
           botResponse =
-            "Dòng Everyday Headphones ANC sở hữu công nghệ Hybrid ANC 35dB, pin 45 giờ và đệm tai thoáng khí. Đang có sẵn trên hệ thống với giá ưu đãi $99.99.";
+            "Dòng Everyday Headphones ANC sở hữu công nghệ Hybrid ANC 35dB, pin 45 giờ và đệm tai thoáng khí. Đang có sẵn trên hệ thống với giá ưu đãi 2.290.000₫.";
         }
 
         setMessages((prev) => [
@@ -173,7 +173,7 @@ export function FloatingChatWidget() {
                 </div>
                 <div>
                   <h4 className="text-sm font-bold leading-tight flex items-center gap-1.5">
-                    <span>Hỗ Trợ Raycon</span>
+                    <span>Hỗ Trợ RYVO</span>
                     <Sparkles className="size-3 text-[#ffb13b]" />
                   </h4>
                   <p className="text-[10px] text-white/70">Đang trực tuyến · Sẵn sàng trợ giúp</p>
@@ -312,7 +312,7 @@ export function FloatingChatWidget() {
                     Hotline Miễn Cước 24/7
                   </span>
                   <span className="text-sm font-extrabold text-royal">
-                    1-800-RAYCON (1800 729 266)
+                    1-800-RYVO (1800 7986)
                   </span>
                 </div>
               </a>

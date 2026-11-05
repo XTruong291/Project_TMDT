@@ -27,7 +27,7 @@ export async function generateMetadata({
   const collection = getCollectionInfo(slug);
 
   return {
-    title: `${collection.title} – Raycon Audio`,
+    title: `${collection.title} – RYVO Audio`,
     description: collection.tagline,
   };
 }

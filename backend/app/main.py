@@ -39,9 +39,21 @@ async def lifespan(app: FastAPI):
             # Ensure orders has discount_amount and coupon_code
             order_cols = [r[0] for r in conn.execute(text("SHOW COLUMNS FROM orders")).fetchall()]
             if "discount_amount" not in order_cols:
-                conn.execute(text("ALTER TABLE orders ADD COLUMN discount_amount FLOAT NOT NULL DEFAULT 0.0"))
+                conn.execute(text("ALTER TABLE orders ADD COLUMN discount_amount DECIMAL(15, 2) NOT NULL DEFAULT 0.0"))
             if "coupon_code" not in order_cols:
                 conn.execute(text("ALTER TABLE orders ADD COLUMN coupon_code VARCHAR(64) NULL"))
+
+            # Expand currency columns to DECIMAL(15, 2) for Vietnamese Dong (VNĐ)
+            conn.execute(text("ALTER TABLE products MODIFY COLUMN price DECIMAL(15, 2) NOT NULL"))
+            conn.execute(text("ALTER TABLE products MODIFY COLUMN compare_at_price DECIMAL(15, 2) NULL"))
+            conn.execute(text("ALTER TABLE coupons MODIFY COLUMN discount_value DECIMAL(15, 2) NOT NULL"))
+            conn.execute(text("ALTER TABLE coupons MODIFY COLUMN min_order_amount DECIMAL(15, 2) NOT NULL DEFAULT 0.0"))
+            conn.execute(text("ALTER TABLE orders MODIFY COLUMN subtotal DECIMAL(15, 2) NOT NULL"))
+            conn.execute(text("ALTER TABLE orders MODIFY COLUMN shipping_fee DECIMAL(15, 2) NOT NULL DEFAULT 0.0"))
+            conn.execute(text("ALTER TABLE orders MODIFY COLUMN discount_amount DECIMAL(15, 2) NOT NULL DEFAULT 0.0"))
+            conn.execute(text("ALTER TABLE orders MODIFY COLUMN total_amount DECIMAL(15, 2) NOT NULL"))
+            conn.execute(text("ALTER TABLE order_items MODIFY COLUMN unit_price DECIMAL(15, 2) NOT NULL"))
+            conn.execute(text("ALTER TABLE order_items MODIFY COLUMN total_price DECIMAL(15, 2) NOT NULL"))
     except Exception as e:
         print(f"Migration note: {e}")
     yield
@@ -50,7 +62,7 @@ async def lifespan(app: FastAPI):
 app = FastAPI(
     title=settings.PROJECT_NAME,
     version=settings.VERSION,
-    description="Backend API for Raycon E-commerce application (FastAPI + MySQL + SQLAlchemy)",
+    description="Backend API for RYVO E-commerce application (FastAPI + MySQL + SQLAlchemy)",
     lifespan=lifespan,
 )
 

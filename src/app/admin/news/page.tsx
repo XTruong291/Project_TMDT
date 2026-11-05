@@ -446,7 +446,7 @@ export default function AdminNewsPage() {
                     required
                     value={formData.title}
                     onChange={(e) => handleTitleChange(e.target.value)}
-                    placeholder="Raycon ra mắt tai nghe mới"
+                    placeholder="RYVO ra mắt tai nghe mới"
                     className="w-full rounded-xl border border-gray-200 bg-gray-50/50 py-2.5 px-3.5 text-xs text-navy outline-none focus:border-navy focus:bg-white"
                   />
                 </div>
@@ -462,7 +462,7 @@ export default function AdminNewsPage() {
                     onChange={(e) =>
                       setFormData({ ...formData, slug: e.target.value })
                     }
-                    placeholder="raycon-ra-mat-tai-nghe-moi"
+                    placeholder="ryvo-ra-mat-tai-nghe-moi"
                     className="w-full rounded-xl border border-gray-200 bg-gray-50/50 py-2.5 px-3.5 text-xs text-navy outline-none focus:border-navy focus:bg-white font-mono"
                   />
                 </div>

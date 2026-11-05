@@ -18,7 +18,7 @@ import {
 } from "lucide-react";
 
 import { AuthModal } from "@/components/sites/raycon/auth-modal";
-import { RayconLogo } from "@/components/sites/raycon/icons";
+import { RyvoLogo } from "@/components/sites/raycon/icons";
 import { formatUsd } from "@/data/products";
 import { createOrder, verifyCoupon } from "@/lib/api";
 import { useAuthStore } from "@/store/use-auth-store";
@@ -92,7 +92,7 @@ export default function CheckoutPage() {
   if (!isClient) return null;
 
   const subtotal = getSubtotal();
-  const shippingFee = subtotal >= 50 || subtotal === 0 ? 0 : 4.99;
+  const shippingFee = subtotal >= 500000 || subtotal === 0 ? 0 : 30000;
   const discountAmount = getDiscountAmount();
   const finalTotal = Math.max(0, subtotal - discountAmount + shippingFee);
   const hasOutOfStockItems = items.some((item) => item.product.inStock === false);
@@ -308,7 +308,7 @@ export default function CheckoutPage() {
         {/* Header Bar */}
         <div className="mb-8 flex items-center justify-between border-b border-navy/10 pb-5">
           <Link href="/" className="inline-block text-navy">
-            <RayconLogo className="h-6 w-[110px]" />
+            <RyvoLogo className="h-6 w-[100px]" />
           </Link>
           <div className="flex items-center gap-2 text-xs font-semibold text-emerald-700 bg-emerald-50 px-3.5 py-1.5 rounded-full">
             <Lock className="size-3.5" />
@@ -563,7 +563,7 @@ export default function CheckoutPage() {
                       type="text"
                       value={couponCode}
                       onChange={(e) => setCouponCode(e.target.value)}
-                      placeholder="Mã giảm giá (ví dụ: RAYCON10)"
+                      placeholder="Mã giảm giá (ví dụ: RYVO10)"
                       className="h-10 flex-1 rounded-xl border border-navy/15 px-3 text-xs uppercase text-navy focus:border-royal focus:outline-hidden"
                     />
                     <button
@@ -607,14 +607,6 @@ export default function CheckoutPage() {
                     )}
                   </span>
                 </div>
-                {discountAmount > 0 ? (
-                  <div className="flex justify-between text-emerald-600 font-semibold">
-                    <span className="flex items-center gap-1">
-                      <Tag className="size-3.5" /> Giảm giá khuyến mãi
-                    </span>
-                    <span>-{formatUsd(discountAmount)}</span>
-                  </div>
-                ) : null}
                 <div className="flex justify-between border-t border-navy/10 pt-3 text-base font-bold text-navy">
                   <span>Tổng thanh toán</span>
                   <span className="text-2xl font-bold text-royal">{formatUsd(finalTotal)}</span>

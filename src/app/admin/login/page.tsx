@@ -56,7 +56,7 @@ export default function AdminLoginPage() {
             <Shield className="size-6" />
           </div>
           <h1 className="text-2xl font-extrabold text-navy">
-            Raycon Admin Portal
+            RYVO Admin Portal
           </h1>
           <p className="mt-1 text-xs text-gray-500">
             Hệ thống quản lý sản phẩm và đơn hàng E-commerce

@@ -17,7 +17,7 @@ import {
   XCircle,
 } from "lucide-react";
 
-import { RayconLogo } from "@/components/sites/raycon/icons";
+import { RyvoLogo } from "@/components/sites/raycon/icons";
 import { formatUsd } from "@/data/products";
 import { cancelOrder, getMyOrders, trackOrder } from "@/lib/api";
 import { useAuthStore } from "@/store/use-auth-store";
@@ -268,7 +268,7 @@ function OrdersContent() {
             </Link>
             <span className="text-gray-300">|</span>
             <Link href="/" className="inline-block text-navy">
-              <RayconLogo className="h-6 w-[104px]" />
+              <RyvoLogo className="h-6 w-[100px]" />
             </Link>
           </div>
 
@@ -322,7 +322,7 @@ function OrdersContent() {
                 required
                 value={searchInput}
                 onChange={(e) => setSearchInput(e.target.value)}
-                placeholder="Ví dụ: RAY-20261104-XXXXXX"
+                placeholder="Ví dụ: RYVO-20261105-XXXXXX hoặc RAY-..."
                 className="h-12 w-full rounded-2xl border border-navy/15 pl-10 pr-4 text-sm text-navy outline-none focus:border-royal focus:ring-2 focus:ring-royal/20 transition-all uppercase"
               />
             </div>
@@ -535,7 +535,7 @@ function OrdersContent() {
                 <Package className="mx-auto size-12 text-gray-300 mb-3" />
                 <p className="text-sm font-bold text-navy">Bạn chưa có đơn hàng nào</p>
                 <p className="text-xs text-gray-500 mt-1">
-                  Khám phá các sản phẩm công nghệ âm thanh thời thượng từ Raycon ngay hôm nay.
+                  Khám phá các sản phẩm công nghệ âm thanh thời thượng từ RYVO ngay hôm nay.
                 </p>
                 <Link
                   href="/collections/all"

@@ -29,14 +29,14 @@ SEED_PRODUCTS = [
         "id": "everyday-earbuds",
         "handle": "the-everyday-earbuds",
         "name": "Everyday Earbuds",
-        "sku": "RAY-E25-BLK",
+        "sku": "RYVO-E25-BLK",
         "tagline": "Pocket-size sound for active days.",
         "category": "earbuds",
         "sub_category": "true-wireless",
         "collection_slug": "earbuds",
         "image": f"{IMG}/E25_BLA_IMG1.png",
-        "price": 63.99,
-        "compare_at_price": 79.98,
+        "price": 1590000.0,
+        "compare_at_price": 1990000.0,
         "badge": "20% OFF",
         "rating": 4.8,
         "review_count": 5,
@@ -90,14 +90,14 @@ SEED_PRODUCTS = [
         "id": "bone-conduction-gen-1",
         "handle": "bone-conduction-headphones",
         "name": "Everyday Bone Conduction Headphones (Gen 1)",
-        "sku": "RAY-BONE-BLU",
+        "sku": "RYVO-BONE-BLU",
         "tagline": "Total awareness for bud-free listening.",
         "category": "headphones",
         "sub_category": "bone-conduction",
         "collection_slug": "headphones",
         "image": f"{IMG}/bc-blue.png",
-        "price": 69.99,
-        "compare_at_price": 99.98,
+        "price": 1750000.0,
+        "compare_at_price": 2490000.0,
         "badge": "30% OFF",
         "rating": 4.7,
         "review_count": 3,
@@ -135,14 +135,14 @@ SEED_PRODUCTS = [
         "id": "essential-open-earbuds",
         "handle": "essential-open-earbuds",
         "name": "Essential Open Earbuds",
-        "sku": "RAY-OPEN-BLK",
+        "sku": "RYVO-OPEN-BLK",
         "tagline": "Minimalist design for all day comfort.",
         "category": "open-audio",
         "sub_category": "open-clip",
         "collection_slug": "open-audio",
         "image": f"{IMG}/515.2514_6e551754-ab11-46e0-9eca-d9cb9a6e0ea6.png",
-        "price": 47.99,
-        "compare_at_price": 79.98,
+        "price": 1190000.0,
+        "compare_at_price": 1990000.0,
         "badge": "40% OFF",
         "rating": 5.0,
         "review_count": 2,
@@ -184,14 +184,14 @@ SEED_PRODUCTS = [
         "id": "everyday-clip-earbuds",
         "handle": "everyday-clip-earbuds",
         "name": "Everyday Clip Earbuds",
-        "sku": "RAY-CLIP-BLK",
+        "sku": "RYVO-CLIP-BLK",
         "tagline": "Lightweight, clip-on sound that never gets in the way.",
         "category": "open-audio",
         "sub_category": "open-clip",
         "collection_slug": "open-audio",
         "image": f"{IMG}/O55_bla_002_V1.png",
-        "price": 69.99,
-        "compare_at_price": 99.98,
+        "price": 1750000.0,
+        "compare_at_price": 2490000.0,
         "badge": "30% OFF",
         "rating": 4.5,
         "review_count": 2,
@@ -232,14 +232,14 @@ SEED_PRODUCTS = [
         "id": "fitness-earbuds",
         "handle": "the-fitness-earbuds",
         "name": "Fitness Earbuds",
-        "sku": "RAY-FIT-BLU",
+        "sku": "RYVO-FIT-BLU",
         "tagline": "A perfect fit to keep you in the zone.",
         "category": "earbuds",
         "sub_category": "sport-fitness",
         "collection_slug": "earbuds",
         "image": f"{IMG}/E45_BLU_IMG1_d64b334f-cb84-48a3-b8fb-9c0a8e264cee.png",
-        "price": 83.99,
-        "compare_at_price": 119.98,
+        "price": 2090000.0,
+        "compare_at_price": 2990000.0,
         "badge": "NEW - 30% OFF",
         "rating": 4.7,
         "review_count": 3,
@@ -275,14 +275,14 @@ SEED_PRODUCTS = [
         "id": "everyday-headphones",
         "handle": "the-everyday-h20-headphones",
         "name": "Everyday Headphones",
-        "sku": "RAY-H20-BLK",
+        "sku": "RYVO-H20-BLK",
         "tagline": "Built for long days, tuned for every sound.",
         "category": "headphones",
         "sub_category": "over-ear-anc",
         "collection_slug": "headphones",
         "image": f"{IMG}/H20_BLA_IMG1_720x.png",
-        "price": 69.99,
-        "compare_at_price": 99.98,
+        "price": 1750000.0,
+        "compare_at_price": 2490000.0,
         "badge": "30% OFF",
         "rating": 4.8,
         "review_count": 4,
@@ -309,14 +309,14 @@ SEED_PRODUCTS = [
         "id": "magic-spin-cable",
         "handle": "magic-spin-cable",
         "name": "Magic Spin Cable",
-        "sku": "RAY-SPN-BLK",
+        "sku": "RYVO-SPN-BLK",
         "tagline": "Ends rotate 180 degrees for frayproof charging.",
         "category": "power-tech",
         "sub_category": "fast-cables",
         "collection_slug": "power-tech",
         "image": f"{IMG}/SPN61C_BLA_CAROUSEL_IMG1_720x.png",
-        "price": 19.99,
-        "compare_at_price": 24.98,
+        "price": 490000.0,
+        "compare_at_price": 590000.0,
         "badge": None,
         "rating": 4.9,
         "review_count": 3,
@@ -351,6 +351,30 @@ SEED_PRODUCTS = [
 
 SEED_COUPONS = [
     {
+        "code": "RYVO10",
+        "discount_type": "percent",
+        "discount_value": 10.0,
+        "min_order_amount": 0.0,
+        "description": "Ưu đãi RYVO: Giảm ngay 10% trên tổng giá trị đơn hàng",
+        "is_active": True,
+    },
+    {
+        "code": "RYVO20",
+        "discount_type": "percent",
+        "discount_value": 20.0,
+        "min_order_amount": 1000000.0,
+        "description": "Ưu đãi RYVO: Giảm 20% cho đơn hàng từ 1.000.000₫ trở lên",
+        "is_active": True,
+    },
+    {
+        "code": "FREESHIP",
+        "discount_type": "fixed",
+        "discount_value": 30000.0,
+        "min_order_amount": 500000.0,
+        "description": "Miễn phí cước giao hàng (Giảm 30.000₫ cho đơn từ 500.000₫)",
+        "is_active": True,
+    },
+    {
         "code": "RAYCON10",
         "discount_type": "percent",
         "discount_value": 10.0,
@@ -362,16 +386,8 @@ SEED_COUPONS = [
         "code": "RAYCON20",
         "discount_type": "percent",
         "discount_value": 20.0,
-        "min_order_amount": 100.0,
-        "description": "Giảm 20% cho đơn hàng từ $100 trở lên",
-        "is_active": True,
-    },
-    {
-        "code": "FREESHIP",
-        "discount_type": "fixed",
-        "discount_value": 15.0,
-        "min_order_amount": 50.0,
-        "description": "Khuyến mại cước giao hàng (Giảm $15 cho đơn từ $50)",
+        "min_order_amount": 1000000.0,
+        "description": "Giảm 20% cho đơn hàng từ 1.000.000₫ trở lên",
         "is_active": True,
     },
 ]
@@ -445,17 +461,17 @@ SEED_REVIEWS = [
 
 SEED_ABOUT_SECTIONS = [
     {
-        "title": "Raycon Global - Kỷ nguyên Âm thanh Không dây Dễ tiếp cận",
+        "title": "RYVO Audio - Kỷ nguyên Âm thanh Không dây Thông minh",
         "category": "company_overview",
-        "content": "Được thành lập vào năm 2017 bởi Ray J cùng các chuyên gia hàng đầu ngành âm thanh tại New York, Raycon ra đời với sứ mệnh xóa bỏ rào cản giá cả đối với các thiết bị âm thanh không dây cao cấp. Chúng tôi tin rằng âm thanh tuyệt hảo không nhất thiết phải đi kèm mức giá xa xỉ, mà phải đồng hành cùng nhịp sống hàng ngày của tất cả mọi người.",
+        "content": "Được sáng lập với niềm đam mê âm học hiện đại cùng các chuyên gia hàng đầu ngành âm thanh, RYVO ra đời với sứ mệnh xóa bỏ rào cản giá cả đối với các thiết bị âm thanh không dây cao cấp. Chúng tôi tin rằng âm thanh tuyệt hảo không nhất thiết phải đi kèm mức giá xa xỉ, mà phải đồng hành cùng nhịp sống hàng ngày của tất cả mọi người.",
         "image_url": f"{IMG}/earbuds-lifestyle.png",
         "is_visible": True,
         "sort_order": 1,
     },
     {
-        "title": "Hệ sinh thái Sản phẩm & Dịch vụ Âm thanh Raycon",
+        "title": "Hệ sinh thái Sản phẩm & Dịch vụ Âm thanh RYVO",
         "category": "products_services",
-        "content": "Raycon cung cấp dải sản phẩm hoàn chỉnh phục vụ cuộc sống năng động: từ dòng tai nghe nhét tai True Wireless siêu nhỏ gọn (Everyday Earbuds), tai nghe truyền âm qua xương (Bone Conduction), tai nghe chụp tai chống ồn chủ động (Everyday Headphones ANC) cho tới cáp sạc nhanh đa năng Magic Spin. Mọi sản phẩm đều đi kèm chính sách đổi trả 30 ngày và bảo hành chính hãng 1 năm.",
+        "content": "RYVO cung cấp dải sản phẩm hoàn chỉnh phục vụ cuộc sống năng động: từ dòng tai nghe nhét tai True Wireless siêu nhỏ gọn (Everyday Earbuds), tai nghe truyền âm qua xương (Bone Conduction), tai nghe chụp tai chống ồn chủ động (Everyday Headphones ANC) cho tới cáp sạc nhanh đa năng Magic Spin. Mọi sản phẩm đều đi kèm chính sách đổi trả 30 ngày và bảo hành chính hãng 1 năm.",
         "image_url": f"{IMG}/E25_BLA_IMG1.png",
         "is_visible": True,
         "sort_order": 2,
@@ -463,7 +479,7 @@ SEED_ABOUT_SECTIONS = [
     {
         "title": "Tầm nhìn & Sứ mệnh Thương hiệu",
         "category": "mission_vision",
-        "content": "Sứ mệnh của chúng tôi là truyền cảm hứng cho những con người bận rộn, người sáng tạo và thế hệ trẻ vươn tới mục tiêu mỗi ngày bằng âm thanh giàu năng lượng. Tầm nhìn 2030: Trở thành thương hiệu âm thanh cá nhân số 1 về trải nghiệm người dùng thực tế và độ bền bỉ trong phân khúc dưới $150.",
+        "content": "Sứ mệnh của chúng tôi là truyền cảm hứng cho những con người bận rộn, người sáng tạo và thế hệ trẻ vươn tới mục tiêu mỗi ngày bằng âm thanh giàu năng lượng. Tầm nhìn 2030: Trở thành thương hiệu âm thanh cá nhân số 1 về trải nghiệm người dùng thực tế và độ bền bỉ trong phân khúc dưới 3.500.000₫.",
         "image_url": f"{IMG}/open-audio-lifestyle.png",
         "is_visible": True,
         "sort_order": 3,
@@ -471,7 +487,7 @@ SEED_ABOUT_SECTIONS = [
     {
         "title": "Cam kết Chất lượng & Trải nghiệm Khách hàng Vượt trội",
         "category": "company_overview",
-        "content": "Hơn 2 triệu khách hàng trên toàn thế giới đã tin tưởng Raycon. Mỗi sản phẩm trước khi xuất xưởng đều trải qua quy trình kiểm thử độ bền 10.000 giờ, chuẩn kháng nước IPX4/IPX7 và tinh chỉnh âm học Signature Sound độc quyền mang lại âm bass sâu lắng và giọng hát trong trẻo.",
+        "content": "Hơn 2 triệu khách hàng trên toàn thế giới đã tin tưởng RYVO. Mỗi sản phẩm trước khi xuất xưởng đều trải qua quy trình kiểm thử độ bền 10.000 giờ, chuẩn kháng nước IPX4/IPX7 và tinh chỉnh âm học Signature Sound độc quyền mang lại âm bass sâu lắng và giọng hát trong trẻo.",
         "image_url": f"{IMG}/headphones-lifestyle.png",
         "is_visible": True,
         "sort_order": 4,
@@ -480,43 +496,43 @@ SEED_ABOUT_SECTIONS = [
 
 SEED_ARTICLES = [
     {
-        "slug": "raycon-ra-mat-dong-tai-nghe-chong-on-anc-everyday-pro",
-        "title": "Raycon chính thức ra mắt tai nghe chống ồn ANC Everyday Pro thế hệ mới",
-        "summary": "Dòng tai nghe chụp tai hàng đầu của Raycon nâng cấp công nghệ chống ồn chủ động Hybrid ANC 35dB, thời lượng pin 45 giờ cùng chất âm cân bằng chuyên nghiệp.",
-        "content": "Hôm nay, Raycon chính thức công bố thế hệ tai nghe không dây Everyday Pro Headphones với nhiều cải tiến mang tính đột phá dành cho giới làm việc văn phòng và người thường xuyên di chuyển.\n\nĐiểm nhấn lớn nhất là chip xử lý ANC thế hệ 3, giúp triệt tiêu tiếng ồn từ môi trường văn phòng, quán cà phê hoặc trên máy bay lên tới 35dB. Ngoài ra, đệm tai bọc da protein công thái học thoáng khí mang lại cảm giác đeo nhẹ êm suốt cả ngày dài.\n\nSản phẩm được trang bị hệ thống 4 microphone định hướng chùm sóng lọc gió, đàm thoại trong trẻo dù đang đi dạo trên phố hay tham gia các cuộc họp trực tuyến quan trọng. Hiện sản phẩm đã có mặt trên hệ thống Raycon Store với giá bán ưu đãi $99.99.",
+        "slug": "ryvo-ra-mat-dong-tai-nghe-chong-on-anc-everyday-pro",
+        "title": "RYVO chính thức ra mắt tai nghe chống ồn ANC Everyday Pro thế hệ mới",
+        "summary": "Dòng tai nghe chụp tai hàng đầu của RYVO nâng cấp công nghệ chống ồn chủ động Hybrid ANC 35dB, thời lượng pin 45 giờ cùng chất âm cân bằng chuyên nghiệp.",
+        "content": "Hôm nay, RYVO chính thức công bố thế hệ tai nghe không dây Everyday Pro Headphones với nhiều cải tiến mang tính đột phá dành cho giới làm việc văn phòng và người thường xuyên di chuyển.\n\nĐiểm nhấn lớn nhất là chip xử lý ANC thế hệ 3, giúp triệt tiêu tiếng ồn từ môi trường văn phòng, quán cà phê hoặc trên máy bay lên tới 35dB. Ngoài ra, đệm tai bọc da protein công thái học thoáng khí mang lại cảm giác đeo nhẹ êm suốt cả ngày dài.\n\nSản phẩm được trang bị hệ thống 4 microphone định hướng chùm sóng lọc gió, đàm thoại trong trẻo dù đang đi dạo trên phố hay tham gia các cuộc họp trực tuyến quan trọng. Hiện sản phẩm đã có mặt trên hệ thống RYVO Store với giá bán ưu đãi 2.290.000₫.",
         "thumbnail": f"{IMG}/headphones-lifestyle.png",
         "category": "su-kien",
-        "author": "Ban Biên Tập Raycon",
+        "author": "Ban Biên Tập RYVO",
         "is_published": True,
     },
     {
         "slug": "cong-nghe-truyen-am-qua-xuong-bone-conduction-hoat-dong-the-nao",
         "title": "Công nghệ truyền âm qua xương (Bone Conduction) hoạt động như thế nào?",
         "summary": "Khám phá nguyên lý khoa học đằng sau dòng tai nghe Open Ear - nghe nhạc rõ nét mà vẫn cảm nhận trọn vẹn âm thanh xung quanh khi chạy bộ và tập gym.",
-        "content": "Khác với tai nghe truyền thống truyền sóng âm qua màng nhĩ, công nghệ Bone Conduction truyền rung động âm thanh thẳng qua xương gò má vào ốc tai.\n\nĐiều này mang lại 3 ưu điểm vượt trội cho người chơi thể thao:\n1. Giữ cho ống tai luôn mở thông thoáng: Không gây bí bách hay tích tụ mồ hôi khi vận động cường độ cao.\n2. Nâng cao an toàn: Bạn có thể nghe rõ tiếng còi xe, tiếng người gọi hoặc thông báo ga tàu trong khi vẫn đang thưởng thức playlist yêu thích.\n3. Bảo vệ thính lực lâu dài: Giảm áp lực trực tiếp lên màng nhĩ nhạy cảm.\n\nDòng Raycon Everyday Bone Conduction Headphones đã được kiểm nghiệm độ bám chắc chắn ngay cả khi bạn chạy nước rút hay nhảy dây.",
+        "content": "Khác với tai nghe truyền thống truyền sóng âm qua màng nhĩ, công nghệ Bone Conduction truyền rung động âm thanh thẳng qua xương gò má vào ốc tai.\n\nĐiều này mang lại 3 ưu điểm vượt trội cho người chơi thể thao:\n1. Giữ cho ống tai luôn mở thông thoáng: Không gây bí bách hay tích tụ mồ hôi khi vận động cường độ cao.\n2. Nâng cao an toàn: Bạn có thể nghe rõ tiếng còi xe, tiếng người gọi hoặc thông báo ga tàu trong khi vẫn đang thưởng thức playlist yêu thích.\n3. Bảo vệ thính lực lâu dài: Giảm áp lực trực tiếp lên màng nhĩ nhạy cảm.\n\nDòng RYVO Everyday Bone Conduction Headphones đã được kiểm nghiệm độ bám chắc chắn ngay cả khi bạn chạy nước rút hay nhảy dây.",
         "thumbnail": f"{IMG}/open-audio-lifestyle.png",
         "category": "cong-nghe-am-thanh",
-        "author": "Kỹ Sư Âm Học Raycon",
+        "author": "Kỹ Sư Âm Học RYVO",
         "is_published": True,
     },
     {
         "slug": "huong-dan-chon-profile-am-thanh-pure-balanced-bass",
         "title": "Hướng dẫn chọn 3 chế độ âm thanh: Pure Sound, Balanced Sound & Bass Boost",
-        "summary": "Làm chủ 3 profile âm thanh độc quyền tích hợp sẵn trên tai nghe Raycon chỉ với một chạm để tối ưu cho từng thể loại nhạc và podcast.",
-        "content": "Tai nghe Raycon được lập trình sẵn 3 chế độ EQ vật lý mà bạn không cần phải cài thêm bất kỳ ứng dụng nặng nề nào vào điện thoại. Chỉ cần nhấn giữ nút chức năng trong 2 giây để chuyển đổi:\n\n1. Pure Sound (Âm thanh mộc): Tối ưu hóa dải trung, giảm thiểu tạp âm nền, cực kỳ phù hợp cho nghe Podcast, Audio book và đàm thoại rõ ràng.\n2. Balanced Sound (Âm thanh cân bằng): Cân bằng hài hòa giữa dải trung và cao, phù hợp cho nhạc Pop, Jazz, Acoustic và xem phim trực tuyến.\n3. Bass Boost (Tăng cường âm trầm): Đẩy mạnh dải âm siêu trầm, tạo nhịp điệu bùng nổ tràn đầy năng lượng cho các buổi tập Gym, chạy bộ với nhạc EDM, Rock hoặc Hip-hop.\n\nHãy thử nghiệm cả 3 chế độ trên chiếc Everyday Earbuds của bạn ngay hôm nay!",
+        "summary": "Làm chủ 3 profile âm thanh độc quyền tích hợp sẵn trên tai nghe RYVO chỉ với một chạm để tối ưu cho từng thể loại nhạc và podcast.",
+        "content": "Tai nghe RYVO được lập trình sẵn 3 chế độ EQ vật lý mà bạn không cần phải cài thêm bất kỳ ứng dụng nặng nề nào vào điện thoại. Chỉ cần nhấn giữ nút chức năng trong 2 giây để chuyển đổi:\n\n1. Pure Sound (Âm thanh mộc): Tối ưu hóa dải trung, giảm thiểu tạp âm nền, cực kỳ phù hợp cho nghe Podcast, Audio book và đàm thoại rõ ràng.\n2. Balanced Sound (Âm thanh cân bằng): Cân bằng hài hòa giữa dải trung và cao, phù hợp cho nhạc Pop, Jazz, Acoustic và xem phim trực tuyến.\n3. Bass Boost (Tăng cường âm trầm): Đẩy mạnh dải âm siêu trầm, tạo nhịp điệu bùng nổ tràn đầy năng lượng cho các buổi tập Gym, chạy bộ với nhạc EDM, Rock hoặc Hip-hop.\n\nHãy thử nghiệm cả 3 chế độ trên chiếc Everyday Earbuds của bạn ngay hôm nay!",
         "thumbnail": f"{IMG}/earbuds-lifestyle.png",
         "category": "tin-tuc",
-        "author": "Ban Biên Tập Raycon",
+        "author": "Ban Biên Tập RYVO",
         "is_published": True,
     },
     {
         "slug": "chuong-trinh-doi-cu-lay-moi-va-bao-ve-moi-truong-2026",
-        "title": "Raycon phát động chương trình Thu cũ đổi mới & Tái chế xanh 2026",
-        "summary": "Hỗ trợ khách hàng nâng cấp tai nghe cũ lên các dòng sản phẩm Raycon mới nhất với voucher trợ giá lên tới 25%, chung tay giảm thiểu rác thải điện tử.",
-        "content": "Nhằm lan tỏa thông điệp sống xanh và phát triển bền vững, Raycon khởi động chiến dịch 'Green Beats 2026' trên toàn hệ thống từ tháng 11/2026.\n\nChính sách chương trình bao gồm:\n- Tiếp nhận mọi thiết bị tai nghe cũ thuộc bất kỳ thương hiệu nào (kể cả đã hỏng).\n- Tặng ngay Voucher giảm giá 20% - 25% khi mua các dòng tai nghe Raycon chính hãng mới.\n- Toàn bộ linh kiện pin Lithium và nhựa thu gom sẽ được chuyển giao cho các đối tác xử lý rác thải công nghệ theo tiêu chuẩn RoHS quốc tế.\n\nHãy cùng Raycon vừa nâng tầm trải nghiệm âm nhạc, vừa bảo vệ môi trường sống của chúng ta!",
+        "title": "RYVO phát động chương trình Thu cũ đổi mới & Tái chế xanh 2026",
+        "summary": "Hỗ trợ khách hàng nâng cấp tai nghe cũ lên các dòng sản phẩm RYVO mới nhất với voucher trợ giá lên tới 25%, chung tay giảm thiểu rác thải điện tử.",
+        "content": "Nhằm lan tỏa thông điệp sống xanh và phát triển bền vững, RYVO khởi động chiến dịch 'Green Beats 2026' trên toàn hệ thống từ tháng 11/2026.\n\nChính sách chương trình bao gồm:\n- Tiếp nhận mọi thiết bị tai nghe cũ thuộc bất kỳ thương hiệu nào (kể cả đã hỏng).\n- Tặng ngay Voucher giảm giá 20% - 25% khi mua các dòng tai nghe RYVO chính hãng mới.\n- Toàn bộ linh kiện pin Lithium và nhựa thu gom sẽ được chuyển giao cho các đối tác xử lý rác thải công nghệ theo tiêu chuẩn RoHS quốc tế.\n\nHãy cùng RYVO vừa nâng tầm trải nghiệm âm nhạc, vừa bảo vệ môi trường sống của chúng ta!",
         "thumbnail": f"{IMG}/E25_BLU_IMG1.png",
         "category": "khuyen-mai",
-        "author": "Phòng Trách Nhiệm Xã Hội Raycon",
+        "author": "Phòng Trách Nhiệm Xã Hội RYVO",
         "is_published": True,
     },
 ]
@@ -528,7 +544,7 @@ SEED_CONTACTS = [
         "phone": "0912345678",
         "address": "128 Hai Bà Trưng, Phường Đa Kao, Quận 1, TP. Hồ Chí Minh",
         "subject": "Tư vấn mua tai nghe chạy bộ",
-        "message": "Chào Raycon, tôi muốn được tư vấn dòng tai nghe Bone Conduction cho người chạy marathon ngoài trời, pin dùng được bao lâu và có chống nước mưa tốt không?",
+        "message": "Chào RYVO, tôi muốn được tư vấn dòng tai nghe Bone Conduction cho người chạy marathon ngoài trời, pin dùng được bao lâu và có chống nước mưa tốt không?",
         "status": "unread",
     },
     {
@@ -536,8 +552,8 @@ SEED_CONTACTS = [
         "email": "phuong.tran@gmail.com",
         "phone": "0988776655",
         "address": "45 Hoàng Hoa Thám, Phường Liễu Giai, Quận Ba Đình, Hà Nội",
-        "subject": "Hợp tác đại lý phân phối sản phẩm Raycon",
-        "message": "Công ty chúng tôi có chuỗi cửa hàng phụ kiện công nghệ tại Hà Nội và Đà Nẵng, muốn tìm hiểu chính sách chiết khấu và nhập hàng tai nghe Raycon chính hãng.",
+        "subject": "Hợp tác đại lý phân phối sản phẩm RYVO",
+        "message": "Công ty chúng tôi có chuỗi cửa hàng phụ kiện công nghệ tại Hà Nội và Đà Nẵng, muốn tìm hiểu chính sách chiết khấu và nhập hàng tai nghe RYVO chính hãng.",
         "status": "read",
     },
     {
@@ -578,44 +594,118 @@ def seed_database():
             conn.execute(text("ALTER TABLE products ADD COLUMN sub_category VARCHAR(100) NULL"))
             print("    [+] Added column 'sub_category' to products table")
 
+        # Expand currency columns to DECIMAL(15, 2) for Vietnamese Dong (VNĐ)
+        conn.execute(text("ALTER TABLE products MODIFY COLUMN price DECIMAL(15, 2) NOT NULL"))
+        conn.execute(text("ALTER TABLE products MODIFY COLUMN compare_at_price DECIMAL(15, 2) NULL"))
+        conn.execute(text("ALTER TABLE coupons MODIFY COLUMN discount_value DECIMAL(15, 2) NOT NULL"))
+        conn.execute(text("ALTER TABLE coupons MODIFY COLUMN min_order_amount DECIMAL(15, 2) NOT NULL DEFAULT 0.0"))
+        conn.execute(text("ALTER TABLE orders MODIFY COLUMN subtotal DECIMAL(15, 2) NOT NULL"))
+        conn.execute(text("ALTER TABLE orders MODIFY COLUMN shipping_fee DECIMAL(15, 2) NOT NULL DEFAULT 0.0"))
+        conn.execute(text("ALTER TABLE orders MODIFY COLUMN discount_amount DECIMAL(15, 2) NOT NULL DEFAULT 0.0"))
+        conn.execute(text("ALTER TABLE orders MODIFY COLUMN total_amount DECIMAL(15, 2) NOT NULL"))
+        conn.execute(text("ALTER TABLE order_items MODIFY COLUMN unit_price DECIMAL(15, 2) NOT NULL"))
+        conn.execute(text("ALTER TABLE order_items MODIFY COLUMN total_price DECIMAL(15, 2) NOT NULL"))
+        print("    [+] Expanded currency columns in all tables to DECIMAL(15, 2)")
+
+        # Convert historical orders from USD (< 10000) to VNĐ (x25,000)
+        conn.execute(text("""
+            UPDATE orders SET 
+                subtotal = ROUND(subtotal * 25000, -3),
+                total_amount = ROUND(total_amount * 25000, -3),
+                shipping_fee = CASE WHEN shipping_fee > 0 THEN 30000.0 ELSE 0.0 END,
+                discount_amount = ROUND(discount_amount * 25000, -3)
+            WHERE total_amount < 10000
+        """))
+        conn.execute(text("""
+            UPDATE order_items SET
+                unit_price = ROUND(unit_price * 25000, -3),
+                total_price = ROUND(total_price * 25000, -3)
+            WHERE total_price < 10000
+        """))
+        print("    [+] Migrated historical orders to VNĐ")
+
+        # Rebranding SQL Updates: Case-sensitive and Case-insensitive replacement
+        conn.execute(text("""
+            UPDATE products SET 
+                sku = REPLACE(sku, 'RAY-', 'RYVO-'),
+                name = REPLACE(REPLACE(name, 'Raycon', 'RYVO'), 'RAYCON', 'RYVO'),
+                description = REPLACE(REPLACE(description, 'Raycon', 'RYVO'), 'RAYCON', 'RYVO')
+        """))
+        conn.execute(text("""
+            UPDATE about_sections SET 
+                title = REPLACE(REPLACE(title, 'Raycon', 'RYVO'), 'RAYCON', 'RYVO'),
+                content = REPLACE(REPLACE(content, 'Raycon', 'RYVO'), 'RAYCON', 'RYVO')
+        """))
+        conn.execute(text("""
+            UPDATE articles SET 
+                slug = REPLACE(slug, 'raycon', 'ryvo'),
+                title = REPLACE(REPLACE(title, 'Raycon', 'RYVO'), 'RAYCON', 'RYVO'),
+                summary = REPLACE(REPLACE(summary, 'Raycon', 'RYVO'), 'RAYCON', 'RYVO'),
+                content = REPLACE(REPLACE(content, 'Raycon', 'RYVO'), 'RAYCON', 'RYVO'),
+                author = REPLACE(REPLACE(author, 'Raycon', 'RYVO'), 'RAYCON', 'RYVO')
+        """))
+        conn.execute(text("""
+            UPDATE product_reviews SET 
+                title = REPLACE(REPLACE(title, 'Raycon', 'RYVO'), 'RAYCON', 'RYVO'),
+                comment = REPLACE(REPLACE(comment, 'Raycon', 'RYVO'), 'RAYCON', 'RYVO')
+        """))
+        conn.execute(text("""
+            UPDATE contacts SET 
+                subject = REPLACE(REPLACE(subject, 'Raycon', 'RYVO'), 'RAYCON', 'RYVO'),
+                message = REPLACE(REPLACE(message, 'Raycon', 'RYVO'), 'RAYCON', 'RYVO')
+        """))
+        conn.execute(text("""
+            UPDATE coupons SET 
+                description = REPLACE(REPLACE(description, 'Raycon', 'RYVO'), 'RAYCON', 'RYVO')
+        """))
+        conn.execute(text("""
+            UPDATE users SET 
+                full_name = 'RYVO Administrator'
+            WHERE role = 'admin'
+        """))
+        print("    [+] Rebranding SQL migration applied to all MySQL tables (Raycon -> RYVO)")
+
     db = SessionLocal()
     try:
-        print("[*] Seeding default users...")
-        # 1. Admin user
-        admin_email = "admin@raycon.local"
-        admin_user = db.query(User).filter(User.email == admin_email).first()
-        if not admin_user:
-            admin_user = User(
-                email=admin_email,
-                hashed_password=hash_password("admin123"),
-                full_name="ADMIN",
-                phone="0901234567",
-                role=RoleEnum.ADMIN,
-                is_active=True,
-            )
-            db.add(admin_user)
-            print("    [+] Created Admin User: admin@raycon.local / admin123")
-        else:
-            admin_user.full_name = "ADMIN"
-            print("    [i] Admin user synchronized as ADMIN")
+        print("[*] Seeding default users (RYVO & Legacy)...")
+        # 1. Admin users (RYVO & Raycon legacy)
+        for admin_email in ["admin@ryvo.local", "admin@raycon.local"]:
+            admin_user = db.query(User).filter(User.email == admin_email).first()
+            if not admin_user:
+                admin_user = User(
+                    email=admin_email,
+                    hashed_password=hash_password("admin123"),
+                    full_name="RYVO Administrator",
+                    phone="0901234567",
+                    role=RoleEnum.ADMIN,
+                    is_active=True,
+                )
+                db.add(admin_user)
+                print(f"    [+] Created Admin User: {admin_email} / admin123")
+            else:
+                admin_user.full_name = "RYVO Administrator"
+                admin_user.role = RoleEnum.ADMIN
+                admin_user.is_active = True
+                print(f"    [i] Admin user synchronized: {admin_email}")
 
-        # 2. Customer user
-        customer_email = "user@raycon.local"
-        customer_user = db.query(User).filter(User.email == customer_email).first()
-        if not customer_user:
-            customer_user = User(
-                email=customer_email,
-                hashed_password=hash_password("user123"),
-                full_name="Xuân Trường",
-                phone="0987654321",
-                role=RoleEnum.CUSTOMER,
-                is_active=True,
-            )
-            db.add(customer_user)
-            print("    [+] Created Customer User: user@raycon.local / user123")
-        else:
-            customer_user.full_name = "Xuân Trường"
-            print("    [i] Customer user synchronized as Xuan Truong")
+        # 2. Customer users (RYVO & Raycon legacy)
+        for customer_email in ["user@ryvo.local", "user@raycon.local"]:
+            customer_user = db.query(User).filter(User.email == customer_email).first()
+            if not customer_user:
+                customer_user = User(
+                    email=customer_email,
+                    hashed_password=hash_password("user123"),
+                    full_name="Khách hàng RYVO",
+                    phone="0987654321",
+                    role=RoleEnum.CUSTOMER,
+                    is_active=True,
+                )
+                db.add(customer_user)
+                print(f"    [+] Created Customer User: {customer_email} / user123")
+            else:
+                customer_user.full_name = "Khách hàng RYVO"
+                customer_user.is_active = True
+                print(f"    [i] Customer user synchronized: {customer_email}")
 
         print("[*] Seeding products with SKU & Subcategories...")
         seeded_count = 0

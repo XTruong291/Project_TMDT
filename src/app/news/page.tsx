@@ -58,15 +58,15 @@ const SAMPLE_THUMBNAILS = [
 const DEFAULT_ARTICLES: Article[] = [
   {
     id: 1,
-    slug: "raycon-ra-mat-dong-tai-nghe-chong-on-anc-everyday-pro",
-    title: "Raycon chính thức ra mắt tai nghe chống ồn ANC Everyday Pro thế hệ mới",
+    slug: "ryvo-ra-mat-dong-tai-nghe-chong-on-anc-everyday-pro",
+    title: "RYVO chính thức ra mắt tai nghe chống ồn ANC Everyday Pro thế hệ mới",
     summary:
-      "Dòng tai nghe chụp tai hàng đầu của Raycon nâng cấp công nghệ chống ồn chủ động Hybrid ANC 35dB, thời lượng pin 45 giờ cùng chất âm cân bằng chuyên nghiệp.",
+      "Dòng tai nghe chụp tai hàng đầu của RYVO nâng cấp công nghệ chống ồn chủ động Hybrid ANC 35dB, thời lượng pin 45 giờ cùng chất âm cân bằng chuyên nghiệp.",
     content:
-      "Hôm nay, Raycon chính thức công bố thế hệ tai nghe không dây Everyday Pro Headphones với nhiều cải tiến mang tính đột phá dành cho giới làm việc văn phòng và người thường xuyên di chuyển...",
+      "Hôm nay, RYVO chính thức công bố thế hệ tai nghe không dây Everyday Pro Headphones với nhiều cải tiến mang tính đột phá dành cho giới làm việc văn phòng và người thường xuyên di chuyển...",
     thumbnail: "/sites/raycon/images/headphones-lifestyle.png",
     category: "su-kien",
-    author: "Ban Biên Tập Raycon",
+    author: "Ban Biên Tập RYVO",
     views: 128,
     isPublished: true,
     publishedAt: new Date().toISOString(),
@@ -83,7 +83,7 @@ const DEFAULT_ARTICLES: Article[] = [
       "Khác với tai nghe truyền thống truyền sóng âm qua màng nhĩ, công nghệ Bone Conduction truyền rung động âm thanh thẳng qua xương gò má vào ốc tai...",
     thumbnail: "/sites/raycon/images/open-audio-lifestyle.png",
     category: "cong-nghe-am-thanh",
-    author: "Kỹ Sư Âm Học Raycon",
+    author: "Kỹ Sư Âm Học RYVO",
     views: 245,
     isPublished: true,
     publishedAt: new Date(Date.now() - 86400000).toISOString(),
@@ -95,12 +95,12 @@ const DEFAULT_ARTICLES: Article[] = [
     slug: "huong-dan-chon-profile-am-thanh-pure-balanced-bass",
     title: "Hướng dẫn chọn 3 chế độ âm thanh: Pure Sound, Balanced Sound & Bass Boost",
     summary:
-      "Làm chủ 3 profile âm thanh độc quyền tích hợp sẵn trên tai nghe Raycon chỉ với một chạm để tối ưu cho từng thể loại nhạc và podcast.",
+      "Làm chủ 3 profile âm thanh độc quyền tích hợp sẵn trên tai nghe RYVO chỉ với một chạm để tối ưu cho từng thể loại nhạc và podcast.",
     content:
-      "Tai nghe Raycon được lập trình sẵn 3 chế độ EQ vật lý mà bạn không cần phải cài thêm bất kỳ ứng dụng nặng nề nào vào điện thoại...",
+      "Tai nghe RYVO được lập trình sẵn 3 chế độ EQ vật lý mà bạn không cần phải cài thêm bất kỳ ứng dụng nặng nề nào vào điện thoại...",
     thumbnail: "/sites/raycon/images/earbuds-lifestyle.png",
     category: "tin-tuc",
-    author: "Ban Biên Tập Raycon",
+    author: "Ban Biên Tập RYVO",
     views: 310,
     isPublished: true,
     publishedAt: new Date(Date.now() - 172800000).toISOString(),
@@ -110,14 +110,14 @@ const DEFAULT_ARTICLES: Article[] = [
   {
     id: 4,
     slug: "chuong-trinh-doi-cu-lay-moi-va-bao-ve-moi-truong-2026",
-    title: "Raycon phát động chương trình Thu cũ đổi mới & Tái chế xanh 2026",
+    title: "RYVO phát động chương trình Thu cũ đổi mới & Tái chế xanh 2026",
     summary:
-      "Hỗ trợ khách hàng nâng cấp tai nghe cũ lên các dòng sản phẩm Raycon mới nhất với voucher trợ giá lên tới 25%, chung tay giảm thiểu rác thải điện tử.",
+      "Hỗ trợ khách hàng nâng cấp tai nghe cũ lên các dòng sản phẩm RYVO mới nhất với voucher trợ giá lên tới 25%, chung tay giảm thiểu rác thải điện tử.",
     content:
-      "Nhằm lan tỏa thông điệp sống xanh và phát triển bền vững, Raycon khởi động chiến dịch 'Green Beats 2026' trên toàn hệ thống từ tháng 11/2026...",
+      "Nhằm lan tỏa thông điệp sống xanh và phát triển bền vững, RYVO khởi động chiến dịch 'Green Beats 2026' trên toàn hệ thống từ tháng 11/2026...",
     thumbnail: "/sites/raycon/images/E25_BLU_IMG1.png",
     category: "khuyen-mai",
-    author: "Phòng Trách Nhiệm Xã Hội Raycon",
+    author: "Phòng Trách Nhiệm Xã Hội RYVO",
     views: 89,
     isPublished: true,
     publishedAt: new Date(Date.now() - 259200000).toISOString(),
@@ -276,13 +276,13 @@ export default function NewsPage() {
             <div className="max-w-2xl">
               <div className="inline-flex items-center gap-2 rounded-full bg-white/10 px-3.5 py-1 text-xs font-bold tracking-wider uppercase backdrop-blur-xs mb-3">
                 <Sparkles className="size-3.5 text-[#ffb13b]" />
-                <span>Raycon Newsroom</span>
+                <span>RYVO Newsroom</span>
               </div>
               <h1 className="text-3xl md:text-5xl font-extrabold tracking-tight">
                 Tin Tức, Sự Kiện & Công Nghệ
               </h1>
               <p className="mt-3 text-sm md:text-base text-white/80">
-                Cập nhật xu hướng âm thanh mới nhất, các sự kiện ra mắt sản phẩm và mẹo tối ưu trải nghiệm âm nhạc từ Raycon.
+                Cập nhật xu hướng âm thanh mới nhất, các sự kiện ra mắt sản phẩm và mẹo tối ưu trải nghiệm âm nhạc từ RYVO.
               </p>
             </div>
 
@@ -502,7 +502,7 @@ export default function NewsPage() {
                   onChange={(e) =>
                     setFormData({ ...formData, title: e.target.value })
                   }
-                  placeholder="Ví dụ: Trải nghiệm tai nghe chống ồn mới nhất từ Raycon"
+                  placeholder="Ví dụ: Trải nghiệm tai nghe chống ồn mới nhất từ RYVO"
                   className="w-full rounded-xl border border-gray-200 bg-gray-50/50 py-2.5 px-3.5 text-xs text-navy outline-none focus:border-navy focus:bg-white"
                 />
               </div>

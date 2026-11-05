@@ -1,5 +1,5 @@
 import enum
-from sqlalchemy import Column, Integer, String, Float, Text, DateTime, Enum, ForeignKey, func
+from sqlalchemy import Column, Integer, String, Float, Text, DateTime, Enum, ForeignKey, DECIMAL, func
 from sqlalchemy.orm import relationship
 from app.core.database import Base
 
@@ -25,10 +25,10 @@ class Order(Base):
     shipping_city = Column(String(128), default="Hà Nội", nullable=False)
     shipping_district = Column(String(128), default="Hoàn Kiếm", nullable=False)
     payment_method = Column(String(64), default="cod", nullable=False)
-    shipping_fee = Column(Float, default=0.0, nullable=False)
-    discount_amount = Column(Float, default=0.0, nullable=False)
-    subtotal = Column(Float, nullable=False)
-    total_amount = Column(Float, nullable=False)
+    shipping_fee = Column(DECIMAL(15, 2), default=0.0, nullable=False)
+    discount_amount = Column(DECIMAL(15, 2), default=0.0, nullable=False)
+    subtotal = Column(DECIMAL(15, 2), nullable=False)
+    total_amount = Column(DECIMAL(15, 2), nullable=False)
     coupon_code = Column(String(64), nullable=True)
     status = Column(Enum(OrderStatus), default=OrderStatus.PENDING, nullable=False)
     notes = Column(Text, nullable=True)
@@ -49,9 +49,9 @@ class OrderItem(Base):
     product_name = Column(String(255), nullable=False)
     color_name = Column(String(64), nullable=False)
     color_image = Column(String(512), nullable=True)
-    unit_price = Column(Float, nullable=False)
+    unit_price = Column(DECIMAL(15, 2), nullable=False)
     quantity = Column(Integer, nullable=False)
-    total_price = Column(Float, nullable=False)
+    total_price = Column(DECIMAL(15, 2), nullable=False)
 
     order = relationship("Order", back_populates="items")
     product = relationship("Product")
