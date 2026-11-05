@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { Lock, Mail, User as UserIcon, X, Shield, Sparkles } from "lucide-react";
+import { Lock, Mail, X } from "lucide-react";
 import { loginUser, registerUser } from "@/lib/api";
 import { useAuthStore } from "@/store/use-auth-store";
 
@@ -19,6 +19,7 @@ export function AuthModal({ isOpen, onClose }: AuthModalProps) {
   const [mode, setMode] = useState<"login" | "register">("login");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
   const [fullName, setFullName] = useState("");
   const [phone, setPhone] = useState("");
   const [loading, setLoading] = useState(false);
@@ -26,12 +27,13 @@ export function AuthModal({ isOpen, onClose }: AuthModalProps) {
 
   if (!isOpen) return null;
 
-  async function handleLogin(targetEmail?: string, targetPassword?: string) {
-    const finalEmail = targetEmail || email;
-    const finalPassword = targetPassword || password;
+  async function handleLogin(e?: React.FormEvent) {
+    if (e) e.preventDefault();
+    const finalEmail = email.trim().toLowerCase();
+    const finalPassword = password;
 
     if (!finalEmail || !finalPassword) {
-      setError("Vui lòng điền đầy đủ Email và Mật khẩu.");
+      setError("Vui lòng nhập đầy đủ Email và Mật khẩu.");
       return;
     }
 
@@ -48,7 +50,7 @@ export function AuthModal({ isOpen, onClose }: AuthModalProps) {
       if (err instanceof Error) {
         setError(err.message);
       } else {
-        setError("Đăng nhập thất bại. Vui lòng kiểm tra lại thông tin.");
+        setError("Đăng nhập thất bại. Email hoặc mật khẩu không chính xác.");
       }
     } finally {
       setLoading(false);
@@ -57,24 +59,52 @@ export function AuthModal({ isOpen, onClose }: AuthModalProps) {
 
   async function handleRegister(e: React.FormEvent) {
     e.preventDefault();
-    if (!email || !password || !fullName) {
-      setError("Vui lòng điền đầy đủ các thông tin bắt buộc.");
+    const trimmedEmail = email.trim().toLowerCase();
+    const trimmedName = fullName.trim();
+    const trimmedPhone = phone.trim();
+
+    if (!trimmedName || trimmedName.length < 2) {
+      setError("Vui lòng nhập Họ và tên (tối thiểu 2 ký tự).");
+      return;
+    }
+
+    const emailRegex = /^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$/;
+    if (!emailRegex.test(trimmedEmail)) {
+      setError("Định dạng email không hợp lệ. Ví dụ: name@example.com");
+      return;
+    }
+
+    if (trimmedPhone) {
+      const phoneRegex = /^(0|\+84)[3|5|7|8|9][0-9]{8}$/;
+      if (!phoneRegex.test(trimmedPhone)) {
+        setError("Số điện thoại không hợp lệ (yêu cầu 10 số di động Việt Nam).");
+        return;
+      }
+    }
+
+    if (password.length < 6) {
+      setError("Mật khẩu phải chứa ít nhất 6 ký tự.");
+      return;
+    }
+
+    if (password !== confirmPassword) {
+      setError("Mật khẩu xác nhận không khớp. Vui lòng kiểm tra lại.");
       return;
     }
 
     setLoading(true);
     setError(null);
     try {
-      await registerUser(email, password, fullName, phone || undefined);
-      // Auto login after register
-      const res = await loginUser(email, password);
+      await registerUser(trimmedEmail, password, trimmedName, trimmedPhone || undefined);
+      // Automatically login after successful registration in MySQL
+      const res = await loginUser(trimmedEmail, password);
       setAuth(res.user, res.accessToken);
       onClose();
     } catch (err: unknown) {
       if (err instanceof Error) {
         setError(err.message);
       } else {
-        setError("Đăng ký tài khoản thất bại.");
+        setError("Đăng ký tài khoản không thành công. Vui lòng thử lại.");
       }
     } finally {
       setLoading(false);
@@ -105,59 +135,18 @@ export function AuthModal({ isOpen, onClose }: AuthModalProps) {
 
         {/* Content */}
         <div className="p-6">
-          {/* Quick Demo Login Preset Buttons */}
-          <div className="mb-6 rounded-xl border border-blue-100 bg-blue-50/60 p-3.5">
-            <div className="flex items-center gap-1.5 text-xs font-bold text-royal mb-2">
-              <Sparkles className="size-3.5 text-orange" />
-              <span>ĐĂNG NHẬP NHANH (DEMO & TEST)</span>
-            </div>
-            <div className="grid grid-cols-2 gap-2">
-              <button
-                type="button"
-                onClick={() => {
-                  setEmail("admin@raycon.local");
-                  setPassword("admin123");
-                  handleLogin("admin@raycon.local", "admin123");
-                }}
-                disabled={loading}
-                className="flex items-center justify-center gap-1.5 rounded-lg border border-purple-200 bg-white py-2 px-3 text-xs font-bold text-purple-700 shadow-sm hover:bg-purple-50 transition-colors"
-              >
-                <Shield className="size-3.5 text-purple-600" />
-                Admin (Quản trị)
-              </button>
-              <button
-                type="button"
-                onClick={() => {
-                  setEmail("user@raycon.local");
-                  setPassword("user123");
-                  handleLogin("user@raycon.local", "user123");
-                }}
-                disabled={loading}
-                className="flex items-center justify-center gap-1.5 rounded-lg border border-blue-200 bg-white py-2 px-3 text-xs font-bold text-royal shadow-sm hover:bg-blue-50 transition-colors"
-              >
-                <UserIcon className="size-3.5 text-royal" />
-                Khách hàng
-              </button>
-            </div>
-          </div>
-
           {error && (
-            <div className="mb-4 rounded-lg bg-red-50 border border-red-200 p-3 text-xs font-medium text-red-600 animate-in fade-in">
-              {error}
+            <div className="mb-4 rounded-xl bg-red-50 border border-red-200 p-3.5 text-xs font-semibold text-red-600 animate-in fade-in flex items-start gap-2">
+              <span className="font-bold">⚠️</span>
+              <span>{error}</span>
             </div>
           )}
 
           {mode === "login" ? (
-            <form
-              onSubmit={(e) => {
-                e.preventDefault();
-                handleLogin();
-              }}
-              className="space-y-4"
-            >
+            <form onSubmit={handleLogin} className="space-y-4">
               <div>
                 <label className="block text-xs font-bold uppercase tracking-wider text-navy/70 mb-1.5">
-                  Email
+                  Email *
                 </label>
                 <div className="relative">
                   <Mail className="absolute left-3.5 top-1/2 -translate-y-1/2 size-4 text-gray-400" />
@@ -166,7 +155,7 @@ export function AuthModal({ isOpen, onClose }: AuthModalProps) {
                     required
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
-                    placeholder="admin@raycon.local"
+                    placeholder="name@example.com"
                     className="w-full rounded-xl border border-gray-200 bg-gray-50/50 py-2.5 pl-10 pr-4 text-sm text-navy outline-none focus:border-navy focus:bg-white transition-all"
                   />
                 </div>
@@ -174,7 +163,7 @@ export function AuthModal({ isOpen, onClose }: AuthModalProps) {
 
               <div>
                 <label className="block text-xs font-bold uppercase tracking-wider text-navy/70 mb-1.5">
-                  Mật khẩu
+                  Mật khẩu *
                 </label>
                 <div className="relative">
                   <Lock className="absolute left-3.5 top-1/2 -translate-y-1/2 size-4 text-gray-400" />
@@ -183,7 +172,7 @@ export function AuthModal({ isOpen, onClose }: AuthModalProps) {
                     required
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
-                    placeholder="••••••••"
+                    placeholder="Nhập mật khẩu..."
                     className="w-full rounded-xl border border-gray-200 bg-gray-50/50 py-2.5 pl-10 pr-4 text-sm text-navy outline-none focus:border-navy focus:bg-white transition-all"
                   />
                 </div>
@@ -192,30 +181,30 @@ export function AuthModal({ isOpen, onClose }: AuthModalProps) {
               <button
                 type="submit"
                 disabled={loading}
-                className="w-full rounded-xl bg-navy py-3 text-sm font-bold text-white shadow-md hover:bg-navy/90 transition-all disabled:opacity-50"
+                className="w-full rounded-xl bg-navy py-3 text-sm font-bold text-white shadow-md hover:bg-navy/90 transition-all disabled:opacity-50 cursor-pointer"
               >
-                {loading ? "Đang xác thực..." : "Đăng nhập"}
+                {loading ? "Đang xác thực thông tin..." : "Đăng nhập"}
               </button>
             </form>
           ) : (
             <form onSubmit={handleRegister} className="space-y-3.5">
               <div>
                 <label className="block text-xs font-bold uppercase tracking-wider text-navy/70 mb-1">
-                  Họ và tên
+                  Họ và tên *
                 </label>
                 <input
                   type="text"
                   required
                   value={fullName}
                   onChange={(e) => setFullName(e.target.value)}
-                  placeholder="Xuân Trường"
+                  placeholder="Ví dụ: Nguyễn Văn An"
                   className="w-full rounded-xl border border-gray-200 bg-gray-50/50 py-2 px-3 text-sm text-navy outline-none focus:border-navy focus:bg-white"
                 />
               </div>
 
               <div>
                 <label className="block text-xs font-bold uppercase tracking-wider text-navy/70 mb-1">
-                  Email
+                  Email *
                 </label>
                 <input
                   type="email"
@@ -229,20 +218,20 @@ export function AuthModal({ isOpen, onClose }: AuthModalProps) {
 
               <div>
                 <label className="block text-xs font-bold uppercase tracking-wider text-navy/70 mb-1">
-                  Số điện thoại (tùy chọn)
+                  Số điện thoại
                 </label>
                 <input
                   type="tel"
                   value={phone}
                   onChange={(e) => setPhone(e.target.value)}
-                  placeholder="0912345678"
+                  placeholder="0912345678 (10 số)"
                   className="w-full rounded-xl border border-gray-200 bg-gray-50/50 py-2 px-3 text-sm text-navy outline-none focus:border-navy focus:bg-white"
                 />
               </div>
 
               <div>
                 <label className="block text-xs font-bold uppercase tracking-wider text-navy/70 mb-1">
-                  Mật khẩu
+                  Mật khẩu *
                 </label>
                 <input
                   type="password"
@@ -254,10 +243,24 @@ export function AuthModal({ isOpen, onClose }: AuthModalProps) {
                 />
               </div>
 
+              <div>
+                <label className="block text-xs font-bold uppercase tracking-wider text-navy/70 mb-1">
+                  Xác nhận lại mật khẩu *
+                </label>
+                <input
+                  type="password"
+                  required
+                  value={confirmPassword}
+                  onChange={(e) => setConfirmPassword(e.target.value)}
+                  placeholder="Nhập lại mật khẩu giống trên..."
+                  className="w-full rounded-xl border border-gray-200 bg-gray-50/50 py-2 px-3 text-sm text-navy outline-none focus:border-navy focus:bg-white"
+                />
+              </div>
+
               <button
                 type="submit"
                 disabled={loading}
-                className="w-full rounded-xl bg-royal py-3 text-sm font-bold text-white shadow-md hover:bg-royal/90 transition-all disabled:opacity-50"
+                className="w-full rounded-xl bg-royal py-3 text-sm font-bold text-white shadow-md hover:bg-royal/90 transition-all disabled:opacity-50 cursor-pointer"
               >
                 {loading ? "Đang tạo tài khoản..." : "Đăng ký ngay"}
               </button>
@@ -275,7 +278,7 @@ export function AuthModal({ isOpen, onClose }: AuthModalProps) {
                     setMode("register");
                     setError(null);
                   }}
-                  className="font-bold text-royal hover:underline"
+                  className="font-bold text-royal hover:underline cursor-pointer"
                 >
                   Đăng ký ngay
                 </button>
@@ -289,7 +292,7 @@ export function AuthModal({ isOpen, onClose }: AuthModalProps) {
                     setMode("login");
                     setError(null);
                   }}
-                  className="font-bold text-navy hover:underline"
+                  className="font-bold text-navy hover:underline cursor-pointer"
                 >
                   Đăng nhập
                 </button>

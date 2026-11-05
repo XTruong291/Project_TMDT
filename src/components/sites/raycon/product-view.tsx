@@ -1,22 +1,29 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   Check,
   ChevronRight,
   Minus,
   Plus,
   RotateCcw,
+  Send,
+  Share2,
   ShieldCheck,
   ShoppingBag,
+  Star,
   Truck,
 } from "lucide-react";
 
 import { formatReviewCount, formatUsd, type Product } from "@/data/products";
+import { getProductReviews, submitProductReview } from "@/lib/api";
+import { useAuthStore } from "@/store/use-auth-store";
 import { useCartStore } from "@/store/use-cart-store";
+import type { ProductReview } from "@/types/review";
 
-import { StarIcon } from "./icons";
+import { AuthModal } from "./auth-modal";
+import { FacebookIcon, StarIcon, TwitterIcon } from "./icons";
 import { ProductCard } from "./product-card";
 
 interface ProductViewProps {
@@ -28,10 +35,32 @@ export function ProductView({ product, relatedProducts }: ProductViewProps) {
   const [selectedColorIndex, setSelectedColorIndex] = useState(0);
   const [customActiveImage, setCustomActiveImage] = useState<string | null>(null);
   const [quantity, setQuantity] = useState(1);
-  const [activeTab, setActiveTab] = useState<"description" | "specs" | "shipping">(
-    "description",
-  );
+  const [activeTab, setActiveTab] = useState<
+    "description" | "specs" | "shipping" | "reviews"
+  >("description");
   const [added, setAdded] = useState(false);
+
+  // Auth & Session
+  const user = useAuthStore((state) => state.user);
+  const token = useAuthStore((state) => state.token);
+  const [authModalOpen, setAuthModalOpen] = useState(false);
+  const isOutOfStock = product.inStock === false;
+
+  // Reviews & Social Share State
+  const [reviews, setReviews] = useState<ProductReview[]>([]);
+  const [loadingReviews, setLoadingReviews] = useState(false);
+  const [copiedLink, setCopiedLink] = useState(false);
+  const [showReviewForm, setShowReviewForm] = useState(false);
+  const [submittingReview, setSubmittingReview] = useState(false);
+  const [reviewError, setReviewError] = useState<string | null>(null);
+  const [reviewSuccess, setReviewSuccess] = useState<string | null>(null);
+  const [reviewForm, setReviewForm] = useState({
+    rating: 5,
+    authorName: "",
+    authorEmail: "",
+    title: "",
+    comment: "",
+  });
 
   const addItem = useCartStore((state) => state.addItem);
 
@@ -47,16 +76,99 @@ export function ProductView({ product, relatedProducts }: ProductViewProps) {
   const activeImage =
     customActiveImage || selectedColor?.image || product.image;
 
+  useEffect(() => {
+    async function loadReviews() {
+      setLoadingReviews(true);
+      try {
+        const data = await getProductReviews(product.handle);
+        setReviews(data);
+      } catch (err) {
+        console.error("Failed to load reviews:", err);
+      } finally {
+        setLoadingReviews(false);
+      }
+    }
+    loadReviews();
+  }, [product.handle]);
+
   function handleSelectColor(index: number) {
     setSelectedColorIndex(index);
     setCustomActiveImage(null);
   }
 
+  useEffect(() => {
+    if (user) {
+      setReviewForm((prev) => ({
+        ...prev,
+        authorName: user.fullName || prev.authorName,
+        authorEmail: user.email || prev.authorEmail,
+      }));
+    }
+  }, [user]);
+
   function handleAddToCart() {
+    if (isOutOfStock) return;
     if (selectedColor) {
       addItem(product, selectedColor, quantity);
       setAdded(true);
       setTimeout(() => setAdded(false), 1200);
+    }
+  }
+
+  function handleCopyLink() {
+    if (typeof window !== "undefined") {
+      navigator.clipboard.writeText(window.location.href);
+      setCopiedLink(true);
+      setTimeout(() => setCopiedLink(false), 2000);
+    }
+  }
+
+  async function handleSubmitReview(e: React.FormEvent) {
+    e.preventDefault();
+    if (!token || !user) {
+      setReviewError("Vui lòng đăng nhập để gửi nhận xét và đánh giá sản phẩm.");
+      setAuthModalOpen(true);
+      return;
+    }
+
+    if (!reviewForm.comment.trim()) {
+      setReviewError("Vui lòng nhập nội dung nhận xét chi tiết.");
+      return;
+    }
+
+    setSubmittingReview(true);
+    setReviewError(null);
+    setReviewSuccess(null);
+
+    try {
+      const created = await submitProductReview(
+        product.handle,
+        {
+          authorName: user.fullName || reviewForm.authorName.trim(),
+          authorEmail: user.email || reviewForm.authorEmail.trim(),
+          rating: reviewForm.rating,
+          title: reviewForm.title.trim() || undefined,
+          comment: reviewForm.comment.trim(),
+        },
+        token,
+      );
+      setReviews((prev) => [created, ...prev]);
+      setReviewSuccess("🎉 Cảm ơn bạn! Đánh giá đã được gửi và cập nhật thành công.");
+      setReviewForm((prev) => ({
+        ...prev,
+        rating: 5,
+        title: "",
+        comment: "",
+      }));
+      setShowReviewForm(false);
+    } catch (err: unknown) {
+      if (err instanceof Error) {
+        setReviewError(err.message);
+      } else {
+        setReviewError("Không thể gửi đánh giá lúc này. Vui lòng thử lại.");
+      }
+    } finally {
+      setSubmittingReview(false);
     }
   }
 
@@ -96,7 +208,11 @@ export function ProductView({ product, relatedProducts }: ProductViewProps) {
           <div className="flex flex-col gap-4">
             {/* Main Featured Image Display */}
             <div className="relative overflow-hidden rounded-[28px] border border-navy/5 bg-[#e8f7ff] p-8 md:p-12 shadow-sm">
-              {product.badge ? (
+              {isOutOfStock ? (
+                <span className="absolute top-4 left-4 z-10 inline-flex items-center rounded-full bg-navy/80 px-3.5 py-1 text-xs font-bold tracking-wider text-white uppercase shadow-xs backdrop-blur-xs">
+                  Tạm Hết Hàng
+                </span>
+              ) : product.badge ? (
                 <span className="absolute top-4 left-4 z-10 inline-flex items-center rounded-full bg-[#f05c56] px-3.5 py-1 text-xs font-bold tracking-wider text-white uppercase shadow-xs">
                   {product.badge}
                 </span>
@@ -132,6 +248,18 @@ export function ProductView({ product, relatedProducts }: ProductViewProps) {
 
           {/* Right Column: Product Info & Purchase Actions */}
           <div className="flex flex-col">
+            {/* Subcategory & SKU Info */}
+            <div className="flex flex-wrap items-center gap-2 mb-2">
+              {product.subCategory ? (
+                <span className="inline-flex items-center rounded-md bg-royal/10 text-royal px-2.5 py-0.5 text-xs font-bold tracking-wide uppercase">
+                  {product.subCategory.replace(/-/g, " ")}
+                </span>
+              ) : null}
+              <span className="text-xs text-navy/50 font-mono">
+                SKU: <strong className="text-navy">{product.sku || "RAY-E25-BLK"}</strong>
+              </span>
+            </div>
+
             {/* Rating & Reviews */}
             <div className="flex items-center gap-2">
               <div className="flex text-[#f05c56]">
@@ -139,12 +267,18 @@ export function ProductView({ product, relatedProducts }: ProductViewProps) {
                   <StarIcon key={index} className="size-4 fill-current" />
                 ))}
               </div>
-              <span className="text-sm font-bold text-navy">
-                {product.rating.toFixed(1)}
-              </span>
-              <span className="text-sm font-medium text-navy/60">
-                ({formatReviewCount(product.reviewCount)} reviews)
-              </span>
+              <button
+                type="button"
+                onClick={() => setActiveTab("reviews")}
+                className="flex items-center gap-1.5 hover:underline text-left cursor-pointer"
+              >
+                <span className="text-sm font-bold text-navy">
+                  {product.rating.toFixed(1)}
+                </span>
+                <span className="text-sm font-medium text-navy/60">
+                  ({reviews.length > 0 ? reviews.length : formatReviewCount(product.reviewCount)} reviews)
+                </span>
+              </button>
               <span className="text-navy/30">·</span>
               <span className="inline-flex items-center gap-1 text-xs font-semibold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-full">
                 <Check className="size-3" /> In Stock
@@ -156,6 +290,59 @@ export function ProductView({ product, relatedProducts }: ProductViewProps) {
               {product.name}
             </h1>
             <p className="mt-2 text-base text-navy/70">{product.tagline}</p>
+
+            {/* Social Share Bar */}
+            <div className="mt-3 flex flex-wrap items-center gap-2 text-xs">
+              <span className="font-bold text-navy/60 uppercase tracking-wider text-[11px]">
+                Chia sẻ:
+              </span>
+              <button
+                type="button"
+                onClick={() => {
+                  const url = typeof window !== "undefined" ? window.location.href : "";
+                  window.open(
+                    `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}`,
+                    "_blank",
+                  );
+                }}
+                className="inline-flex items-center gap-1.5 rounded-full border border-navy/15 bg-white px-3 py-1 font-semibold text-navy/75 hover:border-royal hover:text-royal transition-colors cursor-pointer"
+                title="Chia sẻ lên Facebook"
+              >
+                <FacebookIcon className="size-3.5 fill-current" /> Facebook
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  const url = typeof window !== "undefined" ? window.location.href : "";
+                  window.open(
+                    `https://twitter.com/intent/tweet?url=${encodeURIComponent(url)}&text=${encodeURIComponent(product.name)}`,
+                    "_blank",
+                  );
+                }}
+                className="inline-flex items-center gap-1.5 rounded-full border border-navy/15 bg-white px-3 py-1 font-semibold text-navy/75 hover:border-royal hover:text-royal transition-colors cursor-pointer"
+                title="Chia sẻ lên X (Twitter)"
+              >
+                <TwitterIcon className="size-3.5 fill-current" /> X / Twitter
+              </button>
+              <button
+                type="button"
+                onClick={handleCopyLink}
+                className="inline-flex items-center gap-1.5 rounded-full border border-navy/15 bg-white px-3 py-1 font-semibold text-navy/75 hover:border-royal hover:text-royal transition-colors cursor-pointer"
+                title="Sao chép liên kết sản phẩm"
+              >
+                {copiedLink ? (
+                  <>
+                    <Check className="size-3.5 text-emerald-600" />
+                    <span className="text-emerald-600 font-bold">Đã chép link!</span>
+                  </>
+                ) : (
+                  <>
+                    <Share2 className="size-3.5" />
+                    <span>Sao chép link</span>
+                  </>
+                )}
+              </button>
+            </div>
 
             {/* Pricing Section */}
             <div className="mt-5 flex items-baseline gap-3 border-y border-navy/10 py-4">
@@ -218,9 +405,12 @@ export function ProductView({ product, relatedProducts }: ProductViewProps) {
             {/* Quantity & Add to Cart Controls */}
             <div className="mt-8 flex flex-col gap-4 sm:flex-row sm:items-center">
               {/* Quantity Stepper */}
-              <div className="flex h-13 w-32 shrink-0 items-center justify-between rounded-full border-2 border-navy/15 bg-white px-2">
+              <div className={`flex h-13 w-32 shrink-0 items-center justify-between rounded-full border-2 border-navy/15 bg-white px-2 ${
+                isOutOfStock ? "opacity-50 pointer-events-none" : ""
+              }`}>
                 <button
                   type="button"
+                  disabled={isOutOfStock}
                   onClick={() => setQuantity((q) => Math.max(1, q - 1))}
                   aria-label="Decrease quantity"
                   className="flex size-9 items-center justify-center rounded-full text-navy/70 hover:bg-navy/5 hover:text-navy transition cursor-pointer"
@@ -230,6 +420,7 @@ export function ProductView({ product, relatedProducts }: ProductViewProps) {
                 <span className="text-base font-bold text-navy">{quantity}</span>
                 <button
                   type="button"
+                  disabled={isOutOfStock}
                   onClick={() => setQuantity((q) => q + 1)}
                   aria-label="Increase quantity"
                   className="flex size-9 items-center justify-center rounded-full text-navy/70 hover:bg-navy/5 hover:text-navy transition cursor-pointer"
@@ -239,32 +430,45 @@ export function ProductView({ product, relatedProducts }: ProductViewProps) {
               </div>
 
               {/* Add to Cart Button */}
-              <button
-                type="button"
-                onClick={handleAddToCart}
-                className={`flex h-13 flex-1 items-center justify-center gap-2 rounded-full px-8 text-sm font-bold tracking-wider uppercase transition-all cursor-pointer shadow-md ${
-                  added
-                    ? "bg-emerald-600 text-white scale-[1.02]"
-                    : "bg-royal text-white hover:bg-[#2827cd] hover:shadow-lg"
-                }`}
-              >
-                <ShoppingBag className="size-4" />
-                <span>{added ? "Added to Cart!" : "Add to Cart"}</span>
-              </button>
+              {isOutOfStock ? (
+                <button
+                  type="button"
+                  disabled
+                  className="flex h-13 flex-1 items-center justify-center gap-2 rounded-full px-8 text-sm font-bold tracking-wider uppercase bg-gray-200 text-gray-500 cursor-not-allowed shadow-none"
+                >
+                  <ShoppingBag className="size-4" />
+                  <span>Tạm Hết Hàng</span>
+                </button>
+              ) : (
+                <button
+                  type="button"
+                  onClick={handleAddToCart}
+                  className={`flex h-13 flex-1 items-center justify-center gap-2 rounded-full px-8 text-sm font-bold tracking-wider uppercase transition-all cursor-pointer shadow-md ${
+                    added
+                      ? "bg-emerald-600 text-white scale-[1.02]"
+                      : "bg-royal text-white hover:bg-[#2827cd] hover:shadow-lg"
+                  }`}
+                >
+                  <ShoppingBag className="size-4" />
+                  <span>{added ? "Added to Cart!" : "Add to Cart"}</span>
+                </button>
+              )}
             </div>
 
             {/* Direct Buy / Checkout Link */}
-            <div className="mt-3">
-              <Link
-                href="/checkout"
-                onClick={() => {
-                  if (selectedColor) addItem(product, selectedColor, quantity);
-                }}
-                className="flex h-12 w-full items-center justify-center rounded-full border border-navy/20 bg-white text-sm font-bold text-navy hover:border-royal hover:text-royal transition"
-              >
-                Buy Now with 1-Click
-              </Link>
-            </div>
+            {!isOutOfStock && (
+              <div className="mt-3">
+                <Link
+                  href="/checkout"
+                  onClick={() => {
+                    if (selectedColor) addItem(product, selectedColor, quantity);
+                  }}
+                  className="flex h-12 w-full items-center justify-center rounded-full border border-navy/20 bg-white text-sm font-bold text-navy hover:border-royal hover:text-royal transition"
+                >
+                  Buy Now with 1-Click
+                </Link>
+              </div>
+            )}
 
             {/* Value Props & Assurance Badges */}
             <div className="mt-8 grid grid-cols-3 gap-2 rounded-2xl border border-navy/10 bg-white p-4 text-center">
@@ -322,6 +526,17 @@ export function ProductView({ product, relatedProducts }: ProductViewProps) {
               }`}
             >
               Shipping & Returns
+            </button>
+            <button
+              type="button"
+              onClick={() => setActiveTab("reviews")}
+              className={`pb-4 px-6 text-sm font-bold uppercase tracking-wider transition-colors cursor-pointer border-b-2 ${
+                activeTab === "reviews"
+                  ? "border-royal text-royal"
+                  : "border-transparent text-navy/60 hover:text-navy"
+              }`}
+            >
+              Reviews ({reviews.length > 0 ? reviews.length : formatReviewCount(product.reviewCount)})
             </button>
           </div>
 
@@ -381,6 +596,257 @@ export function ProductView({ product, relatedProducts }: ProductViewProps) {
                 </ul>
               </div>
             ) : null}
+
+            {activeTab === "reviews" ? (
+              <div className="max-w-3xl space-y-8">
+                {/* Review Header & Summary */}
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-6 rounded-2xl bg-[#fafbfc] border border-navy/10 p-6">
+                  <div className="flex items-center gap-4">
+                    <div className="flex flex-col items-center justify-center rounded-2xl bg-white border border-navy/10 px-5 py-3 shadow-xs">
+                      <span className="text-3xl font-black text-navy">
+                        {product.rating.toFixed(1)}
+                      </span>
+                      <div className="flex text-[#f05c56] mt-1">
+                        {Array.from({ length: 5 }).map((_, index) => (
+                          <Star
+                            key={index}
+                            className={`size-3.5 ${
+                              index < Math.round(product.rating)
+                                ? "fill-[#f05c56] text-[#f05c56]"
+                                : "text-gray-300"
+                            }`}
+                          />
+                        ))}
+                      </div>
+                      <span className="text-[11px] text-navy/50 font-medium mt-1">
+                        trên 5 sao
+                      </span>
+                    </div>
+
+                    <div>
+                      <h4 className="text-base font-bold text-navy">
+                        Đánh giá của Khách hàng
+                      </h4>
+                      <p className="text-xs text-navy/60 mt-0.5">
+                        Dựa trên {reviews.length > 0 ? reviews.length : formatReviewCount(product.reviewCount)} lượt đánh giá xác thực
+                      </p>
+                    </div>
+                  </div>
+
+                  <button
+                    type="button"
+                    onClick={() => {
+                      if (!user || !token) {
+                        setAuthModalOpen(true);
+                      } else {
+                        setShowReviewForm((v) => !v);
+                      }
+                    }}
+                    className="inline-flex items-center justify-center gap-2 rounded-full bg-royal px-5 py-2.5 text-xs font-bold text-white hover:bg-[#2827cd] transition-all cursor-pointer shadow-sm"
+                  >
+                    <span>
+                      {showReviewForm
+                        ? "Đóng biểu mẫu"
+                        : user
+                        ? "Viết Đánh Giá Mới"
+                        : "Đăng nhập để Đánh Giá"}
+                    </span>
+                  </button>
+                </div>
+
+                {reviewSuccess && (
+                  <div className="rounded-2xl bg-emerald-50 border border-emerald-200 p-4 text-xs font-semibold text-emerald-800">
+                    {reviewSuccess}
+                  </div>
+                )}
+
+                {/* Review Form */}
+                {showReviewForm && (
+                  <form
+                    onSubmit={handleSubmitReview}
+                    className="space-y-4 rounded-2xl border border-royal/20 bg-royal/5 p-6"
+                  >
+                    <h4 className="text-sm font-bold text-navy">
+                      Chia sẻ trải nghiệm của bạn về sản phẩm này
+                    </h4>
+
+                    {reviewError && (
+                      <p className="text-xs font-semibold text-red-600 bg-red-50 p-2.5 rounded-lg border border-red-200">
+                        {reviewError}
+                      </p>
+                    )}
+
+                    <div>
+                      <label className="block text-xs font-bold text-navy mb-1.5">
+                        Đánh giá số sao:
+                      </label>
+                      <div className="flex items-center gap-1">
+                        {[1, 2, 3, 4, 5].map((star) => (
+                          <button
+                            key={star}
+                            type="button"
+                            onClick={() =>
+                              setReviewForm((prev) => ({ ...prev, rating: star }))
+                            }
+                            className="p-1 hover:scale-110 transition cursor-pointer"
+                          >
+                            <Star
+                              className={`size-6 ${
+                                star <= reviewForm.rating
+                                  ? "fill-[#f05c56] text-[#f05c56]"
+                                  : "text-gray-300"
+                              }`}
+                            />
+                          </button>
+                        ))}
+                        <span className="ml-2 text-xs font-bold text-navy">
+                          {reviewForm.rating} / 5 sao
+                        </span>
+                      </div>
+                    </div>
+
+                    <div className="grid gap-3 sm:grid-cols-2">
+                      <div>
+                        <label className="block text-xs font-semibold text-navy/70 mb-1">
+                          Họ và tên *
+                        </label>
+                        <input
+                          type="text"
+                          required
+                          readOnly
+                          value={user?.fullName || reviewForm.authorName}
+                          className="w-full rounded-xl border border-navy/15 bg-gray-100 px-3.5 py-2 text-xs text-navy/80 outline-none cursor-not-allowed"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-xs font-semibold text-navy/70 mb-1">
+                          Email (tài khoản đã xác thực) *
+                        </label>
+                        <input
+                          type="email"
+                          required
+                          readOnly
+                          value={user?.email || reviewForm.authorEmail}
+                          className="w-full rounded-xl border border-navy/15 bg-gray-100 px-3.5 py-2 text-xs text-navy/80 outline-none cursor-not-allowed"
+                        />
+                      </div>
+                    </div>
+
+                    <div>
+                      <label className="block text-xs font-semibold text-navy/70 mb-1">
+                        Tiêu đề đánh giá
+                      </label>
+                      <input
+                        type="text"
+                        value={reviewForm.title}
+                        onChange={(e) =>
+                          setReviewForm((prev) => ({
+                            ...prev,
+                            title: e.target.value,
+                          }))
+                        }
+                        placeholder="Tóm tắt cảm nhận (ví dụ: Bass cực chắc, đeo rất êm)"
+                        className="w-full rounded-xl border border-navy/15 bg-white px-3.5 py-2 text-xs text-navy outline-none focus:border-royal"
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block text-xs font-semibold text-navy/70 mb-1">
+                        Nội dung nhận xét chi tiết *
+                      </label>
+                      <textarea
+                        rows={3}
+                        required
+                        value={reviewForm.comment}
+                        onChange={(e) =>
+                          setReviewForm((prev) => ({
+                            ...prev,
+                            comment: e.target.value,
+                          }))
+                        }
+                        placeholder="Hãy chia sẻ chi tiết về chất âm, thời lượng pin, độ thoải mái..."
+                        className="w-full rounded-xl border border-navy/15 bg-white p-3.5 text-xs text-navy outline-none focus:border-royal resize-none"
+                      />
+                    </div>
+
+                    <div className="flex justify-end gap-2 pt-2">
+                      <button
+                        type="button"
+                        onClick={() => setShowReviewForm(false)}
+                        className="rounded-full border border-navy/20 bg-white px-4 py-2 text-xs font-bold text-navy/70 hover:bg-navy/5 cursor-pointer"
+                      >
+                        Hủy
+                      </button>
+                      <button
+                        type="submit"
+                        disabled={submittingReview}
+                        className="inline-flex items-center gap-1.5 rounded-full bg-royal px-5 py-2 text-xs font-bold text-white hover:bg-[#2827cd] transition cursor-pointer disabled:opacity-50"
+                      >
+                        <Send className="size-3.5" />
+                        <span>{submittingReview ? "Đang gửi..." : "Gửi Đánh Giá"}</span>
+                      </button>
+                    </div>
+                  </form>
+                )}
+
+                {/* Reviews List */}
+                <div className="space-y-4">
+                  {loadingReviews ? (
+                    <p className="text-center text-xs text-navy/50 py-8">
+                      Đang tải danh sách đánh giá...
+                    </p>
+                  ) : reviews.length === 0 ? (
+                    <div className="text-center py-8 text-navy/60">
+                      <p className="text-sm font-semibold">Chưa có đánh giá nào cho sản phẩm này.</p>
+                      <p className="text-xs text-navy/40 mt-1">
+                        Hãy là người đầu tiên chia sẻ cảm nhận của bạn!
+                      </p>
+                    </div>
+                  ) : (
+                    reviews.map((rev) => (
+                      <div
+                        key={rev.id}
+                        className="rounded-2xl border border-navy/10 bg-[#fafbfc] p-5 space-y-2"
+                      >
+                        <div className="flex items-center justify-between">
+                          <div className="flex items-center gap-2">
+                            <span className="text-xs font-bold text-navy">
+                              {rev.authorName}
+                            </span>
+                            <span className="inline-flex items-center gap-0.5 rounded-full bg-emerald-50 border border-emerald-200 px-2 py-0.5 text-[10px] font-bold text-emerald-700">
+                              <Check className="size-2.5" /> Đã mua hàng
+                            </span>
+                          </div>
+                          <span className="text-[11px] text-navy/40">
+                            {new Date(rev.createdAt).toLocaleDateString("vi-VN")}
+                          </span>
+                        </div>
+
+                        <div className="flex text-[#f05c56]">
+                          {Array.from({ length: 5 }).map((_, index) => (
+                            <Star
+                              key={index}
+                              className={`size-3.5 ${
+                                index < rev.rating
+                                  ? "fill-[#f05c56] text-[#f05c56]"
+                                  : "text-gray-300"
+                              }`}
+                            />
+                          ))}
+                        </div>
+
+                        {rev.title && (
+                          <h5 className="text-xs font-bold text-navy">{rev.title}</h5>
+                        )}
+                        <p className="text-xs text-navy/80 leading-relaxed">
+                          {rev.comment}
+                        </p>
+                      </div>
+                    ))
+                  )}
+                </div>
+              </div>
+            ) : null}
           </div>
         </div>
 
@@ -411,6 +877,8 @@ export function ProductView({ product, relatedProducts }: ProductViewProps) {
           </div>
         ) : null}
       </div>
+
+      <AuthModal isOpen={authModalOpen} onClose={() => setAuthModalOpen(false)} />
     </div>
   );
 }

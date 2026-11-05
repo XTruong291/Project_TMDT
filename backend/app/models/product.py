@@ -1,4 +1,5 @@
 from sqlalchemy import Column, String, Float, Integer, Boolean, Text, DateTime, JSON, func
+from sqlalchemy.orm import relationship
 from app.core.database import Base
 
 
@@ -8,8 +9,10 @@ class Product(Base):
     id = Column(String(64), primary_key=True, index=True)
     handle = Column(String(128), unique=True, index=True, nullable=False)
     name = Column(String(255), nullable=False)
+    sku = Column(String(64), unique=True, index=True, nullable=True)
     tagline = Column(String(255), nullable=True)
     category = Column(String(64), index=True, nullable=False)
+    sub_category = Column(String(100), index=True, nullable=True)
     collection_slug = Column(String(64), index=True, nullable=False)
     image = Column(String(512), nullable=False)
     price = Column(Float, nullable=False)
@@ -19,6 +22,7 @@ class Product(Base):
     review_count = Column(Integer, default=0, nullable=False)
     featured = Column(Boolean, default=False, nullable=False)
     in_stock = Column(Boolean, default=True, nullable=False)
+    is_active = Column(Boolean, default=True, nullable=False)
     description = Column(Text, nullable=True)
     
     # Complex fields stored cleanly as native JSON in MySQL 8.0
@@ -28,4 +32,6 @@ class Product(Base):
 
     created_at = Column(DateTime, server_default=func.now(), nullable=False)
     updated_at = Column(DateTime, server_default=func.now(), onupdate=func.now(), nullable=False)
+
+    reviews = relationship("ProductReview", back_populates="product", cascade="all, delete-orphan")
 

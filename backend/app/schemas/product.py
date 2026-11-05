@@ -17,8 +17,10 @@ class ProductSpecSchema(CamelModel):
 
 class ProductBase(CamelModel):
     name: str
+    sku: Optional[str] = None
     tagline: Optional[str] = None
     category: str
+    sub_category: Optional[str] = None
     collection_slug: str
     image: str
     price: float
@@ -28,6 +30,7 @@ class ProductBase(CamelModel):
     review_count: int = 0
     featured: bool = False
     in_stock: bool = True
+    is_active: bool = True
     description: Optional[str] = None
     gallery_images: List[str] = []
     specs: List[ProductSpecSchema] = []
@@ -41,8 +44,10 @@ class ProductCreate(ProductBase):
 
 class ProductUpdate(CamelModel):
     name: Optional[str] = None
+    sku: Optional[str] = None
     tagline: Optional[str] = None
     category: Optional[str] = None
+    sub_category: Optional[str] = None
     collection_slug: Optional[str] = None
     image: Optional[str] = None
     price: Optional[float] = None
@@ -52,6 +57,7 @@ class ProductUpdate(CamelModel):
     review_count: Optional[int] = None
     featured: Optional[bool] = None
     in_stock: Optional[bool] = None
+    is_active: Optional[bool] = None
     description: Optional[str] = None
     gallery_images: Optional[List[str]] = None
     specs: Optional[List[ProductSpecSchema]] = None

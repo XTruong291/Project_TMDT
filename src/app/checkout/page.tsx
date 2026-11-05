@@ -3,6 +3,8 @@
 import Link from "next/link";
 import { useEffect, useState, useSyncExternalStore } from "react";
 import {
+  AlertCircle,
+  AlertTriangle,
   Banknote,
   CheckCircle2,
   CreditCard,
@@ -12,11 +14,13 @@ import {
   ShoppingBag,
   Tag,
   Truck,
+  User as UserIcon,
 } from "lucide-react";
 
+import { AuthModal } from "@/components/sites/raycon/auth-modal";
 import { RayconLogo } from "@/components/sites/raycon/icons";
 import { formatUsd } from "@/data/products";
-import { createOrder } from "@/lib/api";
+import { createOrder, verifyCoupon } from "@/lib/api";
 import { useAuthStore } from "@/store/use-auth-store";
 import { useCartStore } from "@/store/use-cart-store";
 import type { CartItem } from "@/types/cart";
@@ -33,25 +37,32 @@ export default function CheckoutPage() {
   const items = useCartStore((state) => state.items);
   const getSubtotal = useCartStore((state) => state.getSubtotal);
   const clearCart = useCartStore((state) => state.clearCart);
+  const appliedCoupon = useCartStore((state) => state.appliedCoupon);
+  const getDiscountAmount = useCartStore((state) => state.getDiscountAmount);
+  const applyCoupon = useCartStore((state) => state.applyCoupon);
+  const removeCoupon = useCartStore((state) => state.removeCoupon);
   const token = useAuthStore((state) => state.token);
   const user = useAuthStore((state) => state.user);
 
-  // Form states
+  // Form states (No hardcoded mock demo data)
   const [formData, setFormData] = useState({
-    fullName: user?.fullName || "Xuân Trường",
-    phone: user?.phone || "0987654321",
-    email: user?.email || "user@raycon.local",
-    address: "Số 207 Đường Giải Phóng, Phường Đồng Tâm",
-    district: "Quận Hai Bà Trưng",
-    city: "Hà Nội",
-    notes: "Giao hàng vào giờ hành chính, gọi điện trước khi giao",
+    fullName: user?.fullName || "",
+    phone: user?.phone || "",
+    email: user?.email || "",
+    address: "",
+    district: "",
+    city: "",
+    notes: "",
     paymentMethod: "cod",
   });
 
+  const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
+  const [submitError, setSubmitError] = useState<string | null>(null);
+
   // Discount code state
   const [couponCode, setCouponCode] = useState("");
-  const [discountPercent, setDiscountPercent] = useState(0);
   const [couponMessage, setCouponMessage] = useState("");
+  const [isVerifyingCoupon, setIsVerifyingCoupon] = useState(false);
 
   // Order submission state
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -82,34 +93,72 @@ export default function CheckoutPage() {
 
   const subtotal = getSubtotal();
   const shippingFee = subtotal >= 50 || subtotal === 0 ? 0 : 4.99;
-  const discountAmount = (subtotal * discountPercent) / 100;
+  const discountAmount = getDiscountAmount();
   const finalTotal = Math.max(0, subtotal - discountAmount + shippingFee);
+  const hasOutOfStockItems = items.some((item) => item.product.inStock === false);
 
-  function handleApplyCoupon(e: React.FormEvent) {
+  async function handleApplyCoupon(e: React.FormEvent) {
     e.preventDefault();
-    if (couponCode.trim().toUpperCase() === "RAYCON10") {
-      setDiscountPercent(10);
-      setCouponMessage("🎉 Đã áp dụng mã RAYCON10 giảm 10% tổng đơn!");
-    } else {
-      setCouponMessage("❌ Mã giảm giá không hợp lệ hoặc đã hết hạn.");
+    if (!couponCode.trim()) return;
+    setIsVerifyingCoupon(true);
+    setCouponMessage("");
+
+    try {
+      const res = await verifyCoupon(couponCode.trim(), subtotal);
+      applyCoupon({
+        code: res.code,
+        discountType: res.discountType,
+        discountValue: res.discountValue,
+        minOrderAmount: res.minOrderAmount,
+        description: res.description,
+      });
+      setCouponMessage(`🎉 ${res.message}`);
+      setCouponCode("");
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? err.message : "Mã không hợp lệ";
+      setCouponMessage(`❌ ${msg}`);
+    } finally {
+      setIsVerifyingCoupon(false);
     }
   }
 
   async function handleSubmitOrder(e: React.FormEvent) {
     e.preventDefault();
+    setSubmitError(null);
+
     if (items.length === 0) return;
+
+    if (!token || !user) {
+      setSubmitError("Vui lòng đăng nhập hoặc tạo tài khoản để tiến hành đặt hàng.");
+      setIsAuthModalOpen(true);
+      return;
+    }
+
+    if (hasOutOfStockItems) {
+      setSubmitError("Giỏ hàng của bạn chứa sản phẩm đã hết hàng. Vui lòng quay lại giỏ hàng và gỡ sản phẩm đó.");
+      return;
+    }
+
+    const VN_PHONE_REGEX = /^(0|\+84)[3|5|7|8|9][0-9]{8}$/;
+    if (!VN_PHONE_REGEX.test(formData.phone.trim())) {
+      setSubmitError(
+        "Số điện thoại không đúng định dạng di động Việt Nam (gồm 10 số, bắt đầu bằng 03, 05, 07, 08, 09 hoặc +84).",
+      );
+      return;
+    }
 
     setIsSubmitting(true);
 
     const orderPayload = {
-      customerName: formData.fullName,
-      customerEmail: formData.email,
-      customerPhone: formData.phone,
-      shippingAddress: formData.address,
-      shippingCity: formData.city,
-      shippingDistrict: formData.district,
+      customerName: formData.fullName.trim(),
+      customerEmail: formData.email.trim(),
+      customerPhone: formData.phone.trim(),
+      shippingAddress: formData.address.trim(),
+      shippingCity: formData.city.trim(),
+      shippingDistrict: formData.district.trim(),
       paymentMethod: formData.paymentMethod,
-      notes: formData.notes,
+      notes: formData.notes.trim() || undefined,
+      couponCode: appliedCoupon?.code || undefined,
       items: items.map((i) => ({
         productId: i.product.id,
         productName: i.product.name,
@@ -122,48 +171,25 @@ export default function CheckoutPage() {
     };
 
     try {
-      const order = await createOrder(orderPayload, token || undefined);
+      const order = await createOrder(orderPayload, token);
       setCompletedOrder({
         orderId: order.orderNumber,
         items: [...items],
         subtotal: order.subtotal,
         shippingFee: order.shippingFee,
-        discount: discountAmount,
+        discount: order.discountAmount || discountAmount,
         total: order.totalAmount,
         customer: { ...formData },
       });
-      try {
-        const stored = JSON.parse(localStorage.getItem("raycon_guest_orders") || "[]");
-        const updated = [order.orderNumber, ...stored.filter((id: string) => id !== order.orderNumber)].slice(0, 10);
-        localStorage.setItem("raycon_guest_orders", JSON.stringify(updated));
-      } catch {
-        // Ignore localStorage error
-      }
       clearCart();
       setOrderComplete(true);
       window.scrollTo({ top: 0, behavior: "smooth" });
-    } catch {
-      // Graceful fallback to client simulation if backend is offline
-      const generatedOrderId = `RAY-${Date.now().toString().slice(-6)}`;
-      setCompletedOrder({
-        orderId: generatedOrderId,
-        items: [...items],
-        subtotal,
-        shippingFee,
-        discount: discountAmount,
-        total: finalTotal,
-        customer: { ...formData },
-      });
-      try {
-        const stored = JSON.parse(localStorage.getItem("raycon_guest_orders") || "[]");
-        const updated = [generatedOrderId, ...stored.filter((id: string) => id !== generatedOrderId)].slice(0, 10);
-        localStorage.setItem("raycon_guest_orders", JSON.stringify(updated));
-      } catch {
-        // Ignore localStorage error
+    } catch (err: unknown) {
+      if (err instanceof Error) {
+        setSubmitError(err.message);
+      } else {
+        setSubmitError("Không thể tạo đơn hàng. Vui lòng thử lại sau.");
       }
-      clearCart();
-      setOrderComplete(true);
-      window.scrollTo({ top: 0, behavior: "smooth" });
     } finally {
       setIsSubmitting(false);
     }
@@ -297,12 +323,37 @@ export default function CheckoutPage() {
             <div className="rounded-3xl border border-navy/10 bg-white p-6 sm:p-8 shadow-xs">
               <div className="flex flex-wrap items-center justify-between gap-2 mb-4">
                 <h2 className="text-lg font-bold text-navy">1. Thông tin liên hệ</h2>
-                {user && (
+                {user ? (
                   <span className="text-xs bg-royal/10 text-royal px-2.5 py-1 rounded-full font-medium">
-                    Tài khoản: {user.fullName}
+                    Tài khoản: {user.fullName} ({user.email})
                   </span>
+                ) : (
+                  <button
+                    type="button"
+                    onClick={() => setIsAuthModalOpen(true)}
+                    className="inline-flex items-center gap-1.5 text-xs bg-royal text-white px-3 py-1.5 rounded-full font-bold hover:bg-[#2827cd] transition cursor-pointer"
+                  >
+                    <UserIcon className="size-3" />
+                    Đăng nhập / Đăng ký
+                  </button>
                 )}
               </div>
+
+              {!user && (
+                <div className="mb-4 flex items-center gap-2 rounded-2xl border border-amber-200 bg-amber-50 p-3 text-xs text-amber-800">
+                  <AlertTriangle className="size-4 shrink-0 text-amber-600" />
+                  <span>
+                    Bạn cần đăng nhập để đặt hàng và bảo vệ quyền lợi bảo hành.{" "}
+                    <button
+                      type="button"
+                      onClick={() => setIsAuthModalOpen(true)}
+                      className="font-bold underline cursor-pointer hover:text-amber-950"
+                    >
+                      Bấm vào đây để đăng nhập
+                    </button>
+                  </span>
+                </div>
+              )}
               <div className="grid gap-4 sm:grid-cols-2">
                 <div>
                   <label htmlFor="fullname" className="block text-xs font-bold text-navy/70 uppercase mb-1.5">
@@ -485,26 +536,48 @@ export default function CheckoutPage() {
 
               {/* Discount Code Input */}
               <div className="mt-5 border-t border-navy/10 pt-4">
-                <div className="flex gap-2">
-                  <input
-                    type="text"
-                    value={couponCode}
-                    onChange={(e) => setCouponCode(e.target.value)}
-                    placeholder="Mã giảm giá (Nhập: RAYCON10)"
-                    className="h-10 flex-1 rounded-xl border border-navy/15 px-3 text-xs uppercase text-navy focus:border-royal focus:outline-hidden"
-                  />
-                  <button
-                    type="button"
-                    onClick={handleApplyCoupon}
-                    className="h-10 rounded-xl bg-navy px-4 text-xs font-bold text-white hover:bg-royal transition"
-                  >
-                    Áp dụng
-                  </button>
-                </div>
+                {appliedCoupon ? (
+                  <div className="flex items-center justify-between rounded-xl bg-emerald-50 border border-emerald-200 px-3.5 py-2">
+                    <div className="flex items-center gap-2">
+                      <Tag className="size-4 text-emerald-600" />
+                      <div>
+                        <p className="text-xs font-bold text-emerald-800">
+                          {appliedCoupon.code}
+                        </p>
+                        <p className="text-[10px] text-emerald-600">
+                          {appliedCoupon.description || "Đã áp dụng mã giảm giá"}
+                        </p>
+                      </div>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={removeCoupon}
+                      className="text-xs font-semibold text-emerald-700 hover:text-red-600 transition"
+                    >
+                      Gỡ mã
+                    </button>
+                  </div>
+                ) : (
+                  <div className="flex gap-2">
+                    <input
+                      type="text"
+                      value={couponCode}
+                      onChange={(e) => setCouponCode(e.target.value)}
+                      placeholder="Mã giảm giá (ví dụ: RAYCON10)"
+                      className="h-10 flex-1 rounded-xl border border-navy/15 px-3 text-xs uppercase text-navy focus:border-royal focus:outline-hidden"
+                    />
+                    <button
+                      type="button"
+                      onClick={handleApplyCoupon}
+                      disabled={isVerifyingCoupon || !couponCode.trim()}
+                      className="h-10 rounded-xl bg-navy px-4 text-xs font-bold text-white hover:bg-royal transition disabled:opacity-50 cursor-pointer"
+                    >
+                      {isVerifyingCoupon ? "..." : "Áp dụng"}
+                    </button>
+                  </div>
+                )}
                 {couponMessage ? (
-                  <p className={`mt-2 text-xs font-medium ${
-                    discountPercent > 0 ? "text-emerald-600" : "text-[#f05c56]"
-                  }`}>
+                  <p className="mt-2 text-xs font-medium text-emerald-600">
                     {couponMessage}
                   </p>
                 ) : null}
@@ -516,6 +589,12 @@ export default function CheckoutPage() {
                   <span>Tạm tính (Subtotal)</span>
                   <span className="font-semibold text-navy">{formatUsd(subtotal)}</span>
                 </div>
+                {appliedCoupon && discountAmount > 0 && (
+                  <div className="flex justify-between text-emerald-700 font-semibold">
+                    <span>Khuyến mại ({appliedCoupon.code})</span>
+                    <span>-{formatUsd(discountAmount)}</span>
+                  </div>
+                )}
                 <div className="flex justify-between text-navy/70">
                   <span className="flex items-center gap-1">
                     <Truck className="size-3.5 text-royal" /> Phí vận chuyển
@@ -542,14 +621,34 @@ export default function CheckoutPage() {
                 </div>
               </div>
 
+              {/* Out of Stock Warning */}
+              {hasOutOfStockItems && (
+                <div className="mt-4 flex items-center gap-2 rounded-2xl border border-red-200 bg-red-50 p-3 text-xs text-red-700">
+                  <AlertCircle className="size-4 shrink-0 text-red-600" />
+                  <span>Một số sản phẩm trong giỏ đã hết hàng. Vui lòng quay lại giỏ hàng gỡ bỏ trước khi tiếp tục.</span>
+                </div>
+              )}
+
+              {/* Submit Error Message */}
+              {submitError && (
+                <div className="mt-4 flex items-center gap-2 rounded-2xl border border-red-200 bg-red-50 p-3 text-xs text-red-700">
+                  <AlertCircle className="size-4 shrink-0 text-red-600" />
+                  <span>{submitError}</span>
+                </div>
+              )}
+
               {/* Submit Button */}
               <button
                 type="submit"
-                disabled={isSubmitting}
-                className="mt-6 flex h-13 w-full items-center justify-center gap-2 rounded-full bg-royal px-8 text-sm font-bold tracking-wider text-white uppercase transition hover:bg-[#2827cd] shadow-md hover:shadow-lg disabled:opacity-60 cursor-pointer"
+                disabled={isSubmitting || hasOutOfStockItems}
+                className="mt-6 flex h-13 w-full items-center justify-center gap-2 rounded-full bg-royal px-8 text-sm font-bold tracking-wider text-white uppercase transition hover:bg-[#2827cd] shadow-md hover:shadow-lg disabled:opacity-60 disabled:cursor-not-allowed cursor-pointer"
               >
                 {isSubmitting ? (
                   <span>Đang xử lý đơn hàng...</span>
+                ) : hasOutOfStockItems ? (
+                  <span>Có sản phẩm hết hàng</span>
+                ) : !user ? (
+                  <span>Đăng Nhập Để Đặt Hàng ({formatUsd(finalTotal)})</span>
                 ) : (
                   <span>Xác Nhận Đặt Hàng ({formatUsd(finalTotal)})</span>
                 )}
@@ -563,6 +662,8 @@ export default function CheckoutPage() {
           </div>
         </form>
       </div>
+
+      <AuthModal isOpen={isAuthModalOpen} onClose={() => setIsAuthModalOpen(false)} />
     </div>
   );
 }

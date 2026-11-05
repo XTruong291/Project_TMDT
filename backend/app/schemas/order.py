@@ -27,6 +27,7 @@ class OrderCreate(CamelModel):
     shipping_city: str = "Hà Nội"
     shipping_district: str = "Hoàn Kiếm"
     payment_method: str = "cod"
+    coupon_code: Optional[str] = None
     notes: Optional[str] = None
     items: List[OrderItemCreate]
 
@@ -52,8 +53,10 @@ class OrderResponse(CamelModel):
     shipping_district: str
     payment_method: str
     shipping_fee: float
+    discount_amount: float = 0.0
     subtotal: float
     total_amount: float
+    coupon_code: Optional[str] = None
     status: OrderStatus
     notes: Optional[str] = None
     created_at: datetime

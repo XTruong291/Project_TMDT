@@ -1,13 +1,23 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
-import { Shield, User as UserIcon, LogOut, Settings, PackageCheck, Truck } from "lucide-react";
+import { useEffect, useState } from "react";
+import {
+  Shield,
+  User as UserIcon,
+  LogOut,
+  Settings,
+  PackageCheck,
+  Truck,
+  Loader2,
+} from "lucide-react";
 
 import { products } from "@/data/products";
+import { getProducts, getProfile } from "@/lib/api";
 import { cn } from "@/lib/utils";
-import { useCartStore } from "@/store/use-cart-store";
 import { useAuthStore } from "@/store/use-auth-store";
+import { useCartStore } from "@/store/use-cart-store";
+import type { Product } from "@/types/product";
 import { AuthModal } from "./auth-modal";
 
 import {
@@ -40,11 +50,22 @@ const NAV = [
     label: "Fast Charge",
     href: "/collections/power-tech",
   },
+  {
+    label: "Giới thiệu",
+    href: "/about",
+  },
+  {
+    label: "Tin tức",
+    href: "/news",
+  },
+  {
+    label: "Liên hệ",
+    href: "/contact",
+  },
 ];
 
 const MOBILE_LINKS = [
   ...NAV,
-  { label: "Our Story", href: "/pages/about" },
   { label: "FAQs", href: "/pages/faq" },
 ];
 
@@ -54,24 +75,64 @@ export function SiteHeader() {
   const [authModalOpen, setAuthModalOpen] = useState(false);
   const [userDropdownOpen, setUserDropdownOpen] = useState(false);
   const [query, setQuery] = useState("");
+  const [searchResults, setSearchResults] = useState<Product[]>(products.slice(0, 4));
+  const [searching, setSearching] = useState(false);
 
   const openCart = useCartStore((state) => state.openCart);
   const totalItems = useCartStore((state) => state.getTotalItems());
   const cartHydrated = useCartStore((state) => state.hasHydrated);
 
   const user = useAuthStore((state) => state.user);
+  const token = useAuthStore((state) => state.token);
   const authHydrated = useAuthStore((state) => state.hasHydrated);
   const logout = useAuthStore((state) => state.logout);
+  const setAuth = useAuthStore((state) => state.setAuth);
 
   const displayCount = cartHydrated ? totalItems : 0;
   const currentUser = authHydrated ? user : null;
   const isAdmin = currentUser?.role === "admin";
 
-  const results = query.trim()
-    ? products.filter((product) =>
-        product.name.toLowerCase().includes(query.trim().toLowerCase()),
-      )
-    : products.slice(0, 4);
+  // Session verification: Verify token & sync latest profile/role from MySQL on mount
+  useEffect(() => {
+    if (authHydrated && token) {
+      getProfile(token)
+        .then((freshUser) => {
+          setAuth(freshUser, token);
+        })
+        .catch(() => {
+          logout();
+        });
+    }
+  }, [authHydrated, token, setAuth, logout]);
+
+  useEffect(() => {
+    if (!query.trim()) {
+      setSearchResults(products.slice(0, 4));
+      setSearching(false);
+      return;
+    }
+
+    setSearching(true);
+    const timer = setTimeout(async () => {
+      try {
+        const data = await getProducts({ search: query.trim() });
+        setSearchResults(data);
+      } catch (err) {
+        console.error("Search API failed:", err);
+        setSearchResults(
+          products.filter(
+            (p) =>
+              p.name.toLowerCase().includes(query.trim().toLowerCase()) ||
+              (p.sku && p.sku.toLowerCase().includes(query.trim().toLowerCase())),
+          ),
+        );
+      } finally {
+        setSearching(false);
+      }
+    }, 300);
+
+    return () => clearTimeout(timer);
+  }, [query]);
 
   return (
     <>
@@ -246,33 +307,93 @@ export function SiteHeader() {
         </div>
 
         {searchOpen ? (
-          <div className="border-t border-border bg-white shadow-md">
+          <div className="border-t border-border bg-white shadow-md animate-in fade-in duration-150">
             <div className="raycon-container py-5">
-              <label className="mb-3 block text-sm font-bold text-navy" htmlFor="site-search">
-                Search Products
-              </label>
-              <input
-                id="site-search"
-                value={query}
-                onChange={(event) => setQuery(event.target.value)}
-                placeholder="Search by product name..."
-                className="h-12 w-full rounded-none border-b border-navy bg-transparent text-lg outline-none"
-                autoFocus
-              />
-              <ul className="mt-4 grid gap-2">
-                {results.map((product) => (
-                  <li key={product.id}>
-                    <Link
-                      href={product.href}
-                      onClick={() => setSearchOpen(false)}
-                      className="flex items-center justify-between text-sm font-medium hover:text-royal py-1.5"
-                    >
-                      <span>{product.name}</span>
-                      <span className="text-navy/60 font-semibold">{product.price.toFixed(2)}$</span>
-                    </Link>
-                  </li>
-                ))}
-              </ul>
+              <div className="flex items-center justify-between mb-3">
+                <label className="text-sm font-bold text-navy" htmlFor="site-search">
+                  Tìm Kiếm Sản Phẩm
+                </label>
+                {searching && (
+                  <span className="inline-flex items-center gap-1.5 text-xs text-royal font-semibold">
+                    <Loader2 className="size-3.5 animate-spin" /> Đang tìm kiếm...
+                  </span>
+                )}
+              </div>
+              <div className="relative">
+                <input
+                  id="site-search"
+                  value={query}
+                  onChange={(event) => setQuery(event.target.value)}
+                  placeholder="Nhập tên sản phẩm hoặc mã SKU (vd: Everyday, Bone, RAY-E25)..."
+                  className="h-12 w-full rounded-none border-b border-navy bg-transparent text-base md:text-lg outline-none pr-8"
+                  autoFocus
+                />
+                {query && (
+                  <button
+                    type="button"
+                    onClick={() => setQuery("")}
+                    className="absolute right-2 top-1/2 -translate-y-1/2 text-navy/40 hover:text-navy text-xs font-bold"
+                  >
+                    Xóa
+                  </button>
+                )}
+              </div>
+
+              <div className="mt-4">
+                <p className="text-[11px] font-bold uppercase tracking-wider text-navy/50 mb-2">
+                  {query.trim()
+                    ? `Kết quả tìm kiếm (${searchResults.length})`
+                    : "Sản phẩm gợi ý"}
+                </p>
+
+                {searchResults.length === 0 && !searching ? (
+                  <div className="py-6 text-center text-xs text-navy/60">
+                    Không tìm thấy sản phẩm nào khớp với &quot;<strong>{query}</strong>&quot;.
+                  </div>
+                ) : (
+                  <div className="grid gap-2 sm:grid-cols-2">
+                    {searchResults.map((product) => (
+                      <Link
+                        key={product.id}
+                        href={product.href}
+                        onClick={() => setSearchOpen(false)}
+                        className="flex items-center justify-between gap-3 rounded-xl border border-navy/5 p-2.5 hover:bg-navy/5 hover:border-navy/15 transition-all group"
+                      >
+                        <div className="flex items-center gap-3 min-w-0">
+                          <div className="size-10 rounded-lg bg-[#e8f7ff] p-1 shrink-0 overflow-hidden border border-navy/5">
+                            {/* eslint-disable-next-line @next/next/no-img-element */}
+                            <img
+                              src={product.image}
+                              alt=""
+                              className="size-full object-contain"
+                            />
+                          </div>
+                          <div className="min-w-0">
+                            <span className="block text-xs font-bold text-navy truncate group-hover:text-royal transition-colors">
+                              {product.name}
+                            </span>
+                            <div className="flex items-center gap-2 mt-0.5">
+                              {product.sku && (
+                                <span className="text-[10px] text-navy/40 font-mono">
+                                  {product.sku}
+                                </span>
+                              )}
+                              {product.badge && (
+                                <span className="text-[9px] font-bold text-[#f05c56] bg-red-50 px-1.5 py-0.2 rounded">
+                                  {product.badge}
+                                </span>
+                              )}
+                            </div>
+                          </div>
+                        </div>
+                        <span className="text-xs font-bold text-royal shrink-0">
+                          ${product.price.toFixed(2)}
+                        </span>
+                      </Link>
+                    ))}
+                  </div>
+                )}
+              </div>
             </div>
           </div>
         ) : null}

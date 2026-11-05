@@ -20,8 +20,10 @@ export type Product = {
   id: string;
   handle: string;
   name: string;
+  sku?: string | null;
   tagline: string;
   category: ProductCategory;
+  subCategory?: string | null;
   collectionSlug: string;
   href: string;
   image: string;
@@ -35,7 +37,30 @@ export type Product = {
   specs: ProductSpec[];
   description: string;
   inStock: boolean;
+  isActive?: boolean;
   featured?: boolean;
+};
+
+export const SUB_CATEGORIES_BY_COLLECTION: Record<
+  string,
+  { label: string; slug: string }[]
+> = {
+  earbuds: [
+    { label: "True Wireless", slug: "true-wireless" },
+    { label: "Sport & Fitness", slug: "sport-fitness" },
+  ],
+  "open-audio": [
+    { label: "Open-Ear Clips", slug: "open-clip" },
+    { label: "Bone Conduction", slug: "bone-conduction" },
+  ],
+  headphones: [
+    { label: "Over-Ear ANC", slug: "over-ear-anc" },
+    { label: "Everyday Wireless", slug: "everyday-wireless" },
+  ],
+  "power-tech": [
+    { label: "Magnetic & Fast Cables", slug: "fast-cables" },
+    { label: "Wireless Chargers", slug: "wireless-chargers" },
+  ],
 };
 
 export type CategoryCard = {

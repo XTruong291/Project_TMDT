@@ -60,15 +60,18 @@ export default function AdminProductsPage() {
   const [formData, setFormData] = useState<{
     id: string;
     handle: string;
+    sku: string;
     name: string;
     tagline: string;
     category: string;
+    subCategory: string;
     collectionSlug: string;
     image: string;
     price: number;
     compareAtPrice: number | null;
     badge: string;
     inStock: boolean;
+    isActive: boolean;
     featured: boolean;
     description: string;
     colors: ProductColor[];
@@ -76,15 +79,18 @@ export default function AdminProductsPage() {
   }>({
     id: "",
     handle: "",
+    sku: "",
     name: "",
     tagline: "",
     category: "earbuds",
+    subCategory: "",
     collectionSlug: "earbuds",
     image: DEFAULT_IMAGE,
     price: 69.99,
     compareAtPrice: 89.99,
     badge: "",
     inStock: true,
+    isActive: true,
     featured: false,
     description: "",
     colors: [
@@ -103,7 +109,7 @@ export default function AdminProductsPage() {
   async function loadProducts() {
     setLoading(true);
     try {
-      const data = await getProducts();
+      const data = await getProducts({ includeInactive: true });
       setProducts(data);
     } catch (err) {
       console.error("Failed to load products:", err);
@@ -134,15 +140,18 @@ export default function AdminProductsPage() {
     setFormData({
       id: "",
       handle: "",
+      sku: "",
       name: "",
       tagline: "",
       category: "earbuds",
+      subCategory: "",
       collectionSlug: "earbuds",
       image: DEFAULT_IMAGE,
       price: 69.99,
       compareAtPrice: 89.99,
       badge: "20% OFF",
       inStock: true,
+      isActive: true,
       featured: false,
       description: "Sản phẩm âm thanh cao cấp với công nghệ tiên tiến nhất từ Raycon.",
       colors: [
@@ -166,15 +175,18 @@ export default function AdminProductsPage() {
     setFormData({
       id: product.id,
       handle: product.handle,
+      sku: product.sku || "",
       name: product.name,
       tagline: product.tagline || "",
       category: product.category,
+      subCategory: product.subCategory || "",
       collectionSlug: product.collectionSlug,
       image: product.image,
       price: product.price,
       compareAtPrice: product.compareAtPrice ?? null,
       badge: product.badge || "",
       inStock: product.inStock,
+      isActive: product.isActive ?? true,
       featured: product.featured ?? false,
       description: product.description || "",
       colors: product.colors.length > 0 ? [...product.colors] : [
@@ -271,15 +283,18 @@ export default function AdminProductsPage() {
     const payload: Partial<Product> = {
       id: formData.id.trim(),
       handle: formData.handle.trim(),
+      sku: formData.sku.trim() || null,
       name: formData.name.trim(),
       tagline: formData.tagline.trim(),
       category: formData.category,
+      subCategory: formData.subCategory.trim() || null,
       collectionSlug: formData.collectionSlug,
       image: formData.image.trim() || DEFAULT_IMAGE,
       price: Number(formData.price),
       compareAtPrice: formData.compareAtPrice ? Number(formData.compareAtPrice) : null,
       badge: formData.badge.trim() || null,
       inStock: formData.inStock,
+      isActive: formData.isActive,
       featured: formData.featured,
       description: formData.description,
       colors: formData.colors,
@@ -303,6 +318,21 @@ export default function AdminProductsPage() {
       }
     } finally {
       setSaving(false);
+    }
+  }
+
+  async function handleToggleActive(product: Product) {
+    if (!token) return;
+    const nextStatus = !(product.isActive ?? true);
+    try {
+      await adminUpdateProduct(product.id, { isActive: nextStatus }, token);
+      setProducts((prev) =>
+        prev.map((p) =>
+          p.id === product.id ? { ...p, isActive: nextStatus } : p,
+        ),
+      );
+    } catch (err) {
+      console.error("Failed to toggle isActive:", err);
     }
   }
 
@@ -410,9 +440,16 @@ export default function AdminProductsPage() {
                         </div>
                         <div className="min-w-0">
                           <p className="font-bold text-navy truncate">{p.name}</p>
-                          <p className="text-[11px] text-gray-400 font-mono truncate">
-                            /{p.handle}
-                          </p>
+                          <div className="flex items-center gap-1.5 mt-0.5">
+                            <span className="text-[11px] text-gray-400 font-mono truncate">
+                              /{p.handle}
+                            </span>
+                            {p.sku && (
+                              <span className="rounded bg-gray-100 px-1.5 py-0.2 font-mono text-[10px] font-bold text-gray-600">
+                                {p.sku}
+                              </span>
+                            )}
+                          </div>
                         </div>
                       </div>
                     </td>
@@ -422,6 +459,11 @@ export default function AdminProductsPage() {
                       <span className="inline-block rounded-md bg-gray-100 px-2 py-0.5 text-[11px] font-semibold text-gray-700 capitalize">
                         {p.category}
                       </span>
+                      {p.subCategory && (
+                        <span className="block text-[10px] text-royal font-medium mt-0.5">
+                          ↳ {p.subCategory}
+                        </span>
+                      )}
                     </td>
 
                     {/* Price Cell */}
@@ -451,6 +493,25 @@ export default function AdminProductsPage() {
                     {/* Status Cell */}
                     <td className="py-3 px-4">
                       <div className="flex flex-col gap-1 items-start">
+                        {/* Active / Inactive Toggle Button */}
+                        <button
+                          type="button"
+                          onClick={() => handleToggleActive(p)}
+                          className={`inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[10px] font-bold cursor-pointer transition ${
+                            p.isActive !== false
+                              ? "bg-emerald-50 text-emerald-700 border border-emerald-200 hover:bg-emerald-100"
+                              : "bg-gray-100 text-gray-500 border border-gray-200 hover:bg-gray-200"
+                          }`}
+                          title="Nhấn để Bật/Tắt hiển thị ngoài Storefront"
+                        >
+                          <span
+                            className={`size-1.5 rounded-full ${
+                              p.isActive !== false ? "bg-emerald-500" : "bg-gray-400"
+                            }`}
+                          />
+                          <span>{p.isActive !== false ? "Hiển thị" : "Đang ẩn"}</span>
+                        </button>
+
                         {p.inStock ? (
                           <span className="inline-flex items-center gap-1 text-[11px] font-semibold text-emerald-600">
                             <Check className="size-3" /> Còn hàng
@@ -595,6 +656,39 @@ export default function AdminProductsPage() {
                 </div>
               </div>
 
+              {/* SKU & SubCategory */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-xs font-bold uppercase tracking-wider text-navy/70 mb-1">
+                    Mã SKU Sản Phẩm
+                  </label>
+                  <input
+                    type="text"
+                    value={formData.sku}
+                    onChange={(e) =>
+                      setFormData({ ...formData, sku: e.target.value })
+                    }
+                    placeholder="RAY-E25-BLK"
+                    className="w-full rounded-xl border border-gray-200 bg-gray-50/50 py-2.5 px-3.5 text-xs text-navy outline-none focus:border-navy focus:bg-white font-mono"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-xs font-bold uppercase tracking-wider text-navy/70 mb-1">
+                    Danh mục Phụ Cấp 2 (Sub-category)
+                  </label>
+                  <input
+                    type="text"
+                    value={formData.subCategory}
+                    onChange={(e) =>
+                      setFormData({ ...formData, subCategory: e.target.value })
+                    }
+                    placeholder="true-wireless, sport-fitness, over-ear-anc..."
+                    className="w-full rounded-xl border border-gray-200 bg-gray-50/50 py-2.5 px-3.5 text-xs text-navy outline-none focus:border-navy focus:bg-white"
+                  />
+                </div>
+              </div>
+
               {/* Category & Collection */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
@@ -704,8 +798,20 @@ export default function AdminProductsPage() {
                 />
               </div>
 
-              {/* Switches: InStock & Featured */}
-              <div className="flex items-center gap-6 py-1">
+              {/* Switches: InStock, Featured & IsActive */}
+              <div className="flex flex-wrap items-center gap-6 py-1">
+                <label className="flex items-center gap-2 cursor-pointer text-xs font-bold text-navy">
+                  <input
+                    type="checkbox"
+                    checked={formData.isActive}
+                    onChange={(e) =>
+                      setFormData({ ...formData, isActive: e.target.checked })
+                    }
+                    className="size-4 rounded text-navy focus:ring-navy cursor-pointer"
+                  />
+                  <span>Hiển thị Storefront (is_active)</span>
+                </label>
+
                 <label className="flex items-center gap-2 cursor-pointer text-xs font-bold text-navy">
                   <input
                     type="checkbox"

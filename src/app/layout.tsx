@@ -3,6 +3,7 @@ import { Outfit } from "next/font/google";
 
 import { AnnouncementBar } from "@/components/sites/raycon/announcement-bar";
 import { CartDrawer } from "@/components/sites/raycon/cart-drawer";
+import { FloatingChatWidget } from "@/components/sites/raycon/floating-chat-widget";
 import { SiteFooter } from "@/components/sites/raycon/footer";
 import { SiteHeader } from "@/components/sites/raycon/header";
 
@@ -40,6 +41,7 @@ export default function RootLayout({
         {children}
         <SiteFooter />
         <CartDrawer />
+        <FloatingChatWidget />
       </body>
     </html>
   );

@@ -1,7 +1,11 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { Phone, Mail, MapPin } from "lucide-react";
+
+import { getSiteAnalytics } from "@/lib/api";
+import type { SiteAnalytics } from "@/types/analytics";
 
 import {
   FacebookIcon,
@@ -50,7 +54,9 @@ const COLUMNS = [
   {
     title: "Company",
     links: [
-      { label: "About Us", href: "/pages/about" },
+      { label: "About Us (Giới thiệu)", href: "/about" },
+      { label: "News & Events (Tin tức)", href: "/news" },
+      { label: "Contact Us (Liên hệ)", href: "/contact" },
       { label: "B2B", href: "/pages/b2b" },
       {
         label: "Influencers & Affiliates",
@@ -62,7 +68,8 @@ const COLUMNS = [
   {
     title: "Support",
     links: [
-      { label: "FAQ / Contact Us", href: "/pages/faq" },
+      { label: "Contact Us (Liên hệ trực tiếp)", href: "/contact" },
+      { label: "FAQ / Trợ giúp", href: "/pages/faq" },
       {
         label: "Shipping Policy",
         href: "/pages/shipping-policy",
@@ -98,6 +105,26 @@ const COLUMNS = [
 export function SiteFooter() {
   const [email, setEmail] = useState("");
   const [subscribed, setSubscribed] = useState(false);
+  const [analytics, setAnalytics] = useState<SiteAnalytics>({
+    totalVisits: 154820,
+    onlineVisitors: 16,
+  });
+
+  useEffect(() => {
+    let active = true;
+    getSiteAnalytics()
+      .then((data) => {
+        if (active && data) {
+          setAnalytics(data);
+        }
+      })
+      .catch(() => {
+        // Keep fallback values gracefully if offline
+      });
+    return () => {
+      active = false;
+    };
+  }, []);
 
   function handleSubscribe(e: React.FormEvent) {
     e.preventDefault();
@@ -111,7 +138,7 @@ export function SiteFooter() {
     <footer className="bg-royal text-white">
       <div className="raycon-container py-12 md:py-16">
         <div className="grid gap-10 lg:grid-cols-[1.1fr_2fr_1.1fr]">
-          {/* Social */}
+          {/* Social & Contact Hotline */}
           <div>
             <h2 className="mb-4 text-xl font-bold">Follow Us:</h2>
             <ul className="flex gap-4">
@@ -129,6 +156,37 @@ export function SiteFooter() {
                 </li>
               ))}
             </ul>
+
+            {/* Hotline & Trụ sở (Hạng mục 6 & 7) */}
+            <div className="mt-6 space-y-2 text-xs text-white/80">
+              <p className="font-semibold text-white tracking-wide uppercase text-[11px]">
+                Tổng đài CSKH &amp; Hỗ trợ:
+              </p>
+              <div className="flex items-center gap-2">
+                <Phone className="size-3.5 text-white/70" />
+                <span className="text-white/70">Hotline:</span>
+                <a
+                  href="tel:1800729266"
+                  className="font-bold text-white hover:underline"
+                >
+                  1-800-RAYCON (24/7)
+                </a>
+              </div>
+              <div className="flex items-center gap-2">
+                <Mail className="size-3.5 text-white/70" />
+                <span className="text-white/70">Email:</span>
+                <a
+                  href="mailto:support@rayconglobal.com"
+                  className="text-white font-medium hover:underline"
+                >
+                  support@rayconglobal.com
+                </a>
+              </div>
+              <div className="flex items-start gap-2 pt-0.5 text-white/65">
+                <MapPin className="size-3.5 shrink-0 text-white/50 mt-0.5" />
+                <span>1115 Broadway, Suite 1200, New York, NY 10010</span>
+              </div>
+            </div>
           </div>
 
           {/* Links 3 columns */}
@@ -195,13 +253,26 @@ export function SiteFooter() {
         </div>
 
         {/* Bottom Bar */}
-        <div className="mt-12 flex flex-col items-start justify-between gap-4 border-t border-white/20 pt-6 text-sm text-white/80 sm:flex-row sm:items-center">
+        <div className="mt-12 flex flex-col items-start justify-between gap-4 border-t border-white/20 pt-6 text-sm text-white/80 md:flex-row md:items-center">
           <div className="flex items-center gap-4">
             <Link href="/" aria-label="Raycon Home">
               <RayconLogo className="h-5 w-[96px] text-white" />
             </Link>
             <span>Language: English</span>
           </div>
+
+          {/* Thống kê truy cập (Hạng mục 6) */}
+          <div className="flex flex-wrap items-center gap-3 rounded-full border border-white/15 bg-white/10 px-4 py-1.5 text-xs text-white">
+            <span className="flex items-center gap-1.5 font-semibold text-emerald-300">
+              <span className="size-2 rounded-full bg-emerald-400 animate-pulse" />
+              Đang trực tuyến: {analytics.onlineVisitors}
+            </span>
+            <span className="text-white/40">|</span>
+            <span className="text-white/90 font-medium">
+              Tổng lượt truy cập: {analytics.totalVisits.toLocaleString()}
+            </span>
+          </div>
+
           <Link href="/" className="text-xs hover:underline">
             © RAYCON 2026
           </Link>

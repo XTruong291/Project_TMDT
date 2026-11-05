@@ -1,6 +1,7 @@
 from contextlib import asynccontextmanager
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from sqlalchemy import text
 from app.core.config import settings
 from app.core.database import Base, engine
 from app.api.v1.api import api_router
@@ -12,6 +13,37 @@ import app.models  # noqa: F401
 async def lifespan(app: FastAPI):
     # Ensure database tables exist on startup
     Base.metadata.create_all(bind=engine)
+    # Safe idempotent migration for products table
+    try:
+        with engine.begin() as conn:
+            existing_cols = {
+                row[0]
+                for row in conn.execute(
+                    text(
+                        "SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS "
+                        "WHERE TABLE_NAME = 'products' AND TABLE_SCHEMA = DATABASE()"
+                    )
+                ).fetchall()
+            }
+            if "sku" not in existing_cols:
+                conn.execute(text("ALTER TABLE products ADD COLUMN sku VARCHAR(64) UNIQUE NULL"))
+            if "is_active" not in existing_cols:
+                conn.execute(text("ALTER TABLE products ADD COLUMN is_active BOOLEAN NOT NULL DEFAULT TRUE"))
+            if "sub_category" not in existing_cols:
+                conn.execute(text("ALTER TABLE products ADD COLUMN sub_category VARCHAR(100) NULL"))
+
+            # Ensure articles.thumbnail and about_sections.image_url can store long URLs / Google image addresses / base64
+            conn.execute(text("ALTER TABLE articles MODIFY COLUMN thumbnail LONGTEXT NULL"))
+            conn.execute(text("ALTER TABLE about_sections MODIFY COLUMN image_url LONGTEXT NULL"))
+
+            # Ensure orders has discount_amount and coupon_code
+            order_cols = [r[0] for r in conn.execute(text("SHOW COLUMNS FROM orders")).fetchall()]
+            if "discount_amount" not in order_cols:
+                conn.execute(text("ALTER TABLE orders ADD COLUMN discount_amount FLOAT NOT NULL DEFAULT 0.0"))
+            if "coupon_code" not in order_cols:
+                conn.execute(text("ALTER TABLE orders ADD COLUMN coupon_code VARCHAR(64) NULL"))
+    except Exception as e:
+        print(f"Migration note: {e}")
     yield
 
 

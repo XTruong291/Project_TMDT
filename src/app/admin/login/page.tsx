@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { Shield, Lock, Mail, ArrowLeft, Sparkles, User as UserIcon } from "lucide-react";
+import { Shield, Lock, Mail, ArrowLeft } from "lucide-react";
 import { loginUser } from "@/lib/api";
 import { useAuthStore } from "@/store/use-auth-store";
 
@@ -11,17 +11,18 @@ export default function AdminLoginPage() {
   const router = useRouter();
   const setAuth = useAuthStore((state) => state.setAuth);
 
-  const [email, setEmail] = useState("admin@raycon.local");
-  const [password, setPassword] = useState("admin123");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  async function handleLogin(targetEmail?: string, targetPassword?: string) {
-    const finalEmail = targetEmail || email;
-    const finalPassword = targetPassword || password;
+  async function handleLogin(e?: React.FormEvent) {
+    if (e) e.preventDefault();
+    const finalEmail = email.trim().toLowerCase();
+    const finalPassword = password;
 
     if (!finalEmail || !finalPassword) {
-      setError("Vui lòng nhập Email và Mật khẩu");
+      setError("Vui lòng nhập đầy đủ Email và Mật khẩu Quản trị");
       return;
     }
 
@@ -29,17 +30,17 @@ export default function AdminLoginPage() {
     setError(null);
     try {
       const res = await loginUser(finalEmail, finalPassword);
-      setAuth(res.user, res.accessToken);
-      if (res.user.role === "admin") {
-        router.push("/admin/products");
-      } else {
+      if (res.user.role !== "admin") {
         setError("Tài khoản của bạn không có quyền Quản trị viên (Admin).");
+        return;
       }
+      setAuth(res.user, res.accessToken);
+      router.push("/admin/products");
     } catch (err: unknown) {
       if (err instanceof Error) {
         setError(err.message);
       } else {
-        setError("Đăng nhập thất bại. Kiểm tra lại thông tin.");
+        setError("Đăng nhập thất bại. Email hoặc mật khẩu không chính xác.");
       }
     } finally {
       setLoading(false);
@@ -60,42 +61,6 @@ export default function AdminLoginPage() {
           <p className="mt-1 text-xs text-gray-500">
             Hệ thống quản lý sản phẩm và đơn hàng E-commerce
           </p>
-        </div>
-
-        {/* Quick Demo Login Preset Buttons */}
-        <div className="mb-6 rounded-2xl border border-purple-100 bg-purple-50/50 p-4">
-          <div className="flex items-center gap-1.5 text-xs font-bold text-purple-900 mb-2">
-            <Sparkles className="size-3.5 text-orange" />
-            <span>NÚT ĐĂNG NHẬP NHANH (DEMO)</span>
-          </div>
-          <div className="grid grid-cols-2 gap-2">
-            <button
-              type="button"
-              onClick={() => {
-                setEmail("admin@raycon.local");
-                setPassword("admin123");
-                handleLogin("admin@raycon.local", "admin123");
-              }}
-              disabled={loading}
-              className="flex items-center justify-center gap-1.5 rounded-xl border border-purple-300 bg-white py-2.5 px-3 text-xs font-bold text-purple-800 shadow-sm hover:bg-purple-100/50 transition-colors"
-            >
-              <Shield className="size-3.5 text-purple-700" />
-              Admin Demo
-            </button>
-            <button
-              type="button"
-              onClick={() => {
-                setEmail("user@raycon.local");
-                setPassword("user123");
-                handleLogin("user@raycon.local", "user123");
-              }}
-              disabled={loading}
-              className="flex items-center justify-center gap-1.5 rounded-xl border border-gray-200 bg-white py-2.5 px-3 text-xs font-bold text-gray-600 shadow-sm hover:bg-gray-50 transition-colors"
-            >
-              <UserIcon className="size-3.5 text-gray-500" />
-              Customer Demo
-            </button>
-          </div>
         </div>
 
         {error && (

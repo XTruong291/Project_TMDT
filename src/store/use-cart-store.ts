@@ -2,12 +2,15 @@ import { create } from "zustand";
 import { createJSONStorage, persist } from "zustand/middleware";
 
 import type { CartItem } from "@/types/cart";
+import type { AppliedCoupon } from "@/types/coupon";
 import type { Product, ProductColor } from "@/types/product";
 
 interface CartState {
   items: CartItem[];
   isOpen: boolean;
   hasHydrated: boolean;
+  appliedCoupon: AppliedCoupon | null;
+  couponMessage: string | null;
   setHasHydrated: (status: boolean) => void;
   openCart: () => void;
   closeCart: () => void;
@@ -18,6 +21,27 @@ interface CartState {
   clearCart: () => void;
   getTotalItems: () => number;
   getSubtotal: () => number;
+  getDiscountAmount: () => number;
+  applyCoupon: (coupon: AppliedCoupon) => void;
+  removeCoupon: () => void;
+}
+
+function checkCouponValidity(
+  items: CartItem[],
+  coupon: AppliedCoupon | null,
+): { validCoupon: AppliedCoupon | null; message: string | null } {
+  if (!coupon) return { validCoupon: null, message: null };
+  const subtotal = items.reduce(
+    (acc, item) => acc + item.product.price * item.quantity,
+    0,
+  );
+  if (subtotal < coupon.minOrderAmount) {
+    return {
+      validCoupon: null,
+      message: `Mã ${coupon.code} đã tự động gỡ do đơn hàng chưa đạt mức tối thiểu $${coupon.minOrderAmount.toFixed(2)}.`,
+    };
+  }
+  return { validCoupon: coupon, message: null };
 }
 
 export const useCartStore = create<CartState>()(
@@ -26,6 +50,8 @@ export const useCartStore = create<CartState>()(
       items: [],
       isOpen: false,
       hasHydrated: false,
+      appliedCoupon: null,
+      couponMessage: null,
 
       setHasHydrated: (status: boolean) => set({ hasHydrated: status }),
 
@@ -34,6 +60,11 @@ export const useCartStore = create<CartState>()(
       toggleCart: () => set((state) => ({ isOpen: !state.isOpen })),
 
       addItem: (product, selectedColor, quantity = 1) => {
+        // Enforce in_stock check: do not add out-of-stock items
+        if (product.inStock === false) {
+          return;
+        }
+
         set((state) => {
           const existingIndex = state.items.findIndex(
             (item) =>
@@ -41,35 +72,58 @@ export const useCartStore = create<CartState>()(
               item.selectedColor.name === selectedColor.name,
           );
 
+          let nextItems: CartItem[];
           if (existingIndex > -1) {
-            const nextItems = [...state.items];
+            nextItems = [...state.items];
             const existing = nextItems[existingIndex];
             if (existing) {
               nextItems[existingIndex] = {
                 ...existing,
-                quantity: existing.quantity + quantity,
+                quantity: Math.min(10, existing.quantity + quantity),
               };
             }
-            return { items: nextItems, isOpen: true };
+          } else {
+            nextItems = [
+              ...state.items,
+              { product, selectedColor, quantity: Math.min(10, Math.max(1, quantity)) },
+            ];
           }
 
+          const { validCoupon, message } = checkCouponValidity(
+            nextItems,
+            state.appliedCoupon,
+          );
+
           return {
-            items: [...state.items, { product, selectedColor, quantity }],
+            items: nextItems,
+            appliedCoupon: validCoupon,
+            couponMessage: message,
             isOpen: true,
           };
         });
       },
 
       removeItem: (productId, colorName) => {
-        set((state) => ({
-          items: state.items.filter(
+        set((state) => {
+          const nextItems = state.items.filter(
             (item) =>
               !(
                 item.product.id === productId &&
                 item.selectedColor.name === colorName
               ),
-          ),
-        }));
+          );
+
+          const { validCoupon, message } = checkCouponValidity(
+            nextItems,
+            state.appliedCoupon,
+          );
+
+          return {
+            items: nextItems,
+            appliedCoupon: validCoupon,
+            couponMessage: message,
+          };
+        });
       },
 
       updateQuantity: (productId, colorName, delta) => {
@@ -81,17 +135,27 @@ export const useCartStore = create<CartState>()(
                 item.selectedColor.name === colorName
               ) {
                 const newQty = item.quantity + delta;
-                return newQty > 0 ? { ...item, quantity: newQty } : null;
+                if (newQty <= 0) return null;
+                return { ...item, quantity: Math.min(10, newQty) };
               }
               return item;
             })
             .filter((item): item is CartItem => item !== null);
 
-          return { items: nextItems };
+          const { validCoupon, message } = checkCouponValidity(
+            nextItems,
+            state.appliedCoupon,
+          );
+
+          return {
+            items: nextItems,
+            appliedCoupon: validCoupon,
+            couponMessage: message,
+          };
         });
       },
 
-      clearCart: () => set({ items: [] }),
+      clearCart: () => set({ items: [], appliedCoupon: null, couponMessage: null }),
 
       getTotalItems: () => {
         return get().items.reduce((acc, item) => acc + item.quantity, 0);
@@ -103,15 +167,40 @@ export const useCartStore = create<CartState>()(
           0,
         );
       },
+
+      getDiscountAmount: () => {
+        const subtotal = get().getSubtotal();
+        const coupon = get().appliedCoupon;
+        if (!coupon || subtotal < coupon.minOrderAmount) return 0;
+
+        if (coupon.discountType === "percent") {
+          return Math.round(((subtotal * coupon.discountValue) / 100) * 100) / 100;
+        }
+        return Math.min(coupon.discountValue, subtotal);
+      },
+
+      applyCoupon: (coupon) =>
+        set({
+          appliedCoupon: coupon,
+          couponMessage: null,
+        }),
+
+      removeCoupon: () =>
+        set({
+          appliedCoupon: null,
+          couponMessage: null,
+        }),
     }),
     {
       name: "raycon-cart-storage",
       storage: createJSONStorage(() => localStorage),
-      partialize: (state) => ({ items: state.items }),
+      partialize: (state) => ({
+        items: state.items,
+        appliedCoupon: state.appliedCoupon,
+      }),
       onRehydrateStorage: () => (state) => {
         state?.setHasHydrated(true);
       },
     },
   ),
 );
-

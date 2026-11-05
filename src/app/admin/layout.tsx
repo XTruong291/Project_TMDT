@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import {
@@ -10,10 +11,16 @@ import {
   LogOut,
   Shield,
   Layers,
+  FileText,
+  Newspaper,
+  Inbox,
+  Activity,
 } from "lucide-react";
 import { useAuthStore } from "@/store/use-auth-store";
 import { AdminGuard } from "@/components/admin/admin-guard";
 import { cn } from "@/lib/utils";
+import { getSiteAnalytics } from "@/lib/api";
+import type { SiteAnalytics } from "@/types/analytics";
 
 const NAV_ITEMS = [
   {
@@ -31,6 +38,21 @@ const NAV_ITEMS = [
     href: "/admin/users",
     icon: Users,
   },
+  {
+    label: "Quản lý Giới thiệu",
+    href: "/admin/about",
+    icon: FileText,
+  },
+  {
+    label: "Quản lý Tin tức",
+    href: "/admin/news",
+    icon: Newspaper,
+  },
+  {
+    label: "Hộp thư Liên hệ",
+    href: "/admin/contacts",
+    icon: Inbox,
+  },
 ];
 
 export default function AdminLayout({
@@ -42,6 +64,19 @@ export default function AdminLayout({
   const router = useRouter();
   const user = useAuthStore((state) => state.user);
   const logout = useAuthStore((state) => state.logout);
+  const [analytics, setAnalytics] = useState<SiteAnalytics | null>(null);
+
+  useEffect(() => {
+    let mounted = true;
+    getSiteAnalytics()
+      .then((data) => {
+        if (mounted && data) setAnalytics(data);
+      })
+      .catch(() => {});
+    return () => {
+      mounted = false;
+    };
+  }, []);
 
   // Do not wrap login page with AdminGuard
   if (pathname === "/admin/login") {
@@ -100,6 +135,28 @@ export default function AdminLayout({
 
           {/* Bottom Actions */}
           <div className="border-t border-gray-100 p-4 space-y-3">
+            {/* Live Traffic Widget (Hạng mục 6) */}
+            <div className="rounded-xl border border-emerald-200/80 bg-emerald-50/60 p-3 text-xs">
+              <div className="flex items-center justify-between font-semibold text-emerald-950">
+                <span className="flex items-center gap-1.5">
+                  <span className="size-2 rounded-full bg-emerald-500 animate-pulse" />
+                  Trực tuyến:
+                </span>
+                <span className="font-bold text-emerald-700">
+                  {analytics?.onlineVisitors ?? 16} khách
+                </span>
+              </div>
+              <div className="mt-1 flex items-center justify-between text-[11px] text-emerald-800/80">
+                <span className="flex items-center gap-1">
+                  <Activity className="size-3" />
+                  Tổng truy cập:
+                </span>
+                <span className="font-semibold text-emerald-900">
+                  {(analytics?.totalVisits ?? 154820).toLocaleString()}
+                </span>
+              </div>
+            </div>
+
             <Link
               href="/"
               className="flex items-center gap-2.5 rounded-xl border border-gray-200 bg-gray-50/50 px-3.5 py-2 text-xs font-bold text-navy hover:bg-gray-100 transition-colors"

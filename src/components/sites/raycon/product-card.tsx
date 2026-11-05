@@ -19,8 +19,10 @@ export function ProductCard({ product }: { product: Product }) {
 
   const color = product.colors[colorIndex] ?? product.colors[0];
   const image = color?.image ?? product.image;
+  const isOutOfStock = product.inStock === false;
 
   function handleAddToCart() {
+    if (isOutOfStock) return;
     if (color) {
       addItem(product, color, 1);
       setAdded(true);
@@ -31,7 +33,11 @@ export function ProductCard({ product }: { product: Product }) {
   return (
     <article className="flex h-full min-w-[280px] flex-1 flex-col justify-between rounded-[28px] bg-white p-3 shadow-[0_0_0_1px_rgba(31,40,58,0.04)] md:min-w-[320px] lg:min-w-[280px]">
       <div className="relative block overflow-hidden rounded-[22px] bg-[#e8f7ff]">
-        {product.badge ? (
+        {isOutOfStock ? (
+          <span className="absolute top-3 left-3 z-10 inline-flex items-center rounded-full bg-navy/80 px-2.5 py-1 text-[11px] font-bold tracking-wider text-white uppercase backdrop-blur-xs">
+            Hết Hàng
+          </span>
+        ) : product.badge ? (
           <span className="absolute top-3 left-3 z-10 inline-flex items-center rounded-full bg-[#f05c56] px-2.5 py-1 text-[11px] font-bold tracking-wider text-white uppercase">
             {product.badge}
           </span>
@@ -99,16 +105,26 @@ export function ProductCard({ product }: { product: Product }) {
             ) : null}
           </div>
 
-          <button
-            type="button"
-            onClick={handleAddToCart}
-            aria-label={`Quick add ${product.name} to cart`}
-            className={`inline-flex h-10 items-center justify-center rounded-full px-6 text-sm font-bold text-white transition-all cursor-pointer ${
-              added ? "bg-emerald-600 scale-105" : "bg-royal hover:bg-[#2827cd]"
-            }`}
-          >
-            {added ? "Added!" : "Add"}
-          </button>
+          {isOutOfStock ? (
+            <button
+              type="button"
+              disabled
+              className="inline-flex h-10 items-center justify-center rounded-full bg-gray-200 px-5 text-xs font-bold text-gray-500 cursor-not-allowed"
+            >
+              Hết hàng
+            </button>
+          ) : (
+            <button
+              type="button"
+              onClick={handleAddToCart}
+              aria-label={`Quick add ${product.name} to cart`}
+              className={`inline-flex h-10 items-center justify-center rounded-full px-6 text-sm font-bold text-white transition-all cursor-pointer ${
+                added ? "bg-emerald-600 scale-105" : "bg-royal hover:bg-[#2827cd]"
+              }`}
+            >
+              {added ? "Added!" : "Add"}
+            </button>
+          )}
         </div>
       </div>
     </article>

@@ -1,10 +1,11 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useSyncExternalStore } from "react";
-import { ArrowRight, Minus, Plus, ShoppingBag, Trash2, Truck, X } from "lucide-react";
+import { useEffect, useState, useSyncExternalStore } from "react";
+import { ArrowRight, Minus, Plus, ShoppingBag, Tag, Trash2, Truck, X } from "lucide-react";
 
 import { formatUsd } from "@/data/products";
+import { verifyCoupon } from "@/lib/api";
 import { useCartStore } from "@/store/use-cart-store";
 
 const FREE_SHIPPING_THRESHOLD = 50;
@@ -25,6 +26,15 @@ export function CartDrawer() {
   const updateQuantity = useCartStore((state) => state.updateQuantity);
   const getSubtotal = useCartStore((state) => state.getSubtotal);
   const getTotalItems = useCartStore((state) => state.getTotalItems);
+  const appliedCoupon = useCartStore((state) => state.appliedCoupon);
+  const couponMessage = useCartStore((state) => state.couponMessage);
+  const applyCoupon = useCartStore((state) => state.applyCoupon);
+  const removeCoupon = useCartStore((state) => state.removeCoupon);
+  const getDiscountAmount = useCartStore((state) => state.getDiscountAmount);
+
+  const [couponInput, setCouponInput] = useState("");
+  const [couponError, setCouponError] = useState("");
+  const [isVerifying, setIsVerifying] = useState(false);
 
   useEffect(() => {
     function handleToggleEvent() {
@@ -73,12 +83,38 @@ export function CartDrawer() {
   if (!isClient) return null;
 
   const subtotal = getSubtotal();
+  const discountAmount = getDiscountAmount();
+  const finalTotal = Math.max(0, subtotal - discountAmount);
   const totalItems = getTotalItems();
   const freeShippingProgress = Math.min(
     100,
     (subtotal / FREE_SHIPPING_THRESHOLD) * 100,
   );
   const amountToFreeShipping = Math.max(0, FREE_SHIPPING_THRESHOLD - subtotal);
+
+  async function handleApplyCoupon(e: React.FormEvent) {
+    e.preventDefault();
+    if (!couponInput.trim()) return;
+    setIsVerifying(true);
+    setCouponError("");
+
+    try {
+      const res = await verifyCoupon(couponInput.trim(), subtotal);
+      applyCoupon({
+        code: res.code,
+        discountType: res.discountType,
+        discountValue: res.discountValue,
+        minOrderAmount: res.minOrderAmount,
+        description: res.description,
+      });
+      setCouponInput("");
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? err.message : "Mã không hợp lệ";
+      setCouponError(msg);
+    } finally {
+      setIsVerifying(false);
+    }
+  }
 
   return (
     <div
@@ -258,13 +294,82 @@ export function CartDrawer() {
         {/* Drawer Footer */}
         {items.length > 0 ? (
           <div className="border-t border-navy/10 bg-white p-6 shadow-inner">
+            {/* Coupon Code Section */}
+            <div className="mb-4 pb-4 border-b border-gray-100">
+              {appliedCoupon ? (
+                <div className="flex items-center justify-between rounded-xl bg-emerald-50 border border-emerald-200 px-3.5 py-2.5">
+                  <div className="flex items-center gap-2">
+                    <Tag className="size-4 text-emerald-600" />
+                    <div>
+                      <p className="text-xs font-bold text-emerald-800">
+                        {appliedCoupon.code}
+                      </p>
+                      <p className="text-[10px] text-emerald-600">
+                        {appliedCoupon.description || "Đã áp dụng mã"}
+                      </p>
+                    </div>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={removeCoupon}
+                    aria-label="Remove coupon"
+                    className="text-xs font-semibold text-emerald-700 hover:text-red-600 transition-colors p-1"
+                  >
+                    <X className="size-4" />
+                  </button>
+                </div>
+              ) : (
+                <form onSubmit={handleApplyCoupon} className="space-y-1.5">
+                  <div className="flex gap-2">
+                    <input
+                      type="text"
+                      value={couponInput}
+                      onChange={(e) => {
+                        setCouponInput(e.target.value);
+                        setCouponError("");
+                      }}
+                      placeholder="Mã giảm giá (ví dụ: RAYCON10)"
+                      className="h-9 flex-1 rounded-xl border border-navy/15 px-3 text-xs uppercase outline-none focus:border-royal"
+                    />
+                    <button
+                      type="submit"
+                      disabled={isVerifying || !couponInput.trim()}
+                      className="h-9 rounded-xl bg-navy px-4 text-xs font-bold text-white transition hover:bg-royal disabled:opacity-50 cursor-pointer"
+                    >
+                      {isVerifying ? "..." : "Áp dụng"}
+                    </button>
+                  </div>
+                  {couponError && (
+                    <p className="text-[11px] text-red-500 font-medium">
+                      {couponError}
+                    </p>
+                  )}
+                  {couponMessage && (
+                    <p className="text-[11px] text-amber-600 font-medium">
+                      {couponMessage}
+                    </p>
+                  )}
+                </form>
+              )}
+            </div>
+
             <div className="space-y-2">
-              <div className="flex items-center justify-between text-base font-bold text-navy">
-                <span>Subtotal</span>
-                <span>{formatUsd(subtotal)}</span>
+              <div className="flex items-center justify-between text-sm text-navy/70">
+                <span>Tạm tính</span>
+                <span className="font-semibold text-navy">{formatUsd(subtotal)}</span>
               </div>
-              <p className="text-xs text-navy/60">
-                Taxes and shipping calculated during checkout.
+              {appliedCoupon && discountAmount > 0 && (
+                <div className="flex items-center justify-between text-sm text-emerald-700 font-medium">
+                  <span>Giảm giá ({appliedCoupon.code})</span>
+                  <span>-{formatUsd(discountAmount)}</span>
+                </div>
+              )}
+              <div className="flex items-center justify-between text-base font-bold text-navy pt-1 border-t border-gray-100">
+                <span>Tổng cộng</span>
+                <span className="text-royal font-bold text-lg">{formatUsd(finalTotal)}</span>
+              </div>
+              <p className="text-[11px] text-navy/50">
+                Thuế và phí giao hàng sẽ được tính khi thanh toán.
               </p>
             </div>
 
@@ -274,15 +379,15 @@ export function CartDrawer() {
                 onClick={closeCart}
                 className="group flex h-13 w-full items-center justify-center gap-2 rounded-full bg-royal px-8 text-sm font-bold text-white transition hover:bg-[#2827cd]"
               >
-                <span>Proceed to Checkout</span>
+                <span>Tiến hành Thanh toán</span>
                 <ArrowRight className="size-4 transition-transform group-hover:translate-x-1" />
               </Link>
               <button
                 type="button"
                 onClick={closeCart}
-                className="h-10 text-xs font-semibold text-navy/70 hover:text-navy"
+                className="h-10 text-xs font-semibold text-navy/70 hover:text-navy cursor-pointer"
               >
-                Continue Shopping
+                Tiếp tục mua sắm
               </button>
             </div>
           </div>

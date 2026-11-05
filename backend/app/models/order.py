@@ -26,8 +26,10 @@ class Order(Base):
     shipping_district = Column(String(128), default="Hoàn Kiếm", nullable=False)
     payment_method = Column(String(64), default="cod", nullable=False)
     shipping_fee = Column(Float, default=0.0, nullable=False)
+    discount_amount = Column(Float, default=0.0, nullable=False)
     subtotal = Column(Float, nullable=False)
     total_amount = Column(Float, nullable=False)
+    coupon_code = Column(String(64), nullable=True)
     status = Column(Enum(OrderStatus), default=OrderStatus.PENDING, nullable=False)
     notes = Column(Text, nullable=True)
     

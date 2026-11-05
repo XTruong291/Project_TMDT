@@ -6,7 +6,8 @@ from sqlalchemy.orm import Session
 from app.core.database import get_db
 from app.models.order import Order, OrderItem, OrderStatus
 from app.models.product import Product
-from app.models.user import User
+from app.models.coupon import Coupon
+from app.models.user import User, RoleEnum
 from app.schemas.order import OrderCreate, OrderResponse, OrderStatusUpdate, OrderCancelRequest
 from app.api.deps import (
     get_current_admin,
@@ -29,72 +30,133 @@ def generate_order_number() -> str:
 def create_order(
     order_in: OrderCreate,
     db: Session = Depends(get_db),
-    token: Optional[str] = Depends(oauth2_scheme),
+    current_user: User = Depends(get_current_active_user),
 ):
     if not order_in.items:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
-            detail="Order must contain at least one item"
+            detail="Đơn hàng phải chứa ít nhất một sản phẩm.",
         )
 
-    # Optional user association if bearer token is present
-    user_id: Optional[int] = None
-    if token:
-        payload = decode_access_token(token)
-        if payload and "sub" in payload:
-            try:
-                user_id = int(payload["sub"])
-            except ValueError:
-                user_id = None
-
-    # Calculate subtotal and shipping fee
-    subtotal = float(sum(item.total_price for item in order_in.items))
-    # Raycon promotion: Free shipping over $50, otherwise $4.99
-    shipping_fee = 0.0 if subtotal >= 50.0 else 4.99
-    total_amount = float(subtotal + shipping_fee)
-
-    order_number = generate_order_number()
-
-    order = Order(
-        order_number=order_number,
-        user_id=user_id,
-        customer_name=order_in.customer_name,
-        customer_email=order_in.customer_email,
-        customer_phone=order_in.customer_phone,
-        shipping_address=order_in.shipping_address,
-        shipping_city=order_in.shipping_city,
-        shipping_district=order_in.shipping_district,
-        payment_method=order_in.payment_method,
-        shipping_fee=shipping_fee,
-        subtotal=subtotal,
-        total_amount=total_amount,
-        status=OrderStatus.PENDING,
-        notes=order_in.notes,
-    )
-    db.add(order)
-    db.flush()  # assign order.id
+    # 1. Verify items & calculate subtotal strictly from real MySQL products
+    calculated_subtotal = 0.0
+    verified_items = []
 
     for item_in in order_in.items:
-        # Safely resolve foreign key product_id by ID or handle
-        resolved_product_id: Optional[str] = None
-        if item_in.product_id:
-            matched_prod = (
-                db.query(Product)
-                .filter((Product.id == item_in.product_id) | (Product.handle == item_in.product_id))
-                .first()
+        if item_in.quantity <= 0 or item_in.quantity > 10:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail=f"Số lượng mua cho sản phẩm '{item_in.product_name}' không hợp lệ (cho phép 1 đến 10).",
             )
-            if matched_prod:
-                resolved_product_id = matched_prod.id
 
+        # Lookup product by id or handle
+        prod = (
+            db.query(Product)
+            .filter((Product.id == item_in.product_id) | (Product.handle == item_in.product_id))
+            .first()
+        )
+        if not prod:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail=f"Sản phẩm '{item_in.product_name}' không tồn tại trong hệ thống.",
+            )
+
+        if not prod.is_active:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail=f"Sản phẩm '{prod.name}' hiện đã ngừng kinh doanh. Vui lòng xóa khỏi giỏ.",
+            )
+
+        if not prod.in_stock:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail=f"Sản phẩm '{prod.name}' hiện đã hết hàng. Vui lòng xóa khỏi giỏ.",
+            )
+
+        # Real price from database (ignore client-supplied unit_price)
+        real_unit_price = float(prod.price)
+        item_total = round(real_unit_price * item_in.quantity, 2)
+        calculated_subtotal += item_total
+
+        verified_items.append({
+            "product_id": prod.id,
+            "product_name": prod.name,
+            "color_name": item_in.color_name,
+            "color_image": item_in.color_image,
+            "unit_price": real_unit_price,
+            "quantity": item_in.quantity,
+            "total_price": item_total,
+        })
+
+    calculated_subtotal = round(calculated_subtotal, 2)
+
+    # 2. Verify coupon from MySQL if provided
+    discount_amount = 0.0
+    applied_coupon_code: Optional[str] = None
+
+    if order_in.coupon_code and order_in.coupon_code.strip():
+        code_clean = order_in.coupon_code.strip().upper()
+        coupon = (
+            db.query(Coupon)
+            .filter(Coupon.code == code_clean, Coupon.is_active.is_(True))
+            .first()
+        )
+        if not coupon:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail=f"Mã giảm giá '{code_clean}' không hợp lệ hoặc đã hết hạn.",
+            )
+
+        if calculated_subtotal < coupon.min_order_amount:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail=f"Đơn hàng cần đạt tối thiểu ${coupon.min_order_amount:.2f} để sử dụng mã {coupon.code}.",
+            )
+
+        if coupon.discount_type == "percent":
+            discount_amount = round((calculated_subtotal * coupon.discount_value) / 100.0, 2)
+        else:
+            discount_amount = min(float(coupon.discount_value), calculated_subtotal)
+
+        applied_coupon_code = coupon.code
+
+    # 3. Calculate shipping fee
+    shipping_fee = 0.0 if calculated_subtotal >= 50.0 or applied_coupon_code == "FREESHIP" else 4.99
+    total_amount = round(max(0.0, calculated_subtotal - discount_amount + shipping_fee), 2)
+
+    # 4. Create Order
+    order_number = generate_order_number()
+    order = Order(
+        order_number=order_number,
+        user_id=current_user.id,
+        customer_name=order_in.customer_name.strip(),
+        customer_email=current_user.email,
+        customer_phone=order_in.customer_phone.strip(),
+        shipping_address=order_in.shipping_address.strip(),
+        shipping_city=order_in.shipping_city.strip(),
+        shipping_district=order_in.shipping_district.strip(),
+        payment_method=order_in.payment_method,
+        shipping_fee=shipping_fee,
+        subtotal=calculated_subtotal,
+        discount_amount=discount_amount,
+        total_amount=total_amount,
+        coupon_code=applied_coupon_code,
+        status=OrderStatus.PENDING,
+        notes=order_in.notes.strip() if order_in.notes else None,
+    )
+    db.add(order)
+    db.flush()
+
+    for item_data in verified_items:
         item = OrderItem(
             order_id=order.id,
-            product_id=resolved_product_id,
-            product_name=item_in.product_name,
-            color_name=item_in.color_name,
-            color_image=item_in.color_image,
-            unit_price=float(item_in.unit_price),
-            quantity=item_in.quantity,
-            total_price=float(item_in.total_price),
+            product_id=item_data["product_id"],
+            product_name=item_data["product_name"],
+            color_name=item_data["color_name"],
+            color_image=item_data["color_image"],
+            unit_price=item_data["unit_price"],
+            quantity=item_data["quantity"],
+            total_price=item_data["total_price"],
         )
         db.add(item)
 
@@ -218,7 +280,7 @@ def get_all_orders(
 def get_order_by_id(
     order_id: int,
     db: Session = Depends(get_db),
-    current_user: Optional[User] = Depends(get_optional_current_user),
+    current_user: User = Depends(get_current_active_user),
 ):
     order = db.query(Order).filter(Order.id == order_id).first()
     if not order:
@@ -226,6 +288,16 @@ def get_order_by_id(
             status_code=status.HTTP_404_NOT_FOUND,
             detail=f"Order with ID {order_id} not found"
         )
+
+    # Only Admin or the order owner can view the order
+    is_admin = current_user.role == RoleEnum.ADMIN
+    is_owner = (order.user_id == current_user.id) or (order.customer_email.lower() == current_user.email.lower())
+    if not (is_admin or is_owner):
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Bạn không có quyền truy cập đơn hàng này.",
+        )
+
     return order
 
 

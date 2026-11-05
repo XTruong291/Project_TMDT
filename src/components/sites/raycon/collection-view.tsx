@@ -5,6 +5,7 @@ import { useMemo, useState } from "react";
 import { ArrowUpDown, ChevronRight, Filter, SlidersHorizontal, Sparkles } from "lucide-react";
 
 import type { CollectionInfo, Product } from "@/data/products";
+import { SUB_CATEGORIES_BY_COLLECTION } from "@/types/product";
 
 import { ProductCard } from "./product-card";
 
@@ -20,13 +21,21 @@ export function CollectionView({
   initialProducts,
   collection,
 }: CollectionViewProps) {
+  const [selectedSubCategory, setSelectedSubCategory] = useState<string>("all");
   const [activeFilter, setActiveFilter] = useState<FilterType>("all");
   const [activeSort, setActiveSort] = useState<SortType>("featured");
+
+  const subCategories = SUB_CATEGORIES_BY_COLLECTION[collection.slug] || [];
 
   const filteredAndSortedProducts = useMemo(() => {
     let result = [...initialProducts];
 
-    // Filter
+    // Subcategory filter (Level 2)
+    if (selectedSubCategory !== "all") {
+      result = result.filter((p) => p.subCategory === selectedSubCategory);
+    }
+
+    // Quick filter
     if (activeFilter === "under-50") {
       result = result.filter((p) => p.price < 50);
     } else if (activeFilter === "over-50") {
@@ -52,7 +61,7 @@ export function CollectionView({
     }
 
     return result;
-  }, [initialProducts, activeFilter, activeSort]);
+  }, [initialProducts, selectedSubCategory, activeFilter, activeSort]);
 
   const filterOptions: { id: FilterType; label: string }[] = [
     { id: "all", label: "All Items" },
@@ -113,6 +122,47 @@ export function CollectionView({
           </div>
         </div>
       </div>
+
+      {/* Subcategory Level 2 Tabs */}
+      {subCategories.length > 0 && (
+        <div className="border-b border-navy/5 bg-white py-2.5">
+          <div className="raycon-container flex items-center gap-2 overflow-x-auto [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+            <span className="text-xs font-bold text-navy/50 uppercase mr-1 shrink-0">
+              Phân loại:
+            </span>
+            <button
+              type="button"
+              onClick={() => setSelectedSubCategory("all")}
+              className={`rounded-full px-3.5 py-1 text-xs font-bold transition-all cursor-pointer whitespace-nowrap ${
+                selectedSubCategory === "all"
+                  ? "bg-navy text-white shadow-xs"
+                  : "bg-gray-100 text-navy/70 hover:bg-gray-200"
+              }`}
+            >
+              Tất cả ({initialProducts.length})
+            </button>
+            {subCategories.map((sub) => {
+              const count = initialProducts.filter(
+                (p) => p.subCategory === sub.slug,
+              ).length;
+              return (
+                <button
+                  key={sub.slug}
+                  type="button"
+                  onClick={() => setSelectedSubCategory(sub.slug)}
+                  className={`rounded-full px-3.5 py-1 text-xs font-bold transition-all cursor-pointer whitespace-nowrap ${
+                    selectedSubCategory === sub.slug
+                      ? "bg-royal text-white shadow-xs"
+                      : "bg-gray-100 text-navy/70 hover:bg-gray-200"
+                  }`}
+                >
+                  {sub.label} {count > 0 ? `(${count})` : ""}
+                </button>
+              );
+            })}
+          </div>
+        </div>
+      )}
 
       {/* Filter & Sort Controls Toolbar */}
       <div className="sticky top-[66px] z-30 border-b border-navy/10 bg-white/95 backdrop-blur-md shadow-xs">
@@ -178,6 +228,7 @@ export function CollectionView({
               onClick={() => {
                 setActiveFilter("all");
                 setActiveSort("featured");
+                setSelectedSubCategory("all");
               }}
               className="mt-5 inline-flex h-11 items-center justify-center rounded-full bg-royal px-6 text-xs font-bold text-white transition hover:bg-[#2827cd]"
             >

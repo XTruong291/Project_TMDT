@@ -28,6 +28,7 @@ export type OrderCreatePayload = {
   shippingCity?: string;
   shippingDistrict?: string;
   paymentMethod?: string;
+  couponCode?: string | null;
   notes?: string;
   items: OrderItemPayload[];
 };
@@ -49,8 +50,10 @@ export type Order = {
   shippingDistrict: string;
   paymentMethod: string;
   shippingFee: number;
+  discountAmount?: number;
   subtotal: number;
   totalAmount: number;
+  couponCode?: string | null;
   status: OrderStatus;
   notes?: string | null;
   createdAt: string;
