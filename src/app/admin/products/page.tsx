@@ -86,12 +86,12 @@ export default function AdminProductsPage() {
     subCategory: "",
     collectionSlug: "earbuds",
     image: DEFAULT_IMAGE,
-    price: 69.99,
-    compareAtPrice: 89.99,
+    price: 1590000,
+    compareAtPrice: 1990000,
     badge: "",
     inStock: true,
     isActive: true,
-    featured: false,
+    featured: true,
     description: "",
     colors: [
       {
@@ -147,12 +147,12 @@ export default function AdminProductsPage() {
       subCategory: "",
       collectionSlug: "earbuds",
       image: DEFAULT_IMAGE,
-      price: 69.99,
-      compareAtPrice: 89.99,
+      price: 1590000,
+      compareAtPrice: 1990000,
       badge: "20% OFF",
       inStock: true,
       isActive: true,
-      featured: false,
+      featured: true,
       description: "Sản phẩm âm thanh cao cấp với công nghệ tiên tiến nhất từ RYVO.",
       colors: [
         {
@@ -333,6 +333,21 @@ export default function AdminProductsPage() {
       );
     } catch (err) {
       console.error("Failed to toggle isActive:", err);
+    }
+  }
+
+  async function handleToggleFeatured(product: Product) {
+    if (!token) return;
+    const nextFeatured = !product.featured;
+    try {
+      await adminUpdateProduct(product.id, { featured: nextFeatured }, token);
+      setProducts((prev) =>
+        prev.map((p) =>
+          p.id === product.id ? { ...p, featured: nextFeatured } : p,
+        ),
+      );
+    } catch (err) {
+      console.error("Failed to toggle featured:", err);
     }
   }
 
@@ -521,11 +536,24 @@ export default function AdminProductsPage() {
                             <X className="size-3" /> Hết hàng
                           </span>
                         )}
-                        {p.featured && (
-                          <span className="inline-flex items-center gap-1 rounded bg-amber-50 px-1.5 py-0.5 text-[10px] font-bold text-amber-600">
-                            <Star className="size-2.5 fill-amber-500" /> Nổi bật
-                          </span>
-                        )}
+                        {/* Featured Toggle Button */}
+                        <button
+                          type="button"
+                          onClick={() => handleToggleFeatured(p)}
+                          className={`inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[10px] font-bold cursor-pointer transition ${
+                            p.featured
+                              ? "bg-amber-50 text-amber-700 border border-amber-200 hover:bg-amber-100"
+                              : "bg-gray-100 text-gray-500 border border-gray-200 hover:bg-gray-200"
+                          }`}
+                          title="Nhấn để Bật/Tắt hiển thị tại mục Nổi bật trên Trang chủ"
+                        >
+                          <Star
+                            className={`size-2.5 ${
+                              p.featured ? "fill-amber-500 text-amber-500" : "text-gray-400"
+                            }`}
+                          />
+                          <span>{p.featured ? "Nổi bật" : "Thường"}</span>
+                        </button>
                       </div>
                     </td>
 
@@ -834,7 +862,7 @@ export default function AdminProductsPage() {
                     }
                     className="size-4 rounded text-navy focus:ring-navy cursor-pointer"
                   />
-                  <span>Sản phẩm Nổi bật (Fan Favorites trên Home)</span>
+                  <span>Sản phẩm Nổi bật (Hiển thị tab Nổi bật & ưu tiên Trang chủ)</span>
                 </label>
               </div>
 

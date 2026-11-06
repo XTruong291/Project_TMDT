@@ -73,7 +73,7 @@ def get_products(
     elif sort == "newest":
         query = query.order_by(Product.created_at.desc())
     else:
-        query = query.order_by(Product.created_at.asc())
+        query = query.order_by(Product.featured.desc(), Product.created_at.desc())
 
     return query.all()
 

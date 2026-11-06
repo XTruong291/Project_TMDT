@@ -12,6 +12,7 @@ import {
 import { getArticleDetail, getArticles } from "@/lib/api";
 import type { Article } from "@/types/article";
 import { ArticleShareBar } from "./share-bar";
+import { SafeImage } from "@/components/ui/safe-image";
 
 interface ArticleDetailPageProps {
   params: Promise<{ slug: string }>;
@@ -156,11 +157,10 @@ export default async function ArticleDetailPage({ params }: ArticleDetailPagePro
           {/* Featured Image */}
           {article.thumbnail && (
             <div className="mt-8 aspect-video w-full overflow-hidden rounded-2xl bg-[#e8f7ff] p-6 flex items-center justify-center border border-navy/5">
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
+              <SafeImage
                 src={article.thumbnail}
                 alt={article.title}
-                referrerPolicy="no-referrer"
+                fallbackSrc="/sites/raycon/images/earbuds-lifestyle.png"
                 className="size-full object-contain drop-shadow-md"
               />
             </div>

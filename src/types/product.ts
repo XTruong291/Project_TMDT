@@ -39,6 +39,8 @@ export type Product = {
   inStock: boolean;
   isActive?: boolean;
   featured?: boolean;
+  createdAt?: string;
+  updatedAt?: string;
 };
 
 export const SUB_CATEGORIES_BY_COLLECTION: Record<

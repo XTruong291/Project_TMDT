@@ -7,12 +7,17 @@ import { HeroBanner } from "@/components/sites/raycon/hero-banner";
 import { HomeNews } from "@/components/sites/raycon/home-news";
 import { PressPlayBanner } from "@/components/sites/raycon/press-play-banner";
 import { Reviews } from "@/components/sites/raycon/reviews";
+import { getProducts } from "@/lib/api";
 
-export default function Home() {
+export const dynamic = "force-dynamic";
+
+export default async function Home() {
+  const initialProducts = await getProducts();
+
   return (
     <main>
       <HeroBanner />
-      <BestSellersCarousel />
+      <BestSellersCarousel initialProducts={initialProducts} />
       <PressPlayBanner />
       <CategoryGrid />
       <CoreTech />

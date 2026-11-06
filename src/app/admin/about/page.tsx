@@ -20,12 +20,21 @@ import {
 } from "@/lib/api";
 import { useAuthStore } from "@/store/use-auth-store";
 import type { AboutSection } from "@/types/about";
+import { SafeImage } from "@/components/ui/safe-image";
+import { cleanImageUrl } from "@/lib/image-utils";
 
 const CATEGORY_LABELS: Record<string, string> = {
   company_overview: "Tổng quan công ty",
   products_services: "Sản phẩm & Dịch vụ",
   mission_vision: "Sứ mệnh & Tầm nhìn",
 };
+
+const SAMPLE_ABOUT_IMAGES = [
+  { label: "Tai nghe Earbuds", url: "/sites/raycon/images/earbuds-lifestyle.png" },
+  { label: "Tai nghe Headphones", url: "/sites/raycon/images/headphones-lifestyle.png" },
+  { label: "Open Audio", url: "/sites/raycon/images/open-audio-lifestyle.png" },
+  { label: "Sạc & Phụ kiện", url: "/sites/raycon/images/magic-spin-cable-lifestyle.png" },
+];
 
 export default function AdminAboutPage() {
   const token = useAuthStore((state) => state.token);
@@ -251,10 +260,10 @@ export default function AdminAboutPage() {
                     <td className="py-3 px-4">
                       <div className="size-14 rounded-xl bg-[#e8f7ff] p-1 shrink-0 overflow-hidden border border-gray-100">
                         {sec.imageUrl ? (
-                          // eslint-disable-next-line @next/next/no-img-element
-                          <img
+                          <SafeImage
                             src={sec.imageUrl}
                             alt=""
+                            fallbackSrc="/sites/raycon/images/earbuds-lifestyle.png"
                             className="size-full object-contain"
                           />
                         ) : (
@@ -418,18 +427,70 @@ export default function AdminAboutPage() {
               </div>
 
               <div>
-                <label className="block text-xs font-bold uppercase tracking-wider text-navy/70 mb-1">
-                  Đường dẫn Hình ảnh (Image URL)
-                </label>
+                <div className="flex items-center justify-between mb-1">
+                  <label className="block text-xs font-bold uppercase tracking-wider text-navy/70">
+                    Đường dẫn Hình ảnh (Image URL)
+                  </label>
+                  <span className="text-[10px] text-gray-400 font-medium">
+                    Hỗ trợ URL Google hoặc link ảnh bên ngoài
+                  </span>
+                </div>
                 <input
                   type="text"
                   value={formData.imageUrl}
-                  onChange={(e) =>
-                    setFormData({ ...formData, imageUrl: e.target.value })
-                  }
-                  placeholder="/sites/raycon/images/earbuds-lifestyle.png"
+                  onChange={(e) => {
+                    const cleaned = cleanImageUrl(e.target.value);
+                    setFormData({ ...formData, imageUrl: cleaned });
+                  }}
+                  onPaste={(e) => {
+                    const pasted = e.clipboardData.getData("text");
+                    const cleaned = cleanImageUrl(pasted);
+                    if (cleaned !== pasted) {
+                      e.preventDefault();
+                      setFormData({ ...formData, imageUrl: cleaned });
+                    }
+                  }}
+                  placeholder="/sites/raycon/images/earbuds-lifestyle.png hoặc dán link Google"
                   className="w-full rounded-xl border border-gray-200 bg-gray-50/50 py-2.5 px-3.5 text-xs text-navy outline-none focus:border-navy focus:bg-white font-mono"
                 />
+
+                {/* Sample Chips */}
+                <div className="mt-2 flex flex-wrap items-center gap-1.5">
+                  <span className="text-[10px] text-gray-400 font-medium">Ảnh mẫu:</span>
+                  {SAMPLE_ABOUT_IMAGES.map((sample) => (
+                    <button
+                      key={sample.label}
+                      type="button"
+                      onClick={() =>
+                        setFormData({ ...formData, imageUrl: sample.url })
+                      }
+                      className="rounded-md bg-gray-100 hover:bg-royal/10 hover:text-royal px-2 py-0.5 text-[10px] font-semibold text-gray-600 transition cursor-pointer"
+                    >
+                      {sample.label}
+                    </button>
+                  ))}
+                </div>
+
+                {/* Live Preview */}
+                {formData.imageUrl && (
+                  <div className="mt-3 flex items-center gap-3 rounded-xl border border-gray-200/80 bg-gray-50/70 p-2.5">
+                    <div className="relative size-16 shrink-0 overflow-hidden rounded-lg border border-gray-200 bg-white flex items-center justify-center">
+                      <SafeImage
+                        src={formData.imageUrl}
+                        alt="Preview"
+                        className="size-full object-contain"
+                      />
+                    </div>
+                    <div className="flex-1 min-w-0 text-xs">
+                      <p className="font-semibold text-navy truncate">
+                        Xem trước hình ảnh
+                      </p>
+                      <p className="text-[10px] text-gray-400 truncate mt-0.5 font-mono">
+                        {formData.imageUrl}
+                      </p>
+                    </div>
+                  </div>
+                )}
               </div>
 
               <div>

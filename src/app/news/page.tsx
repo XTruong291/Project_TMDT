@@ -19,6 +19,7 @@ import {
 import { getArticles, createArticle } from "@/lib/api";
 import { useAuthStore } from "@/store/use-auth-store";
 import type { Article } from "@/types/article";
+import { SafeImage } from "@/components/ui/safe-image";
 
 const CATEGORY_MAP: Record<string, { label: string; badgeClass: string }> = {
   "tin-tuc": { label: "Tin Tức", badgeClass: "bg-blue-50 text-blue-700 border-blue-200" },
@@ -383,14 +384,10 @@ export default function NewsPage() {
                     {/* Thumbnail Bên Trái */}
                     <div className="w-full md:w-72 aspect-16/10 md:aspect-4/3 shrink-0 overflow-hidden rounded-2xl bg-[#e8f7ff] p-3 flex items-center justify-center border border-navy/5">
                       {article.thumbnail ? (
-                        // eslint-disable-next-line @next/next/no-img-element
-                        <img
+                        <SafeImage
                           src={article.thumbnail}
                           alt={article.title}
-                          referrerPolicy="no-referrer"
-                          onError={(e) => {
-                            e.currentTarget.src = "/sites/raycon/images/earbuds-lifestyle.png";
-                          }}
+                          fallbackSrc="/sites/raycon/images/earbuds-lifestyle.png"
                           className="size-full object-contain group-hover:scale-105 transition-transform duration-300 drop-shadow-sm"
                         />
                       ) : (

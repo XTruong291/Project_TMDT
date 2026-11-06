@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { bestSellers as fallbackBestSellers } from "@/data/products";
 import { getProducts } from "@/lib/api";
 import type { Product } from "@/types/product";
@@ -20,11 +20,12 @@ export function BestSellersCarousel({
       ? initialProducts
       : fallbackBestSellers,
   );
+  const [activeTab, setActiveTab] = useState<"all" | "featured" | "newest">("all");
 
   useEffect(() => {
-    // If not provided from SSR or to keep in real-time sync with MySQL
+    // Keep in real-time sync with MySQL
     let isMounted = true;
-    getProducts({ featured: true }).then((products) => {
+    getProducts().then((products) => {
       if (isMounted && products && products.length > 0) {
         setItems(products);
       }
@@ -34,6 +35,21 @@ export function BestSellersCarousel({
     };
   }, []);
 
+  const displayedItems = useMemo(() => {
+    if (activeTab === "featured") {
+      const featured = items.filter((p) => p.featured);
+      return featured.length > 0 ? featured : items;
+    }
+    if (activeTab === "newest") {
+      return [...items].sort((a, b) => {
+        const timeA = a.createdAt ? new Date(a.createdAt).getTime() : 0;
+        const timeB = b.createdAt ? new Date(b.createdAt).getTime() : 0;
+        return timeB - timeA;
+      });
+    }
+    return items;
+  }, [items, activeTab]);
+
   function scrollByCard(direction: -1 | 1) {
     const node = scroller.current;
     if (!node) return;
@@ -41,11 +57,51 @@ export function BestSellersCarousel({
     node.scrollBy({ left: amount * direction, behavior: "smooth" });
   }
 
+  const featuredCount = useMemo(() => items.filter((p) => p.featured).length, [items]);
+
   return (
     <section className="bg-white py-14 md:py-20">
       <div className="raycon-container">
-        <div className="mb-8 flex items-end justify-between gap-4">
-          <h2 className="text-[32px] font-bold md:text-[36px]">Fan Favorites</h2>
+        <div className="mb-8 flex flex-col md:flex-row md:items-end md:justify-between gap-4">
+          <div>
+            <h2 className="text-[32px] font-bold md:text-[36px]">Fan Favorites</h2>
+            <div className="mt-3 flex items-center gap-2">
+              <button
+                type="button"
+                onClick={() => setActiveTab("all")}
+                className={`rounded-full px-4 py-1.5 text-xs font-bold transition-all cursor-pointer ${
+                  activeTab === "all"
+                    ? "bg-navy text-white shadow-sm"
+                    : "bg-gray-100 text-gray-600 hover:bg-gray-200"
+                }`}
+              >
+                Tất cả sản phẩm ({items.length})
+              </button>
+              <button
+                type="button"
+                onClick={() => setActiveTab("featured")}
+                className={`rounded-full px-4 py-1.5 text-xs font-bold transition-all cursor-pointer ${
+                  activeTab === "featured"
+                    ? "bg-navy text-white shadow-sm"
+                    : "bg-gray-100 text-gray-600 hover:bg-gray-200"
+                }`}
+              >
+                Nổi bật ({featuredCount})
+              </button>
+              <button
+                type="button"
+                onClick={() => setActiveTab("newest")}
+                className={`rounded-full px-4 py-1.5 text-xs font-bold transition-all cursor-pointer ${
+                  activeTab === "newest"
+                    ? "bg-navy text-white shadow-sm"
+                    : "bg-gray-100 text-gray-600 hover:bg-gray-200"
+                }`}
+              >
+                Mới nhất
+              </button>
+            </div>
+          </div>
+
           <div className="hidden gap-2 md:flex">
             <button
               type="button"
@@ -65,11 +121,12 @@ export function BestSellersCarousel({
             </button>
           </div>
         </div>
+
         <div
           ref={scroller}
           className="flex items-stretch gap-4 overflow-x-auto pb-2 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
         >
-          {items.map((product) => (
+          {displayedItems.map((product) => (
             <ProductCard key={product.id} product={product} />
           ))}
         </div>

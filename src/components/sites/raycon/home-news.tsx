@@ -2,6 +2,7 @@ import Link from "next/link";
 import { ArrowRight, Calendar, Newspaper, Sparkles, Tag } from "lucide-react";
 import { getArticles } from "@/lib/api";
 import type { Article } from "@/types/article";
+import { SafeImage } from "@/components/ui/safe-image";
 
 const CATEGORY_MAP: Record<string, { label: string; badgeClass: string }> = {
   "tin-tuc": { label: "Tin Tức", badgeClass: "bg-blue-50 text-blue-700 border-blue-200" },
@@ -125,11 +126,10 @@ export async function HomeNews() {
                   className="aspect-16/10 w-full overflow-hidden bg-[#e8f7ff] p-4 flex items-center justify-center shrink-0 border-b border-navy/5"
                 >
                   {article.thumbnail ? (
-                    // eslint-disable-next-line @next/next/no-img-element
-                    <img
+                    <SafeImage
                       src={article.thumbnail}
                       alt={article.title}
-                      referrerPolicy="no-referrer"
+                      fallbackSrc="/sites/raycon/images/earbuds-lifestyle.png"
                       className="size-full object-contain group-hover:scale-105 transition-transform duration-300 drop-shadow-sm"
                     />
                   ) : (

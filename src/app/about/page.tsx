@@ -11,12 +11,15 @@ import {
 } from "lucide-react";
 import { getAboutSections } from "@/lib/api";
 import type { AboutSection } from "@/types/about";
+import { SafeImage } from "@/components/ui/safe-image";
 
 export const metadata: Metadata = {
   title: "Về RYVO | Âm Thanh Thông Minh Cho Cuộc Sống Hàng Ngày",
   description:
     "Tìm hiểu về câu chuyện thương hiệu RYVO, sứ mệnh phổ cập âm thanh không dây cao cấp và các giá trị cốt lõi mang lại trải nghiệm âm nhạc đỉnh cao.",
 };
+
+export const dynamic = "force-dynamic";
 
 const DEFAULT_SECTIONS: AboutSection[] = [
   {
@@ -161,10 +164,10 @@ export default async function AboutPage() {
                 >
                   {sec.imageUrl && (
                     <div className="w-full md:w-1/2 aspect-video md:aspect-4/3 overflow-hidden rounded-2xl bg-[#e8f7ff] p-4 flex items-center justify-center shrink-0">
-                      {/* eslint-disable-next-line @next/next/no-img-element */}
-                      <img
+                      <SafeImage
                         src={sec.imageUrl}
                         alt={sec.title}
+                        fallbackSrc="/sites/raycon/images/earbuds-lifestyle.png"
                         className="size-full object-contain hover:scale-105 transition-transform duration-300 drop-shadow-md"
                       />
                     </div>
@@ -208,10 +211,10 @@ export default async function AboutPage() {
                 >
                   {sec.imageUrl && (
                     <div className="w-full md:w-1/2 aspect-video md:aspect-4/3 overflow-hidden rounded-2xl bg-[#e8f7ff] p-4 flex items-center justify-center shrink-0">
-                      {/* eslint-disable-next-line @next/next/no-img-element */}
-                      <img
+                      <SafeImage
                         src={sec.imageUrl}
                         alt={sec.title}
+                        fallbackSrc="/sites/raycon/images/earbuds-lifestyle.png"
                         className="size-full object-contain hover:scale-105 transition-transform duration-300 drop-shadow-md"
                       />
                     </div>
@@ -263,10 +266,10 @@ export default async function AboutPage() {
                 >
                   {sec.imageUrl && (
                     <div className="w-full md:w-1/2 aspect-video md:aspect-4/3 overflow-hidden rounded-2xl bg-[#e8f7ff] p-4 flex items-center justify-center shrink-0">
-                      {/* eslint-disable-next-line @next/next/no-img-element */}
-                      <img
+                      <SafeImage
                         src={sec.imageUrl}
                         alt={sec.title}
+                        fallbackSrc="/sites/raycon/images/earbuds-lifestyle.png"
                         className="size-full object-contain hover:scale-105 transition-transform duration-300 drop-shadow-md"
                       />
                     </div>

@@ -22,6 +22,7 @@ import {
 } from "@/lib/api";
 import { useAuthStore } from "@/store/use-auth-store";
 import type { Article } from "@/types/article";
+import { SafeImage } from "@/components/ui/safe-image";
 
 const CATEGORY_MAP: Record<string, string> = {
   "tin-tuc": "Tin Tức",
@@ -309,14 +310,10 @@ export default function AdminNewsPage() {
                       <div className="flex items-center gap-3">
                         <div className="size-14 rounded-xl bg-[#e8f7ff] p-1 shrink-0 overflow-hidden border border-gray-100">
                           {art.thumbnail ? (
-                            // eslint-disable-next-line @next/next/no-img-element
-                            <img
+                            <SafeImage
                               src={art.thumbnail}
                               alt=""
-                              referrerPolicy="no-referrer"
-                              onError={(e) => {
-                                e.currentTarget.src = "/sites/raycon/images/earbuds-lifestyle.png";
-                              }}
+                              fallbackSrc="/sites/raycon/images/earbuds-lifestyle.png"
                               className="size-full object-contain"
                             />
                           ) : (
